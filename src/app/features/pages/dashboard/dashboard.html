@@ -52,24 +52,27 @@
                   }
 
                   @if(column.matColumnDef == "comprobantes"){
+                    <mat-spinner *ngIf="element.comprobantesLoading"></mat-spinner>
                   <span class="badge bg-success-comprobantes"
-                    *ngIf="element[column.propertyValue] == 0">{{element[column.propertyValue]}}</span>
+                    *ngIf="element[column.propertyValue] == 0 && !element.comprobantesLoading">{{element[column.propertyValue]}}</span>
                   <span class="badge bg-danger"
-                    *ngIf="element[column.propertyValue] != 0">{{element[column.propertyValue]}}</span>
+                    *ngIf="element[column.propertyValue] != 0 && !element.comprobantesLoading">{{element[column.propertyValue]}}</span>
                   }
 
                   @if(column.matColumnDef == "transacciones"){
+                  <mat-spinner *ngIf="element.transaccionesLoading"></mat-spinner>
                   <span class="badge bg-success-comprobantes"
-                    *ngIf="element[column.propertyValue] == 0">{{element[column.propertyValue]}}</span>
+                    *ngIf="element[column.propertyValue] == 0 && !element.transaccionesLoading">{{element[column.propertyValue]}}</span>
                   <span class="badge bg-danger"
-                    *ngIf="element[column.propertyValue] != 0">{{element[column.propertyValue]}}</span>
+                    *ngIf="element[column.propertyValue] != 0 && !element.transaccionesLoading">{{element[column.propertyValue]}}</span>
                   }
 
                   @if(column.matColumnDef == "clientes"){
+                  <mat-spinner *ngIf="element.clientesLoading"></mat-spinner>
                   <span class="badge bg-success-comprobantes"
-                    *ngIf="element[column.propertyValue] == 0">{{element[column.propertyValue]}}</span>
+                    *ngIf="element[column.propertyValue] == 0 && !element.clientesLoading">{{element[column.propertyValue]}}</span>
                   <span class="badge bg-danger"
-                    *ngIf="element[column.propertyValue] != 0">{{element[column.propertyValue]}}</span>
+                    *ngIf="element[column.propertyValue] != 0 && !element.clientesLoading">{{element[column.propertyValue]}}</span>
                   }
 
 

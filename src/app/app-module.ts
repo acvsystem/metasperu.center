@@ -17,6 +17,7 @@ import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatBadgeModule } from '@angular/material/badge';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 @NgModule({
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
@@ -28,6 +29,7 @@ import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
   imports: [
     IonicModule.forRoot(),
     FormsModule,
+    MatProgressSpinnerModule,
     MatBadgeModule,
     MatIconModule,
     MatSidenavModule,

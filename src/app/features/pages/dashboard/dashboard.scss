@@ -171,3 +171,8 @@ tr.example-element-row:not(.example-expanded-row):active {
     box-shadow: 0 0 0 0 rgba(255, 82, 82, 0);
   }
 }
+
+mat-spinner {
+  width: 18px !important;
+  height: 18px !important;
+}

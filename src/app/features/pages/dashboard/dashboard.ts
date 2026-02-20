@@ -60,6 +60,7 @@ export class Dashboard {
       const index = this.dataSource.data.findIndex((t) => t.serie == docs?.serie);
       if (index != -1) {
         this.dataSource.data[index].comprobantes = docs['length'];
+        this.dataSource.data[index].comprobantesLoading = false;
       }
     });
 
@@ -68,6 +69,7 @@ export class Dashboard {
       const index = this.dataSource.data.findIndex((t) => t.serie == transaction?.serie);
       if (index != -1) {
         this.dataSource.data[index].transacciones = transaction['transactions'];
+        this.dataSource.data[index].transaccionesLoading = false;
       }
     });
 
@@ -76,6 +78,7 @@ export class Dashboard {
       const index = this.dataSource.data.findIndex((t) => t.serie == client?.serie);
       if (index != -1) {
         this.dataSource.data[index].clientes = client['clients'];
+        this.dataSource.data[index].clientesLoading = false;
       }
     });
 
@@ -133,6 +136,12 @@ export class Dashboard {
   }
 
   onMissingDocuments() {
+    this.dataSource.data.map((t, i) => {
+      if (t.online) {
+        this.dataSource.data[i].comprobantesLoading = true;
+      }
+    });
+
     this.storeService.callDocumentsMissing().subscribe({
       next: (result) => {
         console.log(result);
@@ -145,6 +154,12 @@ export class Dashboard {
   }
 
   onTransactions() {
+    this.dataSource.data.map((t, i) => {
+      if (t.online) {
+        this.dataSource.data[i].transaccionesLoading = true;
+      }
+    });
+
     this.storeService.callTransactions().subscribe({
       next: (result) => {
         console.log(result);
@@ -157,6 +172,13 @@ export class Dashboard {
   }
 
   onClientBlank() {
+
+    this.dataSource.data.map((t, i) => {
+      if (t.online) {
+        this.dataSource.data[i].clientesLoading = true;
+      }
+    });
+
     this.storeService.callClientBlank().subscribe({
       next: (result) => {
         console.log(result);
