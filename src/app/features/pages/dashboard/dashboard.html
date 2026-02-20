@@ -1,0 +1,172 @@
+<mat-drawer-container class="example-container" autosize>
+  <mat-drawer #drawer [mode]="'over'" position="end">
+
+  </mat-drawer>
+
+  <mat-drawer-content>
+    <div id="content" class="full-center">
+      <div class="card-content">
+        <ion-row>
+          <ion-col sizeXs="12" sizeSm="12" sizeMd="7" sizeLg="7">
+            <div style="display: flex;">
+              <button (click)="onMissingDocuments()" type="button"
+                style="display: flex;justify-content: center;align-items: center;margin-right: 10px;"
+                class="btn btn-primary btn-sm mobil-margin-button"><mat-icon
+                  style="margin-right: 10px;">cloud_sync</mat-icon>
+                Documentos</button>
+              <button (click)="onTransactions()" type="button"
+                style="display: flex;justify-content: center;align-items: center;margin-right: 10px;"
+                class="btn btn-primary btn-sm mobil-margin-button"><mat-icon
+                  style="margin-right: 10px;">cloud_sync</mat-icon>
+                Transacciones</button>
+              <button (click)="onClientBlank()" type="button"
+                style="display: flex;justify-content: center;align-items: center;margin-right: 10px;"
+                class="btn btn-primary btn-sm mobil-margin-button"><mat-icon
+                  style="margin-right: 10px;">person_search</mat-icon>
+                Clientes</button>
+            </div>
+          </ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-col sizeXs="12" sizeSm="12" sizeMd="12" sizeLg="12">
+            <table mat-table [dataSource]="dataSource" multiTemplateDataRows class="mat-elevation-z8">
+              @for (column of columnsToDisplay; track column) {
+              <ng-container matColumnDef="{{column.matColumnDef}}">
+                <th mat-header-cell *matHeaderCellDef>{{column.titleColumn}}</th>
+                <td mat-cell *matCellDef="let element">
+
+                  @if(column.matColumnDef == "traffic"){
+                  @for(trf of element.traffic;track trf){
+
+                  <span matTooltipPosition="above" matTooltip="{{trf.ip}}" *ngIf="trf.active"
+                    style="font-size: 20px;cursor: pointer;color: #17c04f;padding-right: 5px;">
+                    <mat-icon>videocam</mat-icon>
+                  </span>
+
+                  <span matTooltipPosition="above" matTooltip="{{trf.ip}}" *ngIf="!trf.active"
+                    style="font-size: 20px;cursor: pointer;color: #898989;padding-right: 5px;">
+                    <mat-icon>videocam_off</mat-icon>
+                  </span>
+
+                  }
+                  }
+
+                  @if(column.matColumnDef == "comprobantes"){
+                  <span class="badge bg-success-comprobantes"
+                    *ngIf="element[column.propertyValue] == 0">{{element[column.propertyValue]}}</span>
+                  <span class="badge bg-danger"
+                    *ngIf="element[column.propertyValue] != 0">{{element[column.propertyValue]}}</span>
+                  }
+
+                  @if(column.matColumnDef == "transacciones"){
+                  <span class="badge bg-success-comprobantes"
+                    *ngIf="element[column.propertyValue] == 0">{{element[column.propertyValue]}}</span>
+                  <span class="badge bg-danger"
+                    *ngIf="element[column.propertyValue] != 0">{{element[column.propertyValue]}}</span>
+                  }
+
+                  @if(column.matColumnDef == "clientes"){
+                  <span class="badge bg-success-comprobantes"
+                    *ngIf="element[column.propertyValue] == 0">{{element[column.propertyValue]}}</span>
+                  <span class="badge bg-danger"
+                    *ngIf="element[column.propertyValue] != 0">{{element[column.propertyValue]}}</span>
+                  }
+
+
+                  @if(column.matColumnDef != "online" && column.matColumnDef != "clientes" &&
+                  column.matColumnDef != "traffic" && column.matColumnDef != "comprobantes"
+                  && column.matColumnDef != "transacciones"){
+                  {{element[column.propertyValue]}}
+                  }
+
+                  @if(column.matColumnDef == "online"){
+                  <div [ngClass]="[element[column.propertyValue] == 1 ? 'blob blue': 'blob red']"></div>
+                  }
+                </td>
+              </ng-container>
+              }
+              <ng-container matColumnDef="expand">
+                <th mat-header-cell *matHeaderCellDef aria-label="row actions">&nbsp;</th>
+                <td mat-cell *matCellDef="let element">
+                  <button matIconButton aria-label="expand row" (click)="toggle(element); $event.stopPropagation()"
+                    class="example-toggle-button" [class.example-toggle-button-expanded]="isExpanded(element)">
+                    <mat-icon>keyboard_arrow_down</mat-icon>
+                  </button>
+                </td>
+              </ng-container>
+
+              <!-- Expanded Content Column - The detail row is made up of this one column that spans across all columns -->
+              <ng-container matColumnDef="expandedDetail">
+                <td mat-cell *matCellDef="let element" [attr.colspan]="columnsToDisplayWithExpand.length">
+                  <div class="example-element-detail-wrapper"
+                    [class.example-element-detail-wrapper-expanded]="isExpanded(element)">
+                    <div class="example-element-detail">
+                      <div style="width: 100%;">
+                        <ion-row>
+                          <ion-col sizeXs="3" sizeSm="3" sizeMd="3" sizeLg="3">
+                            <div style="text-align: center;">
+                              <div class="head-terminal">
+                                Origen
+                              </div>
+                            </div>
+                            <ul class="list-group">
+                              @for(terminal of element.terminales; track $index;let idx = $index){
+                              <li id="{{terminal.id}}-origen-{{terminal.nombre}}" name="origen"
+                                (click)="onSelectedTranferencia($event,terminal,'')"
+                                class="origen list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                                {{terminal.nombre}}
+                                <span *ngIf="terminal.CANTIDAD == 0" class="badge bg-success-comprobantes badge-pill"
+                                  style="margin-left: 50px;">{{terminal.CANTIDAD}}</span>
+                                <span *ngIf="terminal.CANTIDAD > 0" class="badge bg-danger badge-pill"
+                                  style="margin-left: 50px;">{{terminal.CANTIDAD}}</span>
+                              </li>
+                              }
+                            </ul>
+                          </ion-col>
+                          <ion-col sizeXs="1" sizeSm="1" sizeMd="1" sizeLg="1">
+                            <div style="height: 100%;display: flex;justify-content: center;align-items: center;">
+                              <button type="button" class="btn btn-primary btn-sm mobil-margin-button"><i
+                                  class="fa fa-rocket" aria-hidden="true"></i></button>
+                            </div>
+                          </ion-col>
+                          <ion-col sizeXs="3" sizeSm="3" sizeMd="3" sizeLg="3">
+                            <div style="text-align: center;">
+                              <div class="head-terminal">
+                                Destino
+                              </div>
+                            </div>
+                            <ul class="list-group">
+                              @for(terminal of element.terminales; track $index;let idx = $index){
+                              <li id="{{terminal.id}}-destino-{{terminal.nombre}}"
+                                (click)="onSelectedTranferencia($event,'',terminal)"
+                                class="destino list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                                {{terminal.nombre}}
+                                <span *ngIf="terminal.CANTIDAD == 0" class="badge bg-success-comprobantes badge-pill"
+                                  style="margin-left: 50px;">0</span>
+                                <span *ngIf="terminal.CANTIDAD > 0" class="badge bg-danger badge-pill"
+                                  style="margin-left: 50px;">0</span>
+                              </li>
+                              }
+                            </ul>
+                          </ion-col>
+                        </ion-row>
+                      </div>
+                    </div>
+                  </div>
+                </td>
+              </ng-container>
+
+              <tr mat-header-row *matHeaderRowDef="columnsToDisplayWithExpand"></tr>
+              <tr mat-row *matRowDef="let element; columns: columnsToDisplayWithExpand;" class="example-element-row"
+                [class.example-expanded-row]="isExpanded(element)" (click)="toggle(element)">
+              </tr>
+              <tr mat-row *matRowDef="let row; columns: ['expandedDetail']" class="example-detail-row"></tr>
+            </table>
+          </ion-col>
+        </ion-row>
+
+      </div>
+    </div>
+  </mat-drawer-content>
+
+</mat-drawer-container>

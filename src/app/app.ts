@@ -7,5 +7,11 @@ import { Component, signal } from '@angular/core';
   styleUrl: './app.scss'
 })
 export class App {
+  menuFiltrado: Array<any> = [];
   protected readonly title = signal('metasperu.center');
+  roleUser: string = "";
+
+  ngOnInit(): void {
+    this.roleUser = localStorage.getItem('role') || "";
+  }
 }

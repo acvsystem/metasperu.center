@@ -1,0 +1,578 @@
+/* You can add global styles to this file, and also import other style files */
+// Include theming for Angular Material with `mat.theme()`.
+// This Sass mixin will define CSS variables that are used for styling Angular Material
+// components according to the Material 3 design spec.
+// Learn more about theming and how to use it for your application's
+// custom components at https://material.angular.dev/guide/theming
+@use '@angular/material' as mat;
+
+html {
+  @include mat.theme((color: (theme-type: light,
+        primary: mat.$azure-palette,
+        tertiary: mat.$blue-palette,
+      ),
+      typography: Roboto,
+      density: 0,
+    ));
+}
+
+body {
+  // Default the application to a light color theme. This can be changed to
+  // `dark` to enable the dark color theme, or to `light dark` to defer to the
+  // user's system settings.
+  color-scheme: light;
+
+  // Set a default background, font and text colors for the application using
+  // Angular Material's system-level CSS variables. Learn more about these
+  // variables at https://material.angular.dev/guide/system-variables
+  background-color: var(--mat-sys-surface);
+  color: var(--mat-sys-on-surface);
+  font: var(--mat-sys-body-medium);
+
+  // Reset the user agent margin.
+  margin: 0;
+}
+
+/* You can add global styles to this file, and also import other style files */
+/* From Uiverse.io by catraco */
+
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type=number] {
+  -moz-appearance: textfield;
+}
+
+.mat-mdc-form-field-flex {
+  height: 37px !important;
+}
+
+.no-line .mat-form-field-underline {
+  display: none;
+}
+
+.item-has-focus {
+  border: 1px solid #40a9ff !important;
+  outline: 0 !important;
+  box-shadow: 0 0 0 2px #1890ff33 !important;
+  border-radius: 4px !important;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+}
+
+.custom-notification-panel .mat-mdc-dialog-container .mdc-dialog__surface {
+  border-radius: 16px !important;
+  padding: 0 !important;
+}
+
+.custom-notification-panel {
+
+  /* Apuntamos al contenedor interno de Material */
+  .mat-mdc-dialog-container .mdc-dialog__surface {
+    border-radius: 20px !important;
+    /* Aquí controlas qué tan redondo es */
+    background-color: white !important;
+    padding: 0 !important;
+    overflow: hidden !important;
+    /* Asegura que el contenido no se salga de las esquinas */
+  }
+}
+
+// Esta clase se activa solo cuando el escáner está prendido
+body.barcode-scanner-active {
+  --ion-background-color: transparent;
+  --background: transparent;
+
+  // Ocultamos todos los elementos para ver la cámara al fondo
+  main-layout,
+  ion-content,
+  ion-router-outlet {
+    display: none !important;
+  }
+}
+
+.only-desktop {
+  display: inline-table !important;
+}
+
+@media (max-width:500px) {
+  .only-mobil {
+    display: block !important;
+  }
+
+  .only-desktop {
+    display: none !important;
+  }
+
+}
+
+/* En global.scss */
+
+.custom-alert-inventory {
+
+  .sc-ion-alert-md-h.select-alert.custom-alert-inventory.single-select-alert {
+
+    --z-index: 99999 !important;
+    z-index: 99999 !important;
+  }
+
+  --z-index: 99999 !important;
+  z-index: 99999 !important;
+}
+
+.custom-alert-inventory.alert-wrapper.sc-ion-alert-md {
+  --z-index: 99999 !important;
+  z-index: 99999 !important;
+}
+
+.custom-alert-inventory.alert-wrapper {
+  /* 1. Bordes redondeados de la ventana */
+  border-radius: 8px !important;
+
+  /* 2. Controlar la altura máxima para que no ocupe toda la pantalla */
+  max-height: 80% !important;
+  width: 90% !important;
+  max-width: 400px !important;
+
+  --z-index: 99999 !important;
+  z-index: 99999 !important;
+}
+
+.custom-alert-inventory.alert-wrapper.sc-ion-alert-md {
+  --z-index: 99999 !important;
+  z-index: 99999 !important;
+}
+
+/* 3. Estilo de los botones CANCEL y OK */
+.custom-alert-inventory .alert-button-group {
+  padding-right: 10px;
+}
+
+.custom-alert-inventory .alert-button-inner {
+  color: #3880ff;
+  /* Color azul de los botones */
+  font-weight: 500;
+}
+
+/* 4. Estilo de los radio buttons (círculos) */
+.custom-alert-inventory .alert-radio-icon {
+  border-color: #666;
+  /* Color del círculo cuando no está marcado */
+}
+
+.custom-alert-inventory .alert-radio-label {
+  font-size: 14px;
+  color: #333;
+}
+
+
+.custom-item {
+  /* 1. Creamos nuestro propio borde fino */
+  border: 1px solid #d1d1d1;
+  border-radius: 4px;
+
+  /* 2. Quitamos el color de fondo y sombras de Ionic */
+  --background: transparent;
+  --padding-start: 12px;
+  --inner-padding-end: 12px;
+  --highlight-height: 0;
+  /* ESTO QUITA LA LÍNEA VERDE */
+  height: 39px !important;
+  min-height: 39px !important;
+  transition: border-color 0.2s;
+  display: flex;
+  align-items: center;
+}
+
+/* 3. Ajustamos el select para que la flecha se pegue a la derecha */
+ion-select {
+  width: 100%;
+  --placeholder-color: #999;
+  --placeholder-opacity: 1;
+  min-height: 40px !important;
+}
+
+ion-select::part(container) {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+}
+
+/* 4. Efecto de foco (opcional) */
+.custom-item:focus-within {
+  border-color: #3880ff;
+}
+
+/* Aplicamos a la clase que definimos en interfaceOptions */
+.custom-alert-inventory {
+  z-index: 99999999999 !important;
+
+  /* 1. Quitar el anillo de enfoque de toda la ventana de alerta */
+  .alert-wrapper:focus {
+    outline: none !important;
+  }
+
+  /* 2. Quitar el borde de enfoque en las opciones (Radio buttons) */
+  .alert-radio-button:focus,
+  .alert-radio-button:focus-visible,
+  .alert-radio-button.ion-focused {
+    --background-focused: transparent;
+    outline: none !important;
+  }
+
+  /* 3. Quitar el borde de los botones CANCEL y OK al hacer click */
+  .alert-button:focus,
+  .alert-button:focus-visible,
+  .alert-button.ion-focused {
+    outline: none !important;
+    background: transparent !important;
+    --background-focused: transparent;
+    --background-hover: rgba(0, 0, 0, 0.05);
+    /* Opcional: un toque sutil al pasar el mouse */
+  }
+
+  /* 4. Específico para navegadores basados en Chromium */
+  * {
+    outline: none !important;
+  }
+}
+
+ion-modal {
+  z-index: 1000 !important;
+}
+
+ion-alert {
+  z-index: 9999 !important;
+}
+
+body>ion-alert {
+  z-index: 99999 !important;
+}
+
+.full-center {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.card-content {
+  width: 100% !important;
+  margin: 10px !important;
+  padding: 10px !important;
+  box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px, rgba(0, 0, 0, 0.3) 0px 1px 3px -1px;
+}
+
+
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type=number] {
+  -moz-appearance: textfield;
+}
+
+.mat-mdc-form-field-flex {
+  height: 37px !important;
+}
+
+.no-line .mat-form-field-underline {
+  display: none;
+}
+
+.item-has-focus {
+  border: 1px solid #40a9ff !important;
+  outline: 0 !important;
+  box-shadow: 0 0 0 2px #1890ff33 !important;
+  border-radius: 4px !important;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+}
+
+.custom-notification-panel .mat-mdc-dialog-container .mdc-dialog__surface {
+  border-radius: 16px !important;
+  padding: 0 !important;
+}
+
+.custom-notification-panel {
+
+  /* Apuntamos al contenedor interno de Material */
+  .mat-mdc-dialog-container .mdc-dialog__surface {
+    border-radius: 20px !important;
+    /* Aquí controlas qué tan redondo es */
+    background-color: white !important;
+    padding: 0 !important;
+    overflow: hidden !important;
+    /* Asegura que el contenido no se salga de las esquinas */
+  }
+}
+
+// Esta clase se activa solo cuando el escáner está prendido
+body.barcode-scanner-active {
+  --ion-background-color: transparent;
+  --background: transparent;
+
+  // Ocultamos todos los elementos para ver la cámara al fondo
+  main-layout,
+  ion-content,
+  ion-router-outlet {
+    display: none !important;
+  }
+}
+
+.only-desktop {
+  display: inline-table !important;
+}
+
+.custom-dialog-modal.mt-select {
+  --width: 400px !important;
+}
+
+
+
+@media (max-width:500px) {
+  .only-mobil {
+    display: block !important;
+  }
+
+  .custom-dialog-modal.mt-select {
+    --width: 90% !important;
+  }
+
+  .only-desktop {
+    display: none !important;
+  }
+
+}
+
+/* En global.scss */
+
+.custom-alert-inventory {
+
+  .sc-ion-alert-md-h.select-alert.custom-alert-inventory.single-select-alert {
+
+    --z-index: 99999 !important;
+    z-index: 99999 !important;
+  }
+
+  --z-index: 99999 !important;
+  z-index: 99999 !important;
+}
+
+.custom-alert-inventory.alert-wrapper.sc-ion-alert-md {
+  --z-index: 99999 !important;
+  z-index: 99999 !important;
+}
+
+.custom-alert-inventory.alert-wrapper {
+  /* 1. Bordes redondeados de la ventana */
+  border-radius: 8px !important;
+
+  /* 2. Controlar la altura máxima para que no ocupe toda la pantalla */
+  max-height: 80% !important;
+  width: 90% !important;
+  max-width: 400px !important;
+
+  --z-index: 99999 !important;
+  z-index: 99999 !important;
+}
+
+.custom-alert-inventory.alert-wrapper.sc-ion-alert-md {
+  --z-index: 99999 !important;
+  z-index: 99999 !important;
+}
+
+/* 3. Estilo de los botones CANCEL y OK */
+.custom-alert-inventory .alert-button-group {
+  padding-right: 10px;
+}
+
+.custom-alert-inventory .alert-button-inner {
+  color: #3880ff;
+  /* Color azul de los botones */
+  font-weight: 500;
+}
+
+/* 4. Estilo de los radio buttons (círculos) */
+.custom-alert-inventory .alert-radio-icon {
+  border-color: #666;
+  /* Color del círculo cuando no está marcado */
+}
+
+.custom-alert-inventory .alert-radio-label {
+  font-size: 14px;
+  color: #333;
+}
+
+
+.custom-item {
+  /* 1. Creamos nuestro propio borde fino */
+  border: 1px solid #d1d1d1;
+  border-radius: 4px;
+
+  /* 2. Quitamos el color de fondo y sombras de Ionic */
+  --background: transparent;
+  --padding-start: 12px;
+  --inner-padding-end: 12px;
+  --highlight-height: 0;
+  /* ESTO QUITA LA LÍNEA VERDE */
+  height: 39px !important;
+  min-height: 39px !important;
+  transition: border-color 0.2s;
+  display: flex;
+  align-items: center;
+}
+
+/* 3. Ajustamos el select para que la flecha se pegue a la derecha */
+ion-select {
+  width: 100%;
+  --placeholder-color: #999;
+  --placeholder-opacity: 1;
+  min-height: 40px !important;
+}
+
+ion-select::part(container) {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+}
+
+/* 4. Efecto de foco (opcional) */
+.custom-item:focus-within {
+  border-color: #3880ff;
+}
+
+/* Aplicamos a la clase que definimos en interfaceOptions */
+.custom-alert-inventory {
+  z-index: 99999999999 !important;
+
+  /* 1. Quitar el anillo de enfoque de toda la ventana de alerta */
+  .alert-wrapper:focus {
+    outline: none !important;
+  }
+
+  /* 2. Quitar el borde de enfoque en las opciones (Radio buttons) */
+  .alert-radio-button:focus,
+  .alert-radio-button:focus-visible,
+  .alert-radio-button.ion-focused {
+    --background-focused: transparent;
+    outline: none !important;
+  }
+
+  /* 3. Quitar el borde de los botones CANCEL y OK al hacer click */
+  .alert-button:focus,
+  .alert-button:focus-visible,
+  .alert-button.ion-focused {
+    outline: none !important;
+    background: transparent !important;
+    --background-focused: transparent;
+    --background-hover: rgba(0, 0, 0, 0.05);
+    /* Opcional: un toque sutil al pasar el mouse */
+  }
+
+  /* 4. Específico para navegadores basados en Chromium */
+  * {
+    outline: none !important;
+  }
+}
+
+ion-modal {
+  z-index: 1000 !important;
+}
+
+ion-alert {
+  z-index: 9999 !important;
+}
+
+body>ion-alert {
+  z-index: 99999 !important;
+}
+
+/* Centrar el modal y darle tamaño de diálogo */
+.custom-alert-modal {
+  --width: 90%;
+  --height: fit-content;
+  --max-height: 80%;
+  --border-radius: 4px;
+}
+
+.modal-main-container {
+  display: flex;
+  flex-direction: column;
+  background: white;
+}
+
+.modal-title {
+  padding: 20px 20px 10px 20px;
+  margin: 0;
+  font-size: 20px;
+  font-weight: 500;
+}
+
+.filter-searchbar {
+  padding: 0 10px;
+  --box-shadow: none;
+  --background: #f2f2f2;
+}
+
+.modal-body {
+  max-height: 400px;
+  /* Ajusta según necesites */
+}
+
+.item-checkbox {
+  --padding-start: 10px;
+  font-size: 14px;
+}
+
+.modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  padding: 8px;
+}
+
+.modal-footer ion-button {
+  --color: #1a73e8;
+  /* Azul profesional */
+  font-weight: bold;
+}
+
+/* Estilo para el contenedor gris del filtro */
+::ng-deep .filter-menu-panel {
+  background-color: #eeeeee !important;
+  /* Gris claro de la imagen */
+  border-radius: 8px !important;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1) !important;
+  padding: 12px !important;
+  min-width: 250px !important;
+}
+
+/* El input blanco interno */
+.filter-container input {
+  background: white;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 8px;
+  width: 100%;
+  outline: none;
+}
