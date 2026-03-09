@@ -176,3 +176,102 @@ mat-spinner {
   width: 18px !important;
   height: 18px !important;
 }
+
+#content{
+  margin-bottom: 100px;
+}
+
+//CARD STATUS SERVER
+
+.server-card {
+  background: #18181b; /* Zinc 900 */
+  border: 1px solid #27272a;
+  border-radius: 8px;
+  padding: 4px 16px;
+  width: 320px;
+  color: #f4f4f5;
+  font-family: 'Inter', sans-serif;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.status-indicator {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #3f3f46;
+}
+
+.status-indicator.online {
+  background: #0ea5e9;
+  box-shadow: 0 0 8px #0ea5e9;
+  animation: pulse 2s infinite;
+}
+
+.hostname {
+  font-weight: 600;
+  font-size: 0.9rem;
+  flex-grow: 1;
+}
+
+.metric-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 1px;
+}
+
+.label {
+  font-size: 0.7rem;
+  color: #a1a1aa;
+  width: 30px;
+  font-weight: bold;
+}
+
+.progress-track {
+  flex-grow: 1;
+  height: 6px;
+  background: #27272a;
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  transition: width 0.5s ease-in-out;
+}
+
+.cpu-bar { background: #38bdf8; } /* Azul claro */
+.ram-bar { background: #818cf8; } /* Indigo/Púrpura */
+
+.value {
+  font-size: 0.75rem;
+  width: 40px;
+  text-align: right;
+  font-family: 'Courier New', Courier, monospace;
+}
+
+.usb-badge {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.65rem;
+  background: #27272a;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.usb-badge.connected {
+  color: #4ade80; /* Verde si hay USB */
+}
+
+@keyframes pulse {
+  0% { opacity: 1; }
+  50% { opacity: 0.6; }
+  100% { opacity: 1; }
+}

@@ -38,14 +38,17 @@ export class Dashboard {
   expandedElement: any | null = null;
   tiendas: any[] = [];
   docsEnCola: any = null;
+  statusServer: any = {};
 
-  constructor(private socketService: SocketService, private storeService: StoreService) { }
+  constructor(private socketService: SocketService, private storeService: StoreService) {
+
+  }
 
   ngOnInit(): void {
     this.onListarTiendas();
 
     this.socketService.tiendas$.subscribe(data => {
-
+      console.log(data);
       data.map((d) => {
         const index = this.dataSource.data.findIndex((t) => t.serie == d?.serie);
         if (index != -1) {
@@ -55,41 +58,64 @@ export class Dashboard {
 
     });
 
-    this.socketService.onDocumentosRecibidos((docs) => {
-      console.log(docs);
-      const index = this.dataSource.data.findIndex((t) => t.serie == docs?.serie);
+    this.socketService.onStatusServerBackup((response) => {
+      console.log(response);
+      this.statusServer = response;
+    });
+
+    this.socketService.onResponseDeleteColaPnm((response) => {
+      console.log(response);
+    });
+
+    this.socketService.onResponseDeleteClient((response) => {
+      console.log(response);
+    });
+
+    this.socketService.onDocumentosRecibidos((response) => {
+      console.log(response);
+      const index = this.dataSource.data.findIndex((t) => t.serie == response?.serie);
       if (index != -1) {
-        this.dataSource.data[index].comprobantes = docs['length'];
+        this.dataSource.data[index].comprobantes = response['length'];
         this.dataSource.data[index].comprobantesLoading = false;
       }
     });
 
-    this.socketService.onTransactionsFrontRetail((transaction) => {
-      console.log(transaction);
-      const index = this.dataSource.data.findIndex((t) => t.serie == transaction?.serie);
+    this.socketService.onTransactionsFrontRetail((response) => {
+      console.log(response);
+
+      const index = this.dataSource.data.findIndex((t) => t.serie == response?.serie);
       if (index != -1) {
-        this.dataSource.data[index].transacciones = transaction['transactions'];
+        this.dataSource.data[index].transacciones = response['transactions'];
         this.dataSource.data[index].transaccionesLoading = false;
+
+        this.dataSource.data[index].terminales.filter((tr: any, idxTerminal: any) => {
+          this.dataSource.data[index].terminales[idxTerminal]['cantidad'] = 0;
+        });
+
+        response.terminales?.filter((t: any) => {
+          const idxTerminal = this.dataSource.data[index].terminales?.findIndex((tr: any) => tr.nombre == t.terminal);
+          this.dataSource.data[index].terminales[idxTerminal]['cantidad'] = t.cantidad || 0;
+        });
       }
     });
 
-    this.socketService.onClientBlank((client) => {
-      console.log(client);
-      const index = this.dataSource.data.findIndex((t) => t.serie == client?.serie);
+    this.socketService.onClientBlank((response) => {
+      console.log(response);
+      const index = this.dataSource.data.findIndex((t) => t.serie == response?.serie);
       if (index != -1) {
-        this.dataSource.data[index].clientes = client['clients'];
+        this.dataSource.data[index].clientes = response['clients'];
         this.dataSource.data[index].clientesLoading = false;
       }
     });
 
-    this.socketService.onTrafficCounter((traffic) => {
-      console.log(traffic);
-      if (!traffic?.serie || !traffic?.devices) return;
+    this.socketService.onTrafficCounter((response) => {
+      console.log(response);
+      if (!response?.serie || !response?.devices) return;
 
-      const tienda = this.dataSource.data.find(t => t.serie === traffic.serie);
+      const tienda = this.dataSource.data.find(t => t.serie === response.serie);
 
       if (tienda) {
-        traffic.devices.forEach((device: any) => {
+        response.devices.forEach((device: any) => {
           const targetTraffic = tienda.traffic.find((t: any) => t.ip === device.ip);
           if (targetTraffic) {
             targetTraffic.active = device.online;
@@ -98,6 +124,12 @@ export class Dashboard {
 
         this.dataSource._updateChangeSubscription();
       }
+    });
+
+    this.socketService.onResponseTransfer((response) => {
+      console.log(response);
+      this.onTransactions();
+      this.onNotification({ message: response?.status });
     });
   }
 
@@ -190,6 +222,30 @@ export class Dashboard {
     });
   }
 
+  onClientDelete() {
+    this.storeService.callClientDelete().subscribe({
+      next: (result) => {
+        console.log(result);
+        this.onNotification({ message: result?.message });
+      },
+      error: (err) => {
+        this.onNotification({ error: 'error', message: err?.message });
+      }
+    });
+  }
+
+  onDeleteColaPanama() {
+    this.storeService.callDeleteColaPanama().subscribe({
+      next: (result) => {
+        console.log(result);
+        this.onNotification({ message: result?.message });
+      },
+      error: (err) => {
+        this.onNotification({ error: 'error', message: err?.message });
+      }
+    });
+  }
+
   onSelectedTranferencia(ev: any, dataOne: any, dataTwo?: any) {
     this.vDataTransferencia[0]['dataOne'] = dataOne || this.vDataTransferencia[0]['dataOne'];
     this.vDataTransferencia[0]['dataTwo'] = dataTwo || this.vDataTransferencia[0]['dataTwo'];
@@ -212,6 +268,37 @@ export class Dashboard {
       document.getElementById(ev.target.id)?.classList.add('active');
     }
 
+  }
+
+  onTransferTreminal() {
+
+    const serie = this.vDataTransferencia[0]['dataOne']?.serie;
+    const tIn = this.vDataTransferencia[0]['dataOne']?.nombre;
+    const tOut = this.vDataTransferencia[0]['dataTwo']?.nombre;
+
+    const transfer = {
+      serie: serie,
+      terminalIn: tIn,
+      terminalOut: tOut
+    };
+
+    //this.onTransactions();
+    this.storeService.callTransferTerminal(transfer).subscribe({
+      next: (result) => {
+        console.log(result);
+
+        const index = this.dataSource.data.findIndex((t) => t.serie == serie);
+        if (index != -1) {
+          const idxTerminal = this.dataSource.data[index].terminales?.findIndex((tr: any) => tr.nombre == tIn);
+          this.dataSource.data[index].terminales[idxTerminal]['cantidad'] = 0;
+        }
+
+        this.onNotification({ message: result?.message });
+      },
+      error: (err) => {
+        this.onNotification({ error: 'error', message: err?.message });
+      }
+    });
   }
 
 }

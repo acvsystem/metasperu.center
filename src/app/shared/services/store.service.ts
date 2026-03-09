@@ -122,4 +122,33 @@ export class StoreService {
         );
     }
 
+    callClientDelete(): Observable<any> {
+        return this.http.get(
+            `${this.API_URL}/api/delete/client/${this.socketService.socketID}`
+        ).pipe(
+            catchError(this.handleError)
+        );
+    }
+
+    callTransferTerminal(terminal: any): Observable<any> {
+        return this.http.post(
+            `${this.API_URL}/api/transactions/transfer/terminal`,
+            {
+                socketId: this.socketService.socketID,
+                serie: terminal.serie,
+                terminalIn: terminal.terminalIn,
+                terminalOut: terminal.terminalOut
+            }
+        ).pipe(
+            catchError(this.handleError)
+        );
+    }
+
+    callDeleteColaPanama(): Observable<any> {
+        return this.http.get(
+            `${this.API_URL}/api/delete/cola/panama/${this.socketService.socketID}`
+        ).pipe(
+            catchError(this.handleError)
+        );
+    }
 }

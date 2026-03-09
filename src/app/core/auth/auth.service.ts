@@ -2,6 +2,7 @@ import { Injectable, signal, computed, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { tap, catchError, of, Observable, map } from 'rxjs';
+import { SocketService } from '@metasperu/services/socket.service';
 //import { InventoryService } from '@metasperu/services/inventory.service';
 
 // Definimos la interfaz del usuario para tipado fuerte
@@ -18,8 +19,9 @@ export interface User {
 export class AuthService {
     private http = inject(HttpClient);
     private router = inject(Router);
+    private socketService = inject(SocketService);
     private readonly API_URL = 'https://api.metasperu.net.pe/s2/auth/center'; // Ajusta a tu URL
-   // private invService = inject(InventoryService);
+    // private invService = inject(InventoryService);
     // 1. Estado reactivo con Signals
     #user = signal<User | null>(null);
 
@@ -49,6 +51,7 @@ export class AuthService {
                 if (response.token) {
                     localStorage.setItem('auth_token', response.token);
                     localStorage.setItem('role', response.user.role);
+                    this.socketService.conectar();
                     //this.invService.onMenu.emit(response.user.role);
                 }
 
@@ -63,6 +66,7 @@ export class AuthService {
 
     async logout() {
         localStorage.clear();
+        this.socketService.desconectar();
         localStorage.removeItem('auth_token'); // Limpiar el token
         localStorage.removeItem('codeSession');
         localStorage.removeItem('pocketCode');

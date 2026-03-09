@@ -1,11 +1,11 @@
-import { NgModule, provideBrowserGlobalErrorListeners, isDevMode } from '@angular/core';
+import { NgModule, provideBrowserGlobalErrorListeners, isDevMode, CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA, LOCALE_ID } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-
+import { RouteReuseStrategy } from '@angular/router';
 import { AppRoutingModule } from './app-routing-module';
 import { App } from './app';
 import { ServiceWorkerModule } from '@angular/service-worker';
 import { Login } from '../app/features/auth/login/login';
-import { IonicModule } from '@ionic/angular';
+import { IonicModule, IonicRouteStrategy } from '@ionic/angular';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { Dashboard } from './features/pages/dashboard/dashboard'; // 1. Importar la función
@@ -16,8 +16,8 @@ import { MatTableModule } from '@angular/material/table';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatBadgeModule } from '@angular/material/badge';
-import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatToolbarModule } from '@angular/material/toolbar';
 
 @NgModule({
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
@@ -29,6 +29,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
   imports: [
     IonicModule.forRoot(),
     FormsModule,
+    MatToolbarModule,
     MatProgressSpinnerModule,
     MatBadgeModule,
     MatIconModule,
@@ -45,6 +46,11 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
     })
   ],
   providers: [
+    { provide: LOCALE_ID, useValue: 'es-PE' },
+    {
+      provide: RouteReuseStrategy,
+      useClass: IonicRouteStrategy
+    },
     provideBrowserGlobalErrorListeners(),
     provideHttpClient(withInterceptors([authInterceptor])),
   ],
