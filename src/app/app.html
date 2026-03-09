@@ -9,7 +9,7 @@
             <ion-list lines="none">
                 <ion-menu-toggle auto-hide="true" *ngFor="let menu of menuFiltrado">
                     <ion-item button>
-                        <ion-label>csss</ion-label>
+                        <ion-label>{{menu.title}}</ion-label>
                     </ion-item>
                 </ion-menu-toggle>
             </ion-list>
@@ -18,7 +18,7 @@
 
     <div class="ion-page" id="main-content">
 
-        <ion-header *ngIf="isLogged">
+        <ion-header *ngIf="isLogged" style="height: 4.4%;">
             <ion-toolbar>
                 <ion-buttons slot="start">
                     <ion-menu-button></ion-menu-button>
@@ -34,14 +34,35 @@
                 </ion-buttons>
             </ion-toolbar>
         </ion-header>
-
-        <ion-content class="ion-padding">
+        <ion-content class="ion-padding" style="height: 95.6%;">
             <ion-router-outlet></ion-router-outlet>
         </ion-content>
-
         <toas-notification></toas-notification>
     </div>
 
     <ion-popover trigger="profile-popover-trigger" *ngIf="isLogged">
+        <ng-template>
+            <ion-content>
+                <div class="user-popover-header">
+                    <ion-avatar class="avatar-mini">
+                        <img src="../assets/metasicon.png" />
+                    </ion-avatar>
+                    <div class="user-info">
+                        <span class="label">Usuario</span>
+                        <span class="name">Nombre Apellido</span>
+                    </div>
+                </div>
+                <ion-list lines="none">
+                    <ion-item button class="item-perfil" [routerLink]="['/profile']">
+                        <mat-icon>person_outline</mat-icon>
+                        <ion-label>Mi Perfil</ion-label>
+                    </ion-item>
+                    <ion-item button class="logout-btn" (click)="logout()">
+                        <mat-icon>logout</mat-icon>
+                        <ion-label>Cerrar Sesión</ion-label>
+                    </ion-item>
+                </ion-list>
+            </ion-content>
+        </ng-template>
     </ion-popover>
 </ion-app>

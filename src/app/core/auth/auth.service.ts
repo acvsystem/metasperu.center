@@ -1,6 +1,7 @@
 import { Injectable, signal, computed, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
+import { NavController } from '@ionic/angular';
 import { tap, catchError, of, Observable, map } from 'rxjs';
 import { SocketService } from '@metasperu/services/socket.service';
 //import { InventoryService } from '@metasperu/services/inventory.service';
@@ -19,6 +20,7 @@ export interface User {
 export class AuthService {
     private http = inject(HttpClient);
     private router = inject(Router);
+    private navCtrl = inject(NavController);
     private socketService = inject(SocketService);
     private readonly API_URL = 'https://api.metasperu.net.pe/s2/auth/center'; // Ajusta a tu URL
     // private invService = inject(InventoryService);
@@ -58,7 +60,7 @@ export class AuthService {
                 // 3. Actualizamos el estado del usuario y navegamos
                 // Nota: Ajusta 'response.user' según cómo devuelva los datos tu API
                 this.#user.set(response.user || response);
-                this.router.navigate(['/dashboard']);
+                this.navCtrl.navigateRoot('/dashboard');
             })
         );
     }
@@ -71,6 +73,6 @@ export class AuthService {
         localStorage.removeItem('codeSession');
         localStorage.removeItem('pocketCode');
         this.#user.set(null);                  // Limpiar el estado
-        this.router.navigate(['/login']);      // Redirigir
+        this.navCtrl.navigateRoot('/login');      // Redirigir
     }
 }

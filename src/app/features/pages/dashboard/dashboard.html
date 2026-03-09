@@ -1,10 +1,92 @@
-<div>
-  <mat-drawer-container [hasBackdrop]="true" style="height: 100%;">
-    <mat-drawer #drawer [mode]="'over'" position="end">
+<mat-drawer-container [hasBackdrop]="true" style="height: 100%;" class="example-container">
+  <mat-drawer #drawer [mode]="'over'" position="end" class="example-sidenav" style="width: 580px;">
+    <div class="status-monitor-strip">
+      <div class="monitor-item">
+        <div class="icon-circle coe-theme">
+          <mat-icon>database</mat-icon>
+        </div>
+        <div class="data-group">
+          <span class="data-label">COE DATA</span>
+          <div class="data-row">
+            <span class="data-value">0</span>
+            <span class="data-unit">registros</span>
+          </div>
+        </div>
+      </div>
 
-    </mat-drawer>
+      <div class="separator"></div>
 
-    <mat-drawer-content>
+      <div class="monitor-item">
+        <div class="icon-circle manager-theme">
+          <mat-icon>sync_alt</mat-icon>
+        </div>
+        <div class="data-group">
+          <span class="data-label">MANAGER</span>
+          <div class="data-row">
+            <span class="data-value">0</span>
+            <span class="data-unit">verificados</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="monitor-item">
+        <button (click)="onMissingDocuments()" type="button"
+          style="display: flex;justify-content: center;align-items: center;margin-right: 5px;"
+          class="btn btn-primary btn-sm mobil-margin-button"><mat-icon style="margin-right: 10px;">cloud_sync</mat-icon>
+          </button>
+        <button (click)="onMissingDocuments()" type="button"
+          style="display: flex;justify-content: center;align-items: center;margin-right: 10px;"
+          class="btn btn-primary btn-sm mobil-margin-button"><mat-icon style="margin-right: 10px;">cloud_sync</mat-icon>
+          </button>
+      </div>
+
+    </div>
+
+        <div class="status-monitor-strip">
+      <div class="monitor-item">
+        <div class="icon-circle coe-theme">
+          <mat-icon>database</mat-icon>
+        </div>
+        <div class="data-group">
+          <span class="data-label">FRONT</span>
+          <div class="data-row">
+            <span class="data-value">0</span>
+            <span class="data-unit">registros</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="separator"></div>
+
+      <div class="monitor-item">
+        <div class="icon-circle manager-theme">
+          <mat-icon>sync_alt</mat-icon>
+        </div>
+        <div class="data-group">
+          <span class="data-label">FACTURACION</span>
+          <div class="data-row">
+            <span class="data-value">0</span>
+            <span class="data-unit">verificados</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="monitor-item">
+        <button (click)="onMissingDocuments()" type="button"
+          style="display: flex;justify-content: center;align-items: center;margin-right: 5px;"
+          class="btn btn-primary btn-sm mobil-margin-button"><mat-icon style="margin-right: 10px;">cloud_sync</mat-icon>
+          </button>
+        <button (click)="onMissingDocuments()" type="button"
+          style="display: flex;justify-content: center;align-items: center;margin-right: 10px;"
+          class="btn btn-primary btn-sm mobil-margin-button"><mat-icon style="margin-right: 10px;">cloud_sync</mat-icon>
+          </button>
+      </div>
+
+    </div>
+  </mat-drawer>
+
+  <mat-drawer-content>
+    <ion-content>
       <div id="content" class="full-center">
         <div class="card-content">
           <ion-row>
@@ -216,7 +298,7 @@
 
         </div>
       </div>
-    </mat-drawer-content>
+    </ion-content>
+  </mat-drawer-content>
 
-  </mat-drawer-container>
-</div>
+</mat-drawer-container>

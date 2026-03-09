@@ -177,14 +177,15 @@ mat-spinner {
   height: 18px !important;
 }
 
-#content{
+#content {
   margin-bottom: 100px;
 }
 
 //CARD STATUS SERVER
 
 .server-card {
-  background: #18181b; /* Zinc 900 */
+  background: #18181b;
+  /* Zinc 900 */
   border: 1px solid #27272a;
   border-radius: 8px;
   padding: 4px 16px;
@@ -246,8 +247,16 @@ mat-spinner {
   transition: width 0.5s ease-in-out;
 }
 
-.cpu-bar { background: #38bdf8; } /* Azul claro */
-.ram-bar { background: #818cf8; } /* Indigo/Púrpura */
+.cpu-bar {
+  background: #38bdf8;
+}
+
+/* Azul claro */
+.ram-bar {
+  background: #818cf8;
+}
+
+/* Indigo/Púrpura */
 
 .value {
   font-size: 0.75rem;
@@ -267,11 +276,83 @@ mat-spinner {
 }
 
 .usb-badge.connected {
-  color: #4ade80; /* Verde si hay USB */
+  color: #4ade80;
+  /* Verde si hay USB */
 }
 
 @keyframes pulse {
-  0% { opacity: 1; }
-  50% { opacity: 0.6; }
-  100% { opacity: 1; }
+  0% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.6;
+  }
+
+  100% {
+    opacity: 1;
+  }
 }
+
+
+.status-monitor-strip {
+  display: flex;
+  align-items: center;
+  background: #1e1e1e; // Fondo oscuro técnico
+  padding: 15px 25px;
+  border-bottom: 1px solid #333;
+  gap: 40px;
+
+  .monitor-item {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+
+    .icon-circle {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      mat-icon { font-size: 20px; color: white; }
+    }
+
+    .coe-theme { background: linear-gradient(135deg, #6366f1, #4338ca); }
+    .manager-theme { background: linear-gradient(135deg, #10b981, #059669); }
+
+    .data-group {
+      .data-label {
+        font-size: 10px;
+        letter-spacing: 1px;
+        color: #94a3b8;
+        font-weight: bold;
+        display: block;
+      }
+      .data-row {
+        display: flex;
+        align-items: baseline;
+        gap: 5px;
+        .data-value { font-size: 22px; font-weight: 300; color: #f8fafc; }
+        .data-unit { font-size: 11px; color: #64748b; }
+      }
+    }
+  }
+
+  .separator {
+    width: 1px;
+    height: 30px;
+    background: #334155;
+  }
+}
+
+// Gráfica circular pequeña de match
+.circular-chart {
+  display: block;
+  margin: 0 auto;
+  max-width: 50px;
+  max-height: 50px;
+}
+.circle-bg { fill: none; stroke: #334155; stroke-width: 3; }
+.circle { fill: none; stroke: #38bdf8; stroke-width: 3; stroke-linecap: round; }
+.percentage { fill: #f8fafc; font-size: 9px; text-anchor: middle; font-weight: bold; }

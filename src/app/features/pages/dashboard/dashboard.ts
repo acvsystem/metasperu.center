@@ -38,7 +38,26 @@ export class Dashboard {
   expandedElement: any | null = null;
   tiendas: any[] = [];
   docsEnCola: any = null;
-  statusServer: any = {};
+  statusServer: any = {
+    "hostname": "",
+    "os": "",
+    "cpuname": "",
+    "cpu_usage": 0,
+    "ram": {
+      "used": "0GB",
+      "total": "0GB",
+      "percent": 0,
+      "raw_used": 0
+    },
+    "network": {
+      "ip": "",
+      "mask": "",
+      "interface": ""
+    },
+    "usb": "false",
+    "dispositivos": [],
+    "online": false
+  };
 
   constructor(private socketService: SocketService, private storeService: StoreService) {
 

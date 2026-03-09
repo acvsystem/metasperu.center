@@ -7,7 +7,11 @@ import { AuthService } from './core/auth/auth.service';
   styleUrl: './app.scss'
 })
 export class App {
-  menuFiltrado: Array<any> = [];
+  // QA Fix: Inicializar menú para evitar que aparezca vacío
+  menuFiltrado: Array<any> = [
+    { title: 'Dashboard', url: '/dashboard', icon: 'home' },
+    { title: 'Configuración', url: '/settings', icon: 'settings' }
+  ];
   protected readonly title = signal('metasperu.center');
   roleUser: string = "";
   authService = inject(AuthService);
@@ -19,7 +23,7 @@ export class App {
     return this.authService.isAuthenticated();
   }
 
-  onLogout() {
+  logout() {
     this.authService.logout();
   }
 }
