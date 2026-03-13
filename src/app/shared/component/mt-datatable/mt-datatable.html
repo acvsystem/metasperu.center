@@ -1,0 +1,58 @@
+<section class="example-container mat-elevation-z8" style="overflow: auto;">
+    <div class="mat-elevation-z8" >
+        <table mat-table [dataSource]="dataSource">
+
+            @for(col of dataColumns; track col.matColumnDef) {
+
+            <ng-container [matColumnDef]="col.matColumnDef" [sticky]="col.isSticky">
+                <th mat-header-cell *matHeaderCellDef>
+                    <div class="head-table" style="display: flex; align-items: center;">
+
+                        @if(col.extraProperty === 'cStock') {
+                        <div [matBadge]="1" [class.badge-success]="col.isOnline" [class.badge-danger]="!col.isOnline"
+                            matBadgeSize="small" style="margin-right: 20px; margin-bottom: 8px;">
+                        </div>
+                        }
+
+                        <span class="column-title">{{ col.titleColumn }}</span>
+
+                        <div class="filter-content">
+                            <div class="btn-filter" [matMenuTriggerFor]="filterMenu">
+                                @if(col.filterActive) {
+                                <div matBadge="!" class="badge-danger" matBadgeSize="small"></div>
+                                }
+                                <i class="fa fa-filter"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <mat-menu #filterMenu="matMenu">
+                        @if(col.cboFilter.length) {
+                        <mt-select [isMultiselect]="true" [checkAll]="true" [data]="col.cboFilter"
+                            (selectdOption)="onChangeSelect($event, col.matColumnDef)"
+                            label="Seleccione un departamento" title="Departamento"></mt-select>
+                        } @else {
+                        <mt-input (click)="$event.stopPropagation()"
+                            (keyup)="applyFilterTable($event, col.matColumnDef)" label="Filtro {{col.titleColumn}}"
+                            placeholder="Buscar..."></mt-input>
+                        }
+                    </mat-menu>
+                </th>
+
+                <td mat-cell *matCellDef="let element">
+                    {{ col.extraProperty === 'cStock'
+                    ? (element.cStock?.[col.propertyValue] ?? 0)
+                    : element[col.propertyValue]
+                    }}
+                </td>
+            </ng-container>
+            }
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;" class="example-element-row"></tr>
+        </table>
+
+        <mat-paginator [pageSizeOptions]="[10, 20, 50, 100]" showFirstLastButtons class="mat-mdc-paginator-sticky">
+        </mat-paginator>
+    </div>
+</section>

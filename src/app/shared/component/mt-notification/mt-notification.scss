@@ -1,0 +1,206 @@
+.notification-card {
+    width: 350px;
+    background: white;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    font-family: 'Segoe UI', Roboto, sans-serif;
+
+    .header-bar {
+        background: #333;
+        padding: 10px 15px;
+        display: flex;
+        gap: 6px;
+
+        .dot {
+            width: 8px;
+            height: 8px;
+            background: #555;
+            border-radius: 50%;
+        }
+    }
+
+    .content {
+        padding: 30px 20px 10px;
+        display: flex;
+        align-items: center;
+        gap: 15px;
+
+        .icon-container {
+            color: white;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+
+        .message {
+            color: #444;
+            font-size: 1.1rem;
+            margin: 0;
+            font-weight: 500;
+        }
+    }
+
+    .action-area {
+        padding: 20px;
+        display: flex;
+        justify-content: center;
+
+        .awesome-btn {
+            background: #f8f9fa;
+            border: none;
+            padding: 10px 30px;
+            border-radius: 12px;
+            color: #555;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            transition: transform 0.2s;
+
+            &:hover {
+                transform: translateY(-2px);
+                background: #f0f0f0;
+            }
+        }
+    }
+}
+
+.notification-card {
+    position: fixed;
+    top: 30%;
+    left: 50%;
+    /* Esto mueve el componente hacia atrás la mitad de su propio ancho y alto */
+    transform: translate(-50%, -50%);
+
+    z-index: 10000;
+    /* Aseguramos que esté por encima de todo */
+    width: 350px;
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3); // Sombra más profunda para dar profundidad
+
+}
+
+
+/* Define la animación de entrada "divertida" con rebote */
+@keyframes funBounceIn {
+    0% {
+        opacity: 0;
+        /* Comienza un poco más abajo y más pequeño */
+        transform: translate(-50%, -30%) scale(0.8);
+    }
+
+    60% {
+        opacity: 1;
+        /* Sube un poco más de su posición final y se agranda */
+        transform: translate(-50%, -55%) scale(1.05);
+    }
+
+    80% {
+        /* Baja un poquito para el rebote */
+        transform: translate(-50%, -48%) scale(0.98);
+    }
+
+    100% {
+        /* Vuelve a la posición central perfecta */
+        transform: translate(-50%, -50%) scale(1);
+    }
+}
+
+
+
+@keyframes funBounceIn {
+    0% {
+        opacity: 0;
+        /* Empieza un poco más arriba de su posición final (30%) */
+        transform: translate(-50%, -100%) scale(0.8);
+    }
+
+    60% {
+        opacity: 1;
+        /* Baja un poco más del 30% para el efecto "elástico" */
+        transform: translate(-50%, -40%) scale(1.05);
+    }
+
+    100% {
+        opacity: 1;
+        /* Posición final estable en el 30% de la pantalla */
+        transform: translate(-50%, -50%) scale(1);
+    }
+}
+
+@keyframes fadeOutUp {
+    0% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+    }
+
+    100% {
+        opacity: 0;
+        /* Se desvanece hacia arriba */
+        transform: translate(-50%, -100%) scale(0.9);
+    }
+}
+
+.notification-card {
+    position: fixed;
+    top: 30%;
+    /* Posición vertical al 30% de la pantalla */
+    left: 50%;
+    /* Centrado horizontal */
+    z-index: 10000;
+    width: 350px;
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 15px 45px rgba(0, 0, 0, 0.25);
+    font-family: 'Segoe UI', Roboto, sans-serif;
+    overflow: hidden;
+
+    /* Estado inicial para evitar parpadeos */
+    opacity: 0;
+    transform: translate(-50%, -100%) scale(0.8);
+
+    /* Animación de entrada */
+    animation: funBounceIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+
+    &.hiding {
+        /* Animación de salida */
+        animation: fadeOutUp 0.3s ease-in forwards !important;
+    }
+}
+
+// ... (tus animaciones y estilos de .notification-card se mantienen igual)
+
+.icon-container {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: bold;
+    font-size: 18px;
+    flex-shrink: 0;
+    transition: background-color 0.3s;
+
+    // Variaciones de color
+    &.success {
+        background-color: #28a745; // Verde
+    }
+
+    &.warning {
+        background-color: #ffc107; // Amarillo/Naranja
+        color: #333; // Texto oscuro para mejor contraste
+    }
+
+    &.danger {
+        background-color: #dc3545; // Rojo
+    }
+}

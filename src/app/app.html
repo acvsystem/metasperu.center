@@ -8,8 +8,8 @@
         <ion-content>
             <ion-list lines="none">
                 <ion-menu-toggle auto-hide="true" *ngFor="let menu of menuFiltrado">
-                    <ion-item button>
-                        <ion-label>{{menu.title}}</ion-label>
+                    <ion-item button (click)="onNavigatorRoute(menu.ruta)">
+                        <ion-label>{{menu.nombre}}</ion-label>
                     </ion-item>
                 </ion-menu-toggle>
             </ion-list>

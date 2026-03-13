@@ -19,8 +19,6 @@ export interface Store {
 })
 export class StoreService {
     @Output() onNotification: EventEmitter<any> = new EventEmitter();
-    @Output() onMenu: EventEmitter<any> = new EventEmitter();
-
 
     constructor(private socketService: SocketService) { }
 
@@ -28,7 +26,7 @@ export class StoreService {
 
     // Cambia esta URL según tu entorno de desarrollo/producción
     private readonly API_URL = 'https://api.metasperu.net.pe/s1/center';
-
+    private readonly API_URL_INVENTORY = 'https://api.metasperu.net.pe/s4/center/inventory';
     /**
      * Manejo centralizado de errores de HTTP
      */
@@ -147,6 +145,22 @@ export class StoreService {
     callDeleteColaPanama(): Observable<any> {
         return this.http.get(
             `${this.API_URL}/api/delete/cola/panama/${this.socketService.socketID}`
+        ).pipe(
+            catchError(this.handleError)
+        );
+    }
+
+    callInventory(marca: any): Observable<any> {
+        return this.http.get(
+            `${this.API_URL_INVENTORY}/api/inventory/store/${marca}`
+        ).pipe(
+            catchError(this.handleError)
+        );
+    }
+
+    callUpdateInventory(marca: string, serieStore: string): Observable<any> {
+        return this.http.get(
+            `${this.API_URL_INVENTORY}/api/inventory/consolidated/${marca}/${serieStore}`,
         ).pipe(
             catchError(this.handleError)
         );

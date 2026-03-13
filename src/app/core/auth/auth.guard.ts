@@ -29,8 +29,8 @@ export const authGuard: CanActivateFn = (route, state) => {
 
                 if (userRole && rolesPermitidos.includes(userRole)) {
 
-                    if (userRole == 'SISTEMAS' || userRole == 'auditor') {
-                        router.navigate(['/dashboard']);
+                    if (userRole == 'SISTEMAS') {
+                        router.navigate(['/comprobantes']);
 
                     }
 

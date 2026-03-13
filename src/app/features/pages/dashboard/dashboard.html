@@ -1,88 +1,94 @@
 <mat-drawer-container [hasBackdrop]="true" style="height: 100%;" class="example-container">
-  <mat-drawer #drawer [mode]="'over'" position="end" class="example-sidenav" style="width: 580px;">
-    <div class="status-monitor-strip">
-      <div class="monitor-item">
-        <div class="icon-circle coe-theme">
-          <mat-icon>database</mat-icon>
-        </div>
-        <div class="data-group">
-          <span class="data-label">COE DATA</span>
-          <div class="data-row">
-            <span class="data-value">0</span>
-            <span class="data-unit">registros</span>
-          </div>
-        </div>
-      </div>
+  <mat-drawer #drawer [mode]="'over'" position="end" class="example-sidenav" style="width: 652px;">
 
-      <div class="separator"></div>
-
-      <div class="monitor-item">
-        <div class="icon-circle manager-theme">
-          <mat-icon>sync_alt</mat-icon>
-        </div>
-        <div class="data-group">
-          <span class="data-label">MANAGER</span>
-          <div class="data-row">
-            <span class="data-value">0</span>
-            <span class="data-unit">verificados</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="monitor-item">
-        <button (click)="onMissingDocuments()" type="button"
-          style="display: flex;justify-content: center;align-items: center;margin-right: 5px;"
-          class="btn btn-primary btn-sm mobil-margin-button"><mat-icon style="margin-right: 10px;">cloud_sync</mat-icon>
-          </button>
-        <button (click)="onMissingDocuments()" type="button"
-          style="display: flex;justify-content: center;align-items: center;margin-right: 10px;"
-          class="btn btn-primary btn-sm mobil-margin-button"><mat-icon style="margin-right: 10px;">cloud_sync</mat-icon>
-          </button>
-      </div>
-
-    </div>
-
+    <mat-tab-group>
+      <mat-tab label="SERVIDORES">
         <div class="status-monitor-strip">
-      <div class="monitor-item">
-        <div class="icon-circle coe-theme">
-          <mat-icon>database</mat-icon>
-        </div>
-        <div class="data-group">
-          <span class="data-label">FRONT</span>
-          <div class="data-row">
-            <span class="data-value">0</span>
-            <span class="data-unit">registros</span>
+          <div class="monitor-item">
+            <div class="icon-circle coe-theme">
+              <mat-icon>storage</mat-icon>
+            </div>
+            <div class="data-group">
+              <span class="data-label">COE DATA</span>
+              <div class="data-row">
+                <span class="data-value">0</span>
+                <span class="data-unit">registros</span>
+              </div>
+            </div>
           </div>
-        </div>
-      </div>
 
-      <div class="separator"></div>
+          <div class="separator"></div>
 
-      <div class="monitor-item">
-        <div class="icon-circle manager-theme">
-          <mat-icon>sync_alt</mat-icon>
-        </div>
-        <div class="data-group">
-          <span class="data-label">FACTURACION</span>
-          <div class="data-row">
-            <span class="data-value">0</span>
-            <span class="data-unit">verificados</span>
+          <div class="monitor-item">
+            <div class="icon-circle manager-theme">
+              <mat-icon>storage</mat-icon>
+            </div>
+            <div class="data-group">
+              <span class="data-label">MANAGER</span>
+              <div class="data-row">
+                <span class="data-value">0</span>
+                <span class="data-unit">registros</span>
+              </div>
+            </div>
           </div>
+
+          <div class="monitor-item">
+            <button (click)="onMissingDocuments()" type="button" matTooltip="Verificar"
+              style="display: flex;justify-content: center;align-items: center;"
+              class="btn btn-primary btn-sm mobil-margin-button"><mat-icon>sync_alt</mat-icon>
+            </button>
+          </div>
+
         </div>
-      </div>
+        <section>
+          <mt-datatable [dataSource]="dataSourceServer" [dataColumnsIn]="columnsServer"
+            [extraColumns]="displayedColumnsServer"></mt-datatable>
+        </section>
+      </mat-tab>
+      <mat-tab label="COMPROBANTES PENDIENTES">
+        <div class="status-monitor-strip">
+          <div class="monitor-item">
+            <div class="icon-circle coe-theme">
+              <mat-icon>storage</mat-icon>
+            </div>
+            <div class="data-group">
+              <span class="data-label">FRONT RETAIL</span>
+              <div class="data-row">
+                <span class="data-value">0</span>
+                <span class="data-unit">registros</span>
+              </div>
+            </div>
+          </div>
 
-      <div class="monitor-item">
-        <button (click)="onMissingDocuments()" type="button"
-          style="display: flex;justify-content: center;align-items: center;margin-right: 5px;"
-          class="btn btn-primary btn-sm mobil-margin-button"><mat-icon style="margin-right: 10px;">cloud_sync</mat-icon>
-          </button>
-        <button (click)="onMissingDocuments()" type="button"
-          style="display: flex;justify-content: center;align-items: center;margin-right: 10px;"
-          class="btn btn-primary btn-sm mobil-margin-button"><mat-icon style="margin-right: 10px;">cloud_sync</mat-icon>
-          </button>
-      </div>
+          <div class="separator"></div>
 
-    </div>
+          <div class="monitor-item">
+            <div class="icon-circle manager-theme">
+              <mat-icon>storage</mat-icon>
+            </div>
+            <div class="data-group">
+              <span class="data-label">FACTURACION</span>
+              <div class="data-row">
+                <span class="data-value">0</span>
+                <span class="data-unit">registros</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="monitor-item">
+            <button (click)="onMissingDocuments()" type="button" matTooltip="Verificar"
+              style="display: flex;justify-content: center;align-items: center;"
+              class="btn btn-primary btn-sm mobil-margin-button"><mat-icon>sync_alt</mat-icon>
+            </button>
+          </div>
+
+        </div>
+        <section>
+          <mt-datatable [dataSource]="dataSourceServer_2" [dataColumnsIn]="columnsServer_2"
+            [extraColumns]="displayedColumnsServer_2"></mt-datatable>
+        </section>
+      </mat-tab>
+    </mat-tab-group>
   </mat-drawer>
 
   <mat-drawer-content>
@@ -91,36 +97,43 @@
         <div class="card-content">
           <ion-row>
             <ion-col sizeXs="12" sizeSm="12" sizeMd="9" sizeLg="9" style="display: flex;align-items: center;">
-              <div style="display: flex;">
-                <button (click)="onMissingDocuments()" type="button"
+              <div style="display: flex;align-items: center;">
+                <button (click)="onMissingDocuments()" type="button" matTooltip="Verificar comprobantes"
                   style="display: flex;justify-content: center;align-items: center;margin-right: 10px;"
                   class="btn btn-primary btn-sm mobil-margin-button"><mat-icon
                     style="margin-right: 10px;">cloud_sync</mat-icon>
                   Documentos</button>
-                <button (click)="onTransactions()" type="button"
+                <button (click)="onTransactions()" type="button" matTooltip="Verificar Transacciones"
                   style="display: flex;justify-content: center;align-items: center;margin-right: 10px;"
                   class="btn btn-primary btn-sm mobil-margin-button"><mat-icon
                     style="margin-right: 10px;">cloud_sync</mat-icon>
                   Transacciones</button>
-                <button (click)="onClientBlank()" type="button"
-                  style="display: flex;justify-content: center;align-items: center;margin-right: 10px;"
-                  class="btn btn-primary btn-sm mobil-margin-button"><mat-icon
-                    style="margin-right: 10px;">person_search</mat-icon>
-                  Clientes</button>
-                <button (click)="onClientDelete()" type="button"
-                  style="display: flex;justify-content: center;align-items: center;margin-right: 10px;"
-                  class="btn btn-primary btn-sm mobil-margin-button"><mat-icon
-                    style="margin-right: 10px;">person_off</mat-icon>
-                  Limpiar Clientes</button>
-                <button (click)="onDeleteColaPanama()" type="button"
+
+                <div class="btn-group" style="margin-right: 10px;">
+                  <button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown"
+                    aria-expanded="false"
+                    style="height: 34px;border-radius: 4px;display: flex;justify-content: center;align-items: center;">
+                    <mat-icon style="margin-right: 10px;">person</mat-icon> Clientes
+                  </button>
+                  <ul class="dropdown-menu">
+                    <li  (click)="onClientBlank()" style="cursor: pointer;"><a
+                        class="dropdown-item" style="display: flex;align-items: center;"><mat-icon>person_search</mat-icon>
+                        Consultar</a></li>
+                    <li (click)="onClientDelete()" style="cursor: pointer;"><a
+                        class="dropdown-item" style="display: flex;align-items: center;"><mat-icon>person_off</mat-icon> Limpiar</a>
+                    </li>
+                  </ul>
+                </div>
+
+                <button (click)="onDeleteColaPanama()" type="button" matTooltip="Eliminar Cola Panamá"
                   style="display: flex;justify-content: center;align-items: center;margin-right: 10px;"
                   class="btn btn-primary btn-sm mobil-margin-button"><mat-icon
                     style="margin-right: 10px;">delete_sweep</mat-icon>
-                  Limpiar Cola Panama</button>
+                  Panama</button>
                 <button (click)="drawer.toggle()" type="button"
                   style="display: flex;justify-content: center;align-items: center;margin-right: 10px;"
                   class="btn btn-primary btn-sm mobil-margin-button"><mat-icon
-                    style="margin-right: 10px;">delete_sweep</mat-icon></button>
+                    style="margin-right: 10px;">storage</mat-icon> Servidor</button>
               </div>
             </ion-col>
             <ion-col sizeXs="12" sizeSm="12" sizeMd="3" sizeLg="3" style="display: flex;justify-content: end;">
@@ -155,7 +168,7 @@
             </ion-col>
           </ion-row>
           <ion-row>
-            <ion-col sizeXs="12" sizeSm="12" sizeMd="12" sizeLg="12">
+            <ion-col sizeXs="12" sizeSm="12" sizeMd="12" sizeLg="12" style="overflow: auto;">
               <table mat-table [dataSource]="dataSource" multiTemplateDataRows class="mat-elevation-z8">
                 @for (column of columnsToDisplay; track column) {
                 <ng-container matColumnDef="{{column.matColumnDef}}">
@@ -302,3 +315,4 @@
   </mat-drawer-content>
 
 </mat-drawer-container>
+

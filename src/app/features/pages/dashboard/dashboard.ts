@@ -22,10 +22,26 @@ export class Dashboard {
     { matColumnDef: 'online', titleColumn: 'Online', propertyValue: 'online' }
   ];
 
+
   displayedColumns = [
     'serie', 'nombre', 'traffic', 'comprobantes',
     'transacciones', 'clientes', 'online'
   ];
+
+  columnsServer: tableColumns[] = [
+    { isSticky: false, matColumnDef: 'documento', titleColumn: 'Documento', propertyValue: 'cDocumento', filterActive: false, isCboFilter: false, cboFilter: [] },
+    { isSticky: false, matColumnDef: 'fecha', titleColumn: 'Fecha', propertyValue: 'cFecha', filterActive: false, isCboFilter: false, cboFilter: [] }];
+  displayedColumnsServer = ['documento', 'fecha'];
+  dataSourceServer = new MatTableDataSource<any>([]);
+
+
+  columnsServer_2: tableColumns[] = [
+    { isSticky: false, matColumnDef: 'nro', titleColumn: 'No.', propertyValue: 'cNro', filterActive: false, isCboFilter: false, cboFilter: [] },
+    { isSticky: false, matColumnDef: 'fecha_emision', titleColumn: 'Fecha Emision', propertyValue: 'cFechaEmision', filterActive: false, isCboFilter: false, cboFilter: [] },
+    { isSticky: false, matColumnDef: 'fecha_expiracion', titleColumn: 'Fecha Expiracion', propertyValue: 'cFechaExpiracion', filterActive: false, isCboFilter: false, cboFilter: [] },
+    { isSticky: false, matColumnDef: 'propietario', titleColumn: 'Propietario', propertyValue: 'cPropietario', filterActive: false, isCboFilter: false, cboFilter: [] }];
+  displayedColumnsServer_2 = ['nro', 'fecha_emision', 'fecha_expiracion', 'propietario'];
+  dataSourceServer_2 = new MatTableDataSource<any>([]);
 
   vDataTransferencia: Array<any> = [
     {
@@ -67,7 +83,6 @@ export class Dashboard {
     this.onListarTiendas();
 
     this.socketService.tiendas$.subscribe(data => {
-      console.log(data);
       data.map((d) => {
         const index = this.dataSource.data.findIndex((t) => t.serie == d?.serie);
         if (index != -1) {
@@ -78,7 +93,6 @@ export class Dashboard {
     });
 
     this.socketService.onStatusServerBackup((response) => {
-      console.log(response);
       this.statusServer = response;
     });
 
@@ -322,3 +336,12 @@ export class Dashboard {
 
 }
 
+export interface tableColumns {
+  isSticky: boolean;
+  matColumnDef: string;
+  titleColumn: string;
+  propertyValue: string;
+  filterActive: boolean;
+  isCboFilter: boolean;
+  cboFilter: Array<any>;
+}

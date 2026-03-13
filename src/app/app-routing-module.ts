@@ -3,16 +3,23 @@ import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
 import { authGuard } from './core/auth/auth.guard';
 import { Login } from '@metasperu/page/features/auth/login/login';
 import { Dashboard } from '@metasperu/page/features/pages/dashboard/dashboard';
+import { Inventario } from '@metasperu/page/features/pages/inventario/inventario';
 
 const routes: Routes = [
   { path: '', component: Login },
   { path: 'login', component: Login },
   {
-    path: 'dashboard',
+    path: 'comprobantes',
     component: Dashboard,
     canActivate: [authGuard],
-    data: { roles: ['SISTEMAS', 'auditor'] }
+    data: { roles: ['SISTEMAS'] }
   },
+  {
+    path: 'inventario',
+    component: Inventario,
+    canActivate: [authGuard],
+    data: { roles: ['SISTEMAS'] }
+  }
 ];
 
 @NgModule({

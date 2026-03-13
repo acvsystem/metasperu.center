@@ -1,0 +1,18 @@
+<div class="notification-card" [class.hiding]="isHiding">
+  <div class="header-bar">
+    <span class="dot"></span>
+    <span class="dot"></span>
+    <span class="dot"></span>
+  </div>
+
+  <div class="content">
+    <div class="icon-container" [ngClass]="type">
+      <div class="icon-text">{{ icon }}</div>
+    </div>
+    <p class="message">{{ message }}</p>
+  </div>
+
+  <div class="action-area">
+    <button class="awesome-btn" (click)="close()">Cerrar</button>
+  </div>
+</div>

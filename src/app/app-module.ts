@@ -18,18 +18,44 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatBadgeModule } from '@angular/material/badge';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatToolbarModule } from '@angular/material/toolbar';
-
+import { MatTabsModule } from '@angular/material/tabs';
+import { MtDatatable } from './shared/component/mt-datatable/mt-datatable';
+import { MtInput } from './shared/component/mt-input/mt-input';
+import { MtSelect } from './shared/component/mt-select/mt-select';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatMenu } from '@angular/material/menu';
+import { MatMenuModule } from '@angular/material/menu';
+import { Inventario } from './features/pages/inventario/inventario';
+import { MatPaginatorModule } from '@angular/material/paginator';
+import { MtNotification } from './shared/component/mt-notification/mt-notification';
+import { MtLoader } from './shared/component/mt-loader/mt-loader';
+import localeEsPe from '@angular/common/locales/es-PE';
+import { registerLocaleData } from '@angular/common';
+registerLocaleData(localeEsPe);
 @NgModule({
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   declarations: [
     App,
     Login,
     Dashboard,
+    MtDatatable,
+    MtInput,
+    MtSelect,
+    Inventario,
+    MtNotification,
+    MtLoader,
   ],
   imports: [
     IonicModule.forRoot(),
     FormsModule,
+    MatMenu,
+    MatMenuModule,
+    MatFormFieldModule,
+    MatTabsModule,
+    MatPaginatorModule,
     MatToolbarModule,
+    MatInputModule,
     MatProgressSpinnerModule,
     MatBadgeModule,
     MatIconModule,
