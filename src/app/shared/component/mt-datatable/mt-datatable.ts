@@ -14,7 +14,6 @@ export class MtDatatable implements OnInit, OnChanges, AfterViewInit {
   @Input() dataColumnsIn: columnsTable[] = [];
   @Input() extraColumns: string[] = [];
   @Output() currentDataFilter = new EventEmitter<any[]>();
-
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
@@ -38,6 +37,7 @@ export class MtDatatable implements OnInit, OnChanges, AfterViewInit {
     // 1. Cambio en los datos de las filas
     if (changes['dataIn'] && this.dataIn) {
       this.dataSource = new MatTableDataSource(this.dataIn);
+
       this.dataSource.paginator = this.paginator;
       this.dataSource.sort = this.sort;
       this.onParserFilterCbo();
@@ -57,6 +57,8 @@ export class MtDatatable implements OnInit, OnChanges, AfterViewInit {
 
     this.cdr.detectChanges();
   }
+
+
 
   /**
    * Configura el predicado de filtro una sola vez para mejorar el rendimiento

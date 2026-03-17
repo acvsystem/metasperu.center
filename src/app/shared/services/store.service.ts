@@ -165,4 +165,16 @@ export class StoreService {
             catchError(this.handleError)
         );
     }
+
+    callInventoryEmail(email: string, stores: Array<any>): Observable<any> {
+        return this.http.post(
+            `${this.API_URL_INVENTORY}/api/inventory/application/inventary/email`,
+            {
+                "email": email,
+                "serieStore": stores
+            }
+        ).pipe(
+            catchError(this.handleError)
+        );
+    }
 }

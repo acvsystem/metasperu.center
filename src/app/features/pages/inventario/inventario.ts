@@ -30,7 +30,10 @@ export class Inventario {
   dataInventory: Array<any> = [];
   dataStoreOnline: Array<any> = [];
   storeList: Array<any> = [];
+  datosExportar: Array<any> = [];
   dataSelectStore: Array<any> = [{ key: 'BBW', value: 'BATH & BODY WORKS' }, { key: 'VS', value: 'VICTORIA SECRET' }, { key: 'TM', value: 'TUMI' }];
+  cboStoreList: Array<any> = [];
+  storesSelected: Array<any> = [];
   selectedStore: any = null;
   isNotification: boolean = false;
   isLoading: boolean = false;
@@ -39,6 +42,8 @@ export class Inventario {
   titleLoader: string = 'Procesando Inventario';
   serieStore: string = '';
   countOnlienStore: number = 0;
+  emailInvetorySend: string = '';
+
   constructor(private socketInventoryService: SocketInventoryService, private storeService: StoreService) { }
 
   ngOnInit() {
@@ -46,6 +51,7 @@ export class Inventario {
     this.storeService.getStores().subscribe(
       response => {
         this.storeList = response;
+        this.cboStoreList = this.storeList.map(store => ({ key: store.serie, value: store.nombre }));
       }
     );
 
@@ -59,6 +65,7 @@ export class Inventario {
           if (this.countOnlienStore === this.dataStoreOnline.length) {
 
             this.dataInventory = response.inventory;
+            this.onAlmacenarDatosExportar();
             this.onAddUpdateColumn(this.selectedStore.key);
 
             setTimeout(() => {
@@ -81,6 +88,41 @@ export class Inventario {
     this.onAddUpdateColumn(this.selectedStore.key);
   }
 
+  onAlmacenarDatosExportar() {
+
+    // 1. Creamos un mapa de búsqueda rápida: { "7A": "Tienda Miraflores", ... }
+    const nombresTiendas = this.storeList.reduce((acc, t: any) => {
+      acc[t.serie] = t.nombre;
+      return acc;
+    }, {} as { [key: string]: string });
+   
+    // 2. Transformamos el array de artículos
+    const articulosAplanados = this.dataInventory.map(item => {
+      const { cStock, ...resto } = item;
+
+      // Creamos un nuevo objeto de stock pero con los NOMBRES como llaves
+      const stockConNombres: any = {};
+
+      Object.keys(cStock).forEach(key => {
+        const nombreTienda = nombresTiendas[key] || key; // Si no encuentra el nombre, deja el código
+        stockConNombres[nombreTienda] = cStock[key];
+      });
+
+      return {
+        ...resto,
+        ...stockConNombres
+      };
+    });
+
+    this.datosExportar = articulosAplanados;
+  }
+
+  onChangeInput(ev: any) {
+    const email = ev.target.value;
+    this.emailInvetorySend = email;
+    console.log(email);
+  }
+
   onAddUpdateColumn(marca: string) {
     this.expDisplayedColumnsInventory = [...this.displayedColumnsInventory];
     this.expColumnsInventory = [...this.columnsInventory];
@@ -100,6 +142,27 @@ export class Inventario {
         }
       }
     });
+  }
+
+  onChangeSelectMultiple(ev: any) {
+    this.storesSelected = [];
+    this.storesSelected = ev.map((item: any) => ({ serie: item.key, nombre: item.value }));
+  }
+
+  onEmailInventory() {
+    this.isLoading = true;
+    this.storeService.callInventoryEmail(this.emailInvetorySend, this.storesSelected).subscribe(
+      response => {
+        this.isLoading = false;
+        this.messageNotification = 'Correo enviado exitosamente';
+        this.abrirNotificacion('success');
+      },
+      error => {
+        console.error('Error al enviar el email:', error);
+        this.messageNotification = 'Error al enviar el email:' + error;
+        this.abrirNotificacion('danger');
+      }
+    );
   }
 
   onSendInventory() {
@@ -137,22 +200,8 @@ export class Inventario {
 
   exportarExcel() {
     // 1. Mapeamos los datos (Tu lógica se mantiene igual)
-    const dataParaExportar = this.dataInventory.map(item => {
-      const objReturn: Record<string, any> = {
-        cCodigoTienda: item.cCodigoTienda,
-        cCodigoArticulo: item.cCodigoArticulo,
-        cCodigoBarra: item.cCodigoBarra,
-        cReferencia: item.cReferencia,
-        cDescripcion: item.cDescripcion,
-        cDepartamento: item.cDepartamento,
-        cSeccion: item.cSeccion,
-        cFamilia: item.cFamilia,
-        cSubFamilia: item.cSubFamilia,
-        cTemporada: item.cTemporada,
-        cTalla: item.cTalla,
-        cColor: item.cColor,
-        cStock: item.cStock
-      };
+    const dataParaExportar = this.datosExportar.map(item => {
+      const objReturn: Record<string, any> = item;
       return objReturn;
     });
 

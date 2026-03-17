@@ -14,15 +14,38 @@
         </mt-select>
       </div>
     </ion-col>
-
-    <ion-col size="12" size-md="4" size-lg="3" style="display: flex;align-items: center;">
+    <ion-col size="12" size-md="4" size-lg="1" style="display: flex;align-items: center;">
       <button (click)="onSendInventory()" type="button" matTooltip="Verificar"
         style="display: flex;justify-content: center;align-items: center;"
-        class="btn btn-primary btn-sm mobil-margin-button"><mat-icon>inventory_2</mat-icon><span>Solicitar
-          Inventario</span>
+        class="btn btn-primary btn-sm mobil-margin-button"><mat-icon>inventory_2</mat-icon><span>Consultar Inv</span>
       </button>
     </ion-col>
-    <ion-col size="12" size-md="4" size-lg="7" style="display: flex;justify-content: flex-end;">
+
+    <hr style="background-color: black;width: 1px;margin-right: 10px;">
+
+
+    <ion-col size="12" size-md="4" size-lg="2">
+      <mt-input (keyup)="onChangeInput($event)"
+        label="Email" placeholder="Correo electrónico..."></mt-input>
+    </ion-col>
+
+    <ion-col size="12" size-md="4" size-lg="2">
+      <div class="control-container">
+        <mt-select [data]="cboStoreList" [isMultiselect]=true label="Seleccione Tiendas" title="Tienda"
+          (selectdOption)="onChangeSelectMultiple($event)">
+        </mt-select>
+      </div>
+    </ion-col>
+
+    <ion-col size="12" size-md="4" size-lg="2" style="display: flex;align-items: center;">
+      <button (click)="onEmailInventory()" type="button" matTooltip="Verificar"
+        style="display: flex;justify-content: center;align-items: center;"
+        class="btn btn-primary btn-sm mobil-margin-button"><mat-icon>forward_to_inbox</mat-icon><span>Enviar
+          Email</span>
+      </button>
+    </ion-col>
+
+    <ion-col size="12" size-md="4" size-lg="12" style="display: flex;justify-content: flex-end;">
       <button mat-raised-button class=" btn-excel" (click)="exportarExcel()">
         <mat-icon>file_download</mat-icon>
         <span>Exportar Excel</span>

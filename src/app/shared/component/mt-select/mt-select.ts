@@ -131,7 +131,7 @@ export class MtSelect {
       key: (selected || {}).key,
       value: (selected || {}).value
     };
-    console.log(this.optionSelected);
+  
     this.selectedText = (selected || {}).value;
     this.selectdOption.emit(this.optionSelected);
   }
