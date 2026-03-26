@@ -93,7 +93,7 @@ export class Dashboard {
       const dataActualizada = this.dataSource.data.map(item => {
         // Buscamos si el item actual existe en lo que acaba de llegar
         const coincidencia = data.find(d => d.serie === item.serie);
-        console.log(coincidencia);
+       
         if (coincidencia) {
           // Si existe, le ponemos el estado 'online' que trae el servidor
           return { ...item, online: coincidencia.online };
