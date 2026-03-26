@@ -81,7 +81,7 @@ export class Dashboard {
 
   async ngOnInit(): Promise<void> {
     await this.onListarTiendas();
-
+    
 
     this.socketService.tiendas$.subscribe(data => {
 
@@ -199,6 +199,9 @@ export class Dashboard {
       next: (result) => {
         this.dataSource.data = result;
         this.storeService.callRefreshDashboard().subscribe((response) => { });
+        this.onTransactions();
+        this.onMissingDocuments();
+        this.onClientBlank();
       },
       error: (err) => {
         this.onNotification({ error: 'error', message: err?.message });
