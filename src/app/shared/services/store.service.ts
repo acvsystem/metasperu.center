@@ -48,6 +48,15 @@ export class StoreService {
         return throwError(() => new Error(errorMessage));
     }
 
+
+    callRefreshDashboard(): Observable<any> {
+        return this.http.get(
+            `${this.API_URL}/api/dashboard/store/refresh`
+        ).pipe(
+            catchError(this.handleError)
+        );
+    }
+
     // Dentro de la clase InventoryService
     getStores(): Observable<Store[]> {
         return this.http.get<Store[]>(`${this.API_URL}/api/store`);

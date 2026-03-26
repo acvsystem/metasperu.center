@@ -79,17 +79,32 @@ export class Dashboard {
 
   }
 
-  ngOnInit(): void {
-    this.onListarTiendas();
+  async ngOnInit(): Promise<void> {
+    await this.onListarTiendas();
+
 
     this.socketService.tiendas$.subscribe(data => {
-      data.map((d) => {
-        const index = this.dataSource.data.findIndex((t) => t.serie == d?.serie);
-        if (index != -1) {
-          this.dataSource.data[index].online = data[0].online;
+
+
+      // 1. Extraemos solo las series que vienen en el nuevo paquete 'data'
+      const seriesNuevas = data.map(d => d?.serie);
+
+      // 2. Mapeamos el dataSource completo
+      const dataActualizada = this.dataSource.data.map(item => {
+        // Buscamos si el item actual existe en lo que acaba de llegar
+        const coincidencia = data.find(d => d.serie === item.serie);
+        console.log(coincidencia);
+        if (coincidencia) {
+          // Si existe, le ponemos el estado 'online' que trae el servidor
+          return { ...item, online: coincidencia.online };
+        } else {
+          // Si NO existe en 'data', lo forzamos a false
+          return { ...item, online: false };
         }
       });
 
+      // 3. Actualizamos el origen de datos para que la UI se refresque
+      this.dataSource.data = dataActualizada;
     });
 
     this.socketService.onStatusServerBackup((response) => {
@@ -142,7 +157,7 @@ export class Dashboard {
     });
 
     this.socketService.onTrafficCounter((response) => {
-      console.log(response);
+      // console.log(response);
       if (!response?.serie || !response?.devices) return;
 
       const tienda = this.dataSource.data.find(t => t.serie === response.serie);
@@ -182,7 +197,8 @@ export class Dashboard {
   onListarTiendas() {
     this.storeService.getStores().subscribe({
       next: (result) => {
-        this.dataSource = new MatTableDataSource(result);
+        this.dataSource.data = result;
+        this.storeService.callRefreshDashboard().subscribe((response) => { });
       },
       error: (err) => {
         this.onNotification({ error: 'error', message: err?.message });

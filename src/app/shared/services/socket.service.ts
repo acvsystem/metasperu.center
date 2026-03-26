@@ -46,6 +46,9 @@ export class SocketService {
         }
     }
 
+    
+
+
     // Método para pedir documentos a una tienda específica
     solicitarDocumentos(idTienda: string) {
         console.log(idTienda);
