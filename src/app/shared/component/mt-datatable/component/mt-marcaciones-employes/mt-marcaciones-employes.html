@@ -1,0 +1,30 @@
+<div style="border-bottom: 2px solid #cccccc; margin-bottom: 20px;">
+    <h3 class="title-page" style="margin: 0; font-weight: 700; color: #2c3e50;">Marcaciones</h3>
+    <p style="color: #7f8c8d; margin: 4px 0 15px 0;">Marcaciones reflejadas del sistema Front Retail</p>
+</div>
+
+<div class="table-container">
+    <table class="custom-table">
+        <thead>
+            <tr>
+                <th>Caja</th>
+                <th>Dia</th>
+                <th>H.Entrada</th>
+                <th>H.Salida</th>
+                <th>H.Trabajadas</th>
+            </tr>
+        </thead>
+        <tbody>
+            @for (item of data; track item) {
+            <tr>
+                <td>{{item.caja}}</td>
+                <td>{{item.dia}}</td>
+                <td>{{item.hrIn}}</td>
+                <td>{{item.hrOut}}</td>
+                <td><span class="status present">{{item.hrWorking}}</span></td>
+            </tr>
+            }
+
+        </tbody>
+    </table>
+</div>

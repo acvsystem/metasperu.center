@@ -4,7 +4,7 @@ import { authGuard } from './core/auth/auth.guard';
 import { Login } from '@metasperu/page/features/auth/login/login';
 import { Dashboard } from '@metasperu/page/features/pages/dashboard/dashboard';
 import { Inventario } from '@metasperu/page/features/pages/inventario/inventario';
-
+import { RrhhAsistencia } from '@metasperu/page/features/pages/rrhh-asistencia/rrhh-asistencia';
 const routes: Routes = [
   { path: '', component: Login },
   { path: 'login', component: Login },
@@ -17,6 +17,12 @@ const routes: Routes = [
   {
     path: 'inventario',
     component: Inventario,
+    canActivate: [authGuard],
+    data: { roles: ['SISTEMAS'] }
+  },
+  {
+    path: 'asistencia',
+    component: RrhhAsistencia,
     canActivate: [authGuard],
     data: { roles: ['SISTEMAS'] }
   }

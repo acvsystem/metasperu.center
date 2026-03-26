@@ -27,6 +27,7 @@ export class StoreService {
     // Cambia esta URL según tu entorno de desarrollo/producción
     private readonly API_URL = 'https://api.metasperu.net.pe/s1/center';
     private readonly API_URL_INVENTORY = 'https://api.metasperu.net.pe/s4/center/inventory';
+    private readonly API_URL_RESOURCES_HUMAN = 'https://api.metasperu.net.pe/s5/center/resources/human';
     /**
      * Manejo centralizado de errores de HTTP
      */
@@ -172,6 +173,37 @@ export class StoreService {
             {
                 "email": email,
                 "serieStore": stores
+            }
+        ).pipe(
+            catchError(this.handleError)
+        );
+    }
+
+    callRegisterEmployes(): Observable<any> {
+        return this.http.get(
+            `${this.API_URL_RESOURCES_HUMAN}/api/asistence/ejb/register/employes`
+        ).pipe(
+            catchError(this.handleError)
+        );
+    }
+
+    callAsistenceEmployes(fecha: any, type: string): Observable<any> {
+        return this.http.post(
+            `${this.API_URL_RESOURCES_HUMAN}/api/asistence/employes/store`,
+            {
+                "fecha": fecha,
+                "tipoConsulta": type
+            }
+        ).pipe(
+            catchError(this.handleError)
+        );
+    }
+
+    callRefreshAsistenceEmployes(propertyCode: string): Observable<any> {
+        return this.http.post(
+            `${this.API_URL_RESOURCES_HUMAN}/api/asistence/employes/store/refresh`,
+            {
+                "property": propertyCode
             }
         ).pipe(
             catchError(this.handleError)

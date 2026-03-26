@@ -1,0 +1,187 @@
+ion-input {
+    top: 0px !important;
+
+    input {
+        padding-bottom: 0 !important;
+        padding-top: 13px !important;
+    }
+}
+
+.desktop-item ion-input {
+    top: 0px !important;
+
+    input {
+        padding-bottom: 0 !important;
+        padding-top: 13px !important;
+    }
+}
+/*
+ion-label {
+    position: absolute !important;
+    top: -10px !important;
+    z-index: 99999 !important;
+    color: rgba(0, 0, 0, 0.65) !important;
+    font-size: 14px !important;
+    margin: 0px !important;
+}
+
+*/
+
+
+
+mat-form-field {
+    box-sizing: border-box !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 100% !important;
+    color: rgba(0, 0, 0, .65);
+    font-size: 14px !important;
+    line-height: 1.5 !important;
+    --background: #fff !important;
+    position: relative !important;
+}
+
+
+
+.item-label-floating {
+    --min-height: 39px !important;
+}
+
+.item-label-floating .sc-ion-input-md-h {
+    --padding-top: 15px !important
+}
+
+.item-has-focus {
+    border: 1px solid #40a9ff !important;
+    outline: 0 !important;
+    box-shadow: 0 0 0 2px #1890ff33 !important;
+    border-radius: 4px !important;
+}
+
+ion-input::-webkit-inner-spin-button,
+ion-input::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    margin: 0;
+}
+
+.item-md.item-block .item-inner {
+    padding-right: 8px;
+    padding-right: 8px;
+    border-bottom: none;
+}
+
+.item-interactive.item-has-focus {
+    --highlight-background: transparent !important;
+}
+
+.btn-copy {
+    cursor: pointer !important;
+    height: 100% !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    margin: 0px !important;
+}
+
+.btn-copy:hover {
+    color: #155795 !important;
+}
+
+.input-item.inputSellim {
+    height: 29px !important;
+
+    ion-input {
+        input.sc-ion-input-md {
+            --padding-top: 0 !important;
+            --padding-bttom: 0 !important;
+        }
+    }
+
+    .item-label-floating {
+        --min-height: 28px !important;
+    }
+}
+
+
+.input-item.inputSellim.item-has-value,
+.input-item.inputSellim.item-has-focus.item-has-value {
+    ion-label {
+        top: -3px !important;
+    }
+}
+
+.input-item.inputSellim.item-has-focus {
+    ion-label {
+        top: -10px !important;
+    }
+}
+
+.required {
+    ion-label {
+        color: red !important;
+    }
+
+    .item-has-focus {
+        box-shadow: 0 0 0 1px rgb(248, 99, 99) !important;
+    }
+
+    .input-item {
+        border: 1px solid red !important;
+    }
+}
+
+.renderMobil {
+    ion-label {
+        top: -19px !important;
+    }
+}
+
+.example-month-picker .mat-calendar-period-button {
+    pointer-events: none;
+}
+
+.example-month-picker .mat-calendar-arrow {
+    display: none;
+}
+
+.mdc-floating-label {
+    padding-bottom: 18px !important;
+}
+
+.mtChip .mat-mdc-form-field-infix {
+    padding-top: 5px !important;
+}
+
+.mat-mdc-chip {
+    width: 100px !important;
+    height: 26px !important;
+    margin-right: 5px !important;
+}
+
+.mat-mdc-chip-action {
+    padding-left: 8px !important;
+}
+
+.mdc-evolution-chip__text-label {
+    font-size: 12px !important;
+}
+
+.mat-mdc-chip-remove {
+    padding-left: 5px !important;
+    padding-right: 5px !important;
+}
+
+/** No CSS for this example */
+::ng-deep mat-form-field {
+    width: 100%;
+}
+
+::ng-deep .mat-calendar-body-cell.selected>.mat-calendar-body-cell-content,
+::ng-deep .mat-calendar-body-cell.selected:hover>.mat-calendar-body-cell-content,
+::ng-deep .mat-calendar-body-cell.selected>.mat-calendar-body-cell-content:hover {
+    background-color: #673ab7 !important;
+    color: #fff !important;
+}
+

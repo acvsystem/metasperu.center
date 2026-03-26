@@ -578,3 +578,17 @@ body>ion-alert {
   width: 100%;
   outline: none;
 }
+
+
+/* Debe ir en el global porque el diálogo se renderiza fuera del componente */
+.modal-mediano {
+  .mat-mdc-dialog-container .mdc-dialog__surface {
+    width: 500px !important;
+    /* Casi toda la pantalla */
+    min-width: 700px !important;
+    /* Pero con un tope para monitores grandes */
+    height: 370px !important;
+    padding: 20px;
+    overflow: hidden;
+  }
+}

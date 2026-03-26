@@ -1,0 +1,89 @@
+<ion-row>
+    <ion-col sizeXs="12" sizeSm="12" sizeMd="12" sizeLg="12">
+
+        @if(isPresentRange) {
+
+        <mat-form-field appearance="outline" subscriptSizing="dynamic">
+            <mat-label>{{placeholder}}</mat-label>
+            <mat-date-range-input [formGroup]="range" [rangePicker]="pickerSemana">
+                <input matStartDate formControlName="start" placeholder="Start date"
+                    (dateChange)="onChangeInput($event)">
+                <input matEndDate formControlName="end" placeholder="End date" (dateChange)="onChangeInput($event)">
+            </mat-date-range-input>
+            <mat-datepicker-toggle matIconSuffix [for]="pickerSemana"></mat-datepicker-toggle>
+            <mat-date-range-picker #pickerSemana></mat-date-range-picker>
+        </mat-form-field>
+
+        }
+        @if(isRange) {
+
+        <mat-form-field appearance="outline" subscriptSizing="dynamic">
+            <mat-label>{{placeholder}}</mat-label>
+            <mat-date-range-input [formGroup]="range" [rangePicker]="picker">
+                <input matStartDate formControlName="start" placeholder="Start date"
+                    (dateChange)="onChangeInput($event)">
+                <input matEndDate formControlName="end" placeholder="End date" (dateChange)="onChangeInput($event)">
+            </mat-date-range-input>
+            <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+            <mat-date-range-picker #picker></mat-date-range-picker>
+        </mat-form-field>
+        }
+
+        @if(isPeriodo) {
+
+        <mat-form-field appearance="outline" subscriptSizing="dynamic">
+            <mat-label>{{placeholder}}</mat-label>
+            <input matInput [matDatepicker]="dp" [formControl]="date">
+            <mat-datepicker-toggle matIconSuffix [for]="dp"></mat-datepicker-toggle>
+            <mat-datepicker #dp startView="multi-year" (yearSelected)="chosenYearHandler($event)"
+                (monthSelected)="chosenMonthHandler($event, dp)" panelClass="example-month-picker">
+            </mat-datepicker>
+        </mat-form-field>
+
+        }
+
+        @if(isMultiSelect) {
+        <mat-form-field appearance="outline" class="mtChip" subscriptSizing="dynamic">
+            <mat-label>Seleccionar fechas</mat-label>
+
+            <mat-chip-grid #chipGrid aria-label="Fechas seleccionadas">
+                @for (value of model; track value) {
+                <mat-chip-row (removed)="remove(value)" [editable]="false">
+                    {{ value | date: 'yyyy/MM/dd' }}
+                    <button matChipRemove aria-label="quitar">
+                        <mat-icon>cancel</mat-icon>
+                    </button>
+                </mat-chip-row>
+                }
+
+                <input [value]="resetModel" matInput [matDatepicker]="picker" placeholder="Elegir fechas..."
+                    (dateChange)="dateChanged($event)" [matChipInputFor]="chipGrid" (click)="picker.open()" readonly />
+            </mat-chip-grid>
+
+            <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+            <mat-datepicker #picker [startAt]="init" [dateClass]="dateClass"></mat-datepicker>
+        </mat-form-field>
+
+        }
+
+        @if(isDefault) {
+        <mat-form-field appearance="outline" subscriptSizing="dynamic">
+            <mat-label>{{placeholder}}</mat-label>
+            <input matInput [matDatepicker]="picker" [formControl]="date" (dateChange)="onChangeInput($event)">
+            <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+            <mat-datepicker #picker></mat-datepicker>
+        </mat-form-field>
+
+        }
+
+        @if(isTime){
+        <mat-form-field appearance="outline">
+            <mat-label>{{placeholder}}</mat-label>
+            <input type="time" matInput [name]="id" [(ngModel)]="vTimer" (keyup)="onChangeInput($event)"
+                value="value" />
+        </mat-form-field>
+
+        }
+
+    </ion-col>
+</ion-row>

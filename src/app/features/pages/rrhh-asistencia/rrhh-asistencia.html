@@ -1,0 +1,51 @@
+<ion-grid>
+    <ion-row class="ion-align-items-center" style="border-bottom: 2px solid #f4f4f4; margin-bottom: 20px;">
+        <ion-col size="12" size-md="8">
+            <h1 class="title-page" style="margin: 0; font-weight: 700; color: #2c3e50;">Asistencia</h1>
+            <p style="color: #7f8c8d; margin: 4px 0 15px 0;">Gestion de asistencia Recursos Humanos</p>
+        </ion-col>
+    </ion-row>
+
+    <ion-row class="ion-align-items-end ion-margin-bottom">
+        <ion-col size="12" size-md="4" size-lg="2">
+            <mt-select id="typeReport" [data]="cboStoreList" label="Seleccione Tipo Reporte" title="Reporte"
+                (selectdOption)="onChangeSelect($event)">
+            </mt-select>
+        </ion-col>
+        <ion-col size="12" size-md="4" size-lg="2">
+            @if(isViewDefault){
+            <mt-calendar [isPeriodo]="false" [isMultiSelect]="false" [isDefault]="true"
+                placeholder="Seleccione la fecha" (afterChange)="onCalendar($event)"></mt-calendar>
+            }
+            @if(isDetallado){
+            <mt-calendar [isPeriodo]="false" [isMultiSelect]="false" [isDefault]="false" [isRange]="true"
+                placeholder="Seleccione rango de fecha" (afterChange)="onCalendar($event)"></mt-calendar>
+            }
+            @if(isViewFeriados){
+                <mt-calendar [isPeriodo]="false" [isMultiSelect]="true"
+                    placeholder="Seleccione las fechas" (afterChange)="onCalendar($event)"></mt-calendar>
+            }
+        </ion-col>
+        <ion-col size="12" size-md="4" size-lg="1" style="display: flex;align-items: center;">
+            <button type="button" matTooltip="Verificar" (click)="onSearchAsistence()"
+                style="display: flex;justify-content: center;align-items: center;"
+                class="btn btn-primary btn-sm mobil-margin-button"><mat-icon>calendar_month</mat-icon><span>Consultar</span>
+            </button>
+        </ion-col>
+
+        <hr style="background-color: black;width: 1px;margin-right: 10px;">
+
+    </ion-row>
+
+    <ion-row>
+        <ion-col size="12">
+            <div class="table-card">
+                <mt-datatable [dataIn]="dataTable" [dataColumnsIn]="columnsInventory"
+                    [extraColumns]="displayedColumnsInventory">
+                </mt-datatable>
+            </div>
+        </ion-col>
+    </ion-row>
+</ion-grid>
+
+<mt-loader *ngIf="isLoading" [title]="titleLoader"></mt-loader>

@@ -32,6 +32,12 @@ import { MtNotification } from './shared/component/mt-notification/mt-notificati
 import { MtLoader } from './shared/component/mt-loader/mt-loader';
 import localeEsPe from '@angular/common/locales/es-PE';
 import { registerLocaleData } from '@angular/common';
+import { RrhhAsistencia } from './features/pages/rrhh-asistencia/rrhh-asistencia';
+import { MtCalendar } from './shared/component/mt-calendar/mt-calendar';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatChipsModule } from '@angular/material/chips';
+import { MtMarcacionesEmployes } from './shared/component/mt-datatable/component/mt-marcaciones-employes/mt-marcaciones-employes';
+
 registerLocaleData(localeEsPe);
 @NgModule({
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
@@ -45,6 +51,9 @@ registerLocaleData(localeEsPe);
     Inventario,
     MtNotification,
     MtLoader,
+    RrhhAsistencia,
+    MtCalendar,
+    MtMarcacionesEmployes
   ],
   imports: [
     IonicModule.forRoot(),
@@ -66,6 +75,8 @@ registerLocaleData(localeEsPe);
     MatTableModule,
     ReactiveFormsModule,
     AppRoutingModule,
+    MatDatepickerModule,
+    MatChipsModule,
     ServiceWorkerModule.register('ngsw-worker.js', {
       enabled: !isDevMode(),
       registrationStrategy: 'registerWhenStable:30000'

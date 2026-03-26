@@ -1,7 +1,14 @@
-import { Component, EventEmitter, Input, Output, SimpleChanges, ViewChild, ChangeDetectorRef, OnInit, OnChanges, AfterViewInit } from '@angular/core';
+import { Component, inject, EventEmitter, Input, Output, SimpleChanges, ViewChild, ChangeDetectorRef, OnInit, OnChanges, AfterViewInit } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
+import {
+  MatDialog,
+  MAT_DIALOG_DATA,
+  MatDialogTitle,
+  MatDialogContent,
+} from '@angular/material/dialog';
+import { MtMarcacionesEmployes } from './component/mt-marcaciones-employes/mt-marcaciones-employes';
 
 @Component({
   selector: 'mt-datatable',
@@ -21,11 +28,12 @@ export class MtDatatable implements OnInit, OnChanges, AfterViewInit {
   dataColumns: columnsTable[] = [];
   displayedColumns: string[] = [];
   filterValues: Record<string, any> = {};
+  dialog = inject(MatDialog);
 
   constructor(private cdr: ChangeDetectorRef) { }
 
   ngOnInit() {
-    this.setupFilterPredicate();
+
   }
 
   ngAfterViewInit() {
@@ -41,6 +49,7 @@ export class MtDatatable implements OnInit, OnChanges, AfterViewInit {
       this.dataSource.paginator = this.paginator;
       this.dataSource.sort = this.sort;
       this.onParserFilterCbo();
+      this.setupFilterPredicate();
     }
 
     // 2. Cambio en las definiciones de columnas (Aquí entra isOnline)
@@ -59,12 +68,20 @@ export class MtDatatable implements OnInit, OnChanges, AfterViewInit {
   }
 
 
+  openDialog(data: any) {
+    this.dialog.open(MtMarcacionesEmployes, {
+      panelClass: 'modal-mediano',
+      data: data,
+    });
+  }
+
 
   /**
    * Configura el predicado de filtro una sola vez para mejorar el rendimiento
    */
   private setupFilterPredicate() {
     this.dataSource.filterPredicate = (data: any, filter: string) => {
+
       // El filter ya viene como string, pero evitamos parsear si es posible
       const searchTerms = JSON.parse(filter);
 
@@ -95,6 +112,7 @@ export class MtDatatable implements OnInit, OnChanges, AfterViewInit {
    * Maneja tanto inputs de texto como combos multiselect.
    */
   applyFilterTable(event: any, columnDef: string, cboValue?: any[]) {
+
     const colIndex = this.dataColumns.findIndex(t => t.matColumnDef === columnDef);
     if (colIndex === -1) return;
 
@@ -108,10 +126,9 @@ export class MtDatatable implements OnInit, OnChanges, AfterViewInit {
     this.filterValues[column.propertyValue] = Array.isArray(rawValue)
       ? rawValue
       : rawValue.toString().trim().toLowerCase();
-
+    this.dataSource.filter = '';
     // Trigger de filtrado
     this.dataSource.filter = JSON.stringify(this.filterValues);
-
     // Notificamos al padre
     this.currentDataFilter.emit(this.dataSource.filteredData);
     this.cdr.detectChanges();
