@@ -151,6 +151,7 @@ export class Inventario {
 
   onEmailInventory() {
     this.isLoading = true;
+     this.titleLoader = `Enviando inventario...`;
     this.storeService.callInventoryEmail(this.emailInvetorySend, this.storesSelected).subscribe(
       response => {
         this.isLoading = false;
