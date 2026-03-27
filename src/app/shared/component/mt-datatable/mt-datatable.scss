@@ -364,3 +364,7 @@ tr.example-element-row:not(.example-expanded-row):active {
   font-size: 11px;
 }
 
+.example-container {
+  height: 550px;
+  overflow: auto;
+}
