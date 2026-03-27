@@ -181,11 +181,11 @@
                   <td mat-cell *matCellDef="let element">
 
                     @if(column.matColumnDef == "traffic"){
-                    <span *ngIf="element['online'] != 1"
-                      style="color: rgb(179, 2, 2);">
+                    <span *ngIf="element['online'] != 1" style="color: rgb(179, 2, 2);">
                       <mat-icon>close_small</mat-icon>
                     </span>
                     <mat-spinner *ngIf="element.trafficLoading && element['online'] == 1"></mat-spinner>
+                    @if(element['online'] == 1){
                     @for(trf of element.traffic;track trf){
                     <span matTooltipPosition="above" matTooltip="{{trf.ip}}"
                       *ngIf="trf.active && !element.trafficLoading"
@@ -198,8 +198,9 @@
                       style="font-size: 20px;cursor: pointer;color: #898989;padding-right: 5px;">
                       <mat-icon>videocam_off</mat-icon>
                     </span>
-
                     }
+                    }
+
                     }
 
                     @if(column.matColumnDef == "comprobantes"){
