@@ -46,7 +46,7 @@ export class SocketService {
         }
     }
 
-    
+
 
 
     // Método para pedir documentos a una tienda específica
@@ -87,6 +87,10 @@ export class SocketService {
 
     onStatusServerBackup(callback: (data: any) => void) {
         this.socket?.on('status_server_backup_dashboard', callback);
+    }
+
+    onTrafficCounterStatus(callback: (data: any) => void) {
+        this.socket?.on('traffic_counter_dashboard', callback);
     }
 
 }

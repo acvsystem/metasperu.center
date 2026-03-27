@@ -138,6 +138,14 @@ export class StoreService {
         );
     }
 
+    callTrafficCounterStatus(): Observable<any> {
+        return this.http.get(
+            `${this.API_URL}/api/traffic/verification/${this.socketService.socketID}`
+        ).pipe(
+            catchError(this.handleError)
+        );
+    }
+
     callTransferTerminal(terminal: any): Observable<any> {
         return this.http.post(
             `${this.API_URL}/api/transactions/transfer/terminal`,

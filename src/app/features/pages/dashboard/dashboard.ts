@@ -81,7 +81,7 @@ export class Dashboard {
 
   async ngOnInit(): Promise<void> {
     await this.onListarTiendas();
-    
+
 
     this.socketService.tiendas$.subscribe(data => {
 
@@ -93,7 +93,7 @@ export class Dashboard {
       const dataActualizada = this.dataSource.data.map(item => {
         // Buscamos si el item actual existe en lo que acaba de llegar
         const coincidencia = data.find(d => d.serie === item.serie);
-       
+
         if (coincidencia) {
           // Si existe, le ponemos el estado 'online' que trae el servidor
           return { ...item, online: coincidencia.online };
@@ -105,6 +105,34 @@ export class Dashboard {
 
       // 3. Actualizamos el origen de datos para que la UI se refresque
       this.dataSource.data = dataActualizada;
+    });
+
+    this.socketService.onTrafficCounterStatus((response) => {
+      console.log(response);
+
+      // console.log(response);
+      if (!response?.serie || !response?.devices) return;
+
+      const tienda = this.dataSource.data.find(t => t.serie === response.serie);
+
+      if (tienda) {
+        response.devices.forEach((device: any) => {
+          const targetTraffic = tienda.traffic.find((t: any) => t.ip === device.ip);
+          if (targetTraffic) {
+            targetTraffic.active = device.online;
+          }
+        });
+
+
+        const index = this.dataSource.data.findIndex((t) => t.serie == response?.serie);
+
+        if (index != -1) {
+          this.dataSource.data[index].trafficLoading = false;
+        }
+
+        this.dataSource._updateChangeSubscription();
+      }
+
     });
 
     this.socketService.onStatusServerBackup((response) => {
@@ -153,24 +181,6 @@ export class Dashboard {
       if (index != -1) {
         this.dataSource.data[index].clientes = response['clients'];
         this.dataSource.data[index].clientesLoading = false;
-      }
-    });
-
-    this.socketService.onTrafficCounter((response) => {
-      // console.log(response);
-      if (!response?.serie || !response?.devices) return;
-
-      const tienda = this.dataSource.data.find(t => t.serie === response.serie);
-
-      if (tienda) {
-        response.devices.forEach((device: any) => {
-          const targetTraffic = tienda.traffic.find((t: any) => t.ip === device.ip);
-          if (targetTraffic) {
-            targetTraffic.active = device.online;
-          }
-        });
-
-        this.dataSource._updateChangeSubscription();
       }
     });
 
@@ -348,6 +358,16 @@ export class Dashboard {
         this.onNotification({ error: 'error', message: err?.message });
       }
     });
+  }
+
+  onTrafficCounterStatus() {
+    this.dataSource.data.map((t, i) => {
+      if (t.traffic) {
+        this.dataSource.data[i].trafficLoading = true;
+      }
+    });
+
+    this.storeService.callTrafficCounterStatus().subscribe((a) => { });
   }
 
 }
