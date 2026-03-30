@@ -78,7 +78,7 @@ export class SocketService {
     }
 
     onResponseDeleteClient(callback: (data: any) => void) {
-        this.socket?.on('delete_client_esponse_dashboard', callback);
+        this.socket?.on('client_refresh_dashboard', callback);
     }
 
     onResponseDeleteColaPnm(callback: (data: any) => void) {

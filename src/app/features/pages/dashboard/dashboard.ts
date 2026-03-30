@@ -84,7 +84,7 @@ export class Dashboard {
 
 
     this.socketService.tiendas$.subscribe(data => {
-
+      console.log(data);
 
       // 1. Extraemos solo las series que vienen en el nuevo paquete 'data'
       const seriesNuevas = data.map(d => d?.serie);
@@ -108,8 +108,6 @@ export class Dashboard {
     });
 
     this.socketService.onTrafficCounterStatus((response) => {
-      console.log(response);
-
       // console.log(response);
       if (!response?.serie || !response?.devices) return;
 
@@ -145,10 +143,10 @@ export class Dashboard {
 
     this.socketService.onResponseDeleteClient((response) => {
       console.log(response);
+
     });
 
     this.socketService.onDocumentosRecibidos((response) => {
-      console.log(response);
       const index = this.dataSource.data.findIndex((t) => t.serie == response?.serie);
       if (index != -1) {
         this.dataSource.data[index].comprobantes = response['length'];
@@ -157,8 +155,6 @@ export class Dashboard {
     });
 
     this.socketService.onTransactionsFrontRetail((response) => {
-      console.log(response);
-
       const index = this.dataSource.data.findIndex((t) => t.serie == response?.serie);
       if (index != -1) {
         this.dataSource.data[index].transacciones = response['transactions'];
@@ -176,7 +172,6 @@ export class Dashboard {
     });
 
     this.socketService.onClientBlank((response) => {
-      console.log(response);
       const index = this.dataSource.data.findIndex((t) => t.serie == response?.serie);
       if (index != -1) {
         this.dataSource.data[index].clientes = response['clients'];
@@ -282,6 +277,11 @@ export class Dashboard {
   }
 
   onClientDelete() {
+    this.dataSource.data.map((t, i) => {
+      if (t.online) {
+        this.dataSource.data[i].clientesLoading = true;
+      }
+    });
     this.storeService.callClientDelete().subscribe({
       next: (result) => {
         console.log(result);
