@@ -130,13 +130,13 @@
                   </ul>
                 </div>
 
-                <button (click)="onDeleteColaPanama()" type="button" matTooltip="Eliminar Cola Panamá"
+                <button (click)="onDeleteColaPanama()" type="button" matTooltip="Eliminar Cola Panamá" disabled
                   style="display: flex;justify-content: center;align-items: center;margin-right: 10px;"
                   class="btn btn-primary btn-sm mobil-margin-button"><mat-icon
                     style="margin-right: 10px;">delete_sweep</mat-icon>
                   Panama</button>
-                <button (click)="drawer.toggle()" type="button"
-                  style="display: flex;justify-content: center;align-items: center;margin-right: 10px;"
+                <button (click)="drawer.toggle()" type="button" 
+                  style="display: flex;justify-content: center;align-items: center;margin-right: 10px;display: none;"
                   class="btn btn-primary btn-sm mobil-margin-button"><mat-icon
                     style="margin-right: 10px;">storage</mat-icon> Servidor</button>
               </div>

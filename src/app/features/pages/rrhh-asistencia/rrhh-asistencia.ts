@@ -38,6 +38,7 @@ export class RrhhAsistencia {
     { isSticky: false, matColumnDef: 'excesoBreak', titleColumn: 'Exc.Break', propertyValue: 'excesoBreak', filterActive: false, isCboFilter: false, cboFilter: [] },
     { isSticky: false, matColumnDef: 'jornada_completa', titleColumn: 'J.Completa', propertyValue: 'jornadaIncompleta', filterActive: false, isCboFilter: false, cboFilter: [] },
     { isSticky: false, matColumnDef: 'estatus_papeleta', titleColumn: 'Papeleta', propertyValue: 'isPapeleta', filterActive: false, isCboFilter: false, cboFilter: [] },
+    { isSticky: false, matColumnDef: 'estatus_marcacion', titleColumn: 'Marcacion', propertyValue: 'marcacionesLen', filterActive: false, isCboFilter: false, cboFilter: [] },
     { isSticky: false, matColumnDef: 'accion', titleColumn: 'Accion', propertyValue: 'accion', filterActive: false, isCboFilter: false, cboFilter: [] }];
 
   displayedColumnsInventory = this.columnsInventory.map(col => col.matColumnDef);
@@ -51,6 +52,7 @@ export class RrhhAsistencia {
 
     this.socketService.onRefreshEmployesAsistence((data: any) => {
       this.storeService.callRefreshAsistenceEmployes(this.propertyCode).subscribe((data: any) => {
+        console.log(data);
         this.dataTable = this.obtenerDataPorPropiedad(data, this.propertyCode);
         this.isLoading = false;
       });

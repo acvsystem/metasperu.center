@@ -28,20 +28,12 @@ export const authGuard: CanActivateFn = (route, state) => {
                 // 3. Validar
 
                 if (userRole && rolesPermitidos.includes(userRole)) {
-
-                    if (userRole == 'SISTEMAS') {
-                        router.navigate(['/comprobantes']);
-
-                    }
-
                     return true; // Acceso permitido
                 } else {
                     // Redirigir al dashboard o login si no tiene permiso
                     router.navigate(['/login']);
                     return false; // Acceso denegado
                 }
-
-                return true;
             } else {
                 // Redirigimos al login y guardamos la URL a la que quería ir
                 return router.createUrlTree(['/' + state.url], { queryParams: { returnUrl: state.url } });

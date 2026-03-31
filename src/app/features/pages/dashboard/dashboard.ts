@@ -107,6 +107,11 @@ export class Dashboard {
       this.dataSource.data = dataActualizada;
     });
 
+    this.socketService.onRefreshColaPanama((response) => {
+      console.log(response);
+      this.onTransactions();
+    });
+
     this.socketService.onTrafficCounterStatus((response) => {
       // console.log(response);
       if (!response?.serie || !response?.devices) return;

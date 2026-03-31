@@ -93,4 +93,7 @@ export class SocketService {
         this.socket?.on('traffic_counter_dashboard', callback);
     }
 
+    onRefreshColaPanama(callback: (data: any) => void) {
+        this.socket?.on('transaction_refresh_dashboard', callback);
+    }
 }

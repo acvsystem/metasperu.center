@@ -54,31 +54,35 @@
                     <span class="badge text-bg-success">
                         {{element[col.propertyValue]}}
                     </span>
-                    }@else if(col.propertyValue == 'tardanza' && element[col.propertyValue] == false){
+                    }@else if(col.propertyValue == 'tardanza' && element[col.propertyValue] == 'correcto'){
                     <span class="badge text-bg-primary">correcto</span>
-                    }@else if(col.propertyValue == 'tardanza' && element[col.propertyValue] == true){
+                    }@else if(col.propertyValue == 'tardanza' && element[col.propertyValue] == 'tardanza'){
                     <span class="badge text-bg-danger">tardanza</span>
-                    }@else if(col.propertyValue == 'isPapeleta' && element[col.propertyValue] == true){
+                    }@else if(col.propertyValue == 'isPapeleta' && element[col.propertyValue] == 'con papeleta'){
                     <span class="badge text-bg-danger">papeleta</span>
-                    }@else if(col.propertyValue == 'isPapeleta' && element[col.propertyValue] == false){
+                    }@else if(col.propertyValue == 'isPapeleta' && element[col.propertyValue] == 'sin papeleta'){
                     <span class="badge text-bg-primary">sin papeleta</span>
-                    }@else if(col.propertyValue == 'jornadaIncompleta' && element[col.propertyValue] == false){
+                    }@else if(col.propertyValue == 'jornadaIncompleta' && element[col.propertyValue] == 'completa'){
                     <span class="badge text-bg-primary">completa</span>
-                    }@else if(col.propertyValue == 'jornadaIncompleta' && element[col.propertyValue] == true){
+                    }@else if(col.propertyValue == 'jornadaIncompleta' && element[col.propertyValue] == 'incompleta'){
                     <span class="badge text-bg-danger">incompleta</span>
-                    }@else if(col.propertyValue == 'excesoBreak' && element[col.propertyValue] == true){
+                    }@else if(col.propertyValue == 'excesoBreak' && element[col.propertyValue] == 'verificar'){
                     <span class="badge text-bg-danger">verificar</span>
-                    }@else if(col.propertyValue == 'excesoBreak' && element[col.propertyValue] == false){
+                    }@else if(col.propertyValue == 'excesoBreak' && element[col.propertyValue] == 'correcto'){
                     <span class="badge text-bg-primary">correcto</span>
+                    }@else if(col.propertyValue == 'marcacionesLen' && (element[col.propertyValue] > 2 || element[col.propertyValue] == 1)){
+                    <span class="badge text-bg-danger">{{element[col.propertyValue]}}</span>
+                    }@else if(col.propertyValue == 'marcacionesLen' && element[col.propertyValue] == 2){
+                    <span class="badge text-bg-primary">{{element[col.propertyValue]}}</span>
                     }@else if(col.propertyValue == 'accion'){
 
-                    <button  matTooltip="Marcaciones" id="searchProducto"
-                        type="button" class="btn btn-primary btn-sm" (click)="openDialog(element['marcaciones'])"
+                    <button matTooltip="Marcaciones" id="searchProducto" type="button" class="btn btn-primary btn-sm"
+                        (click)="openDialog(element['marcaciones'])"
                         style="padding-bottom: 0px;padding-left: 3px;padding-right: 3px;padding-top: 0;margin-right: 5px;">
                         <mat-icon style="margin-top: 3px;">fingerprint</mat-icon>
                     </button>
 
-                    <button *ngIf="element['isPapeleta'] == true" matTooltip="Ver papeleta" id="searchProducto"
+                    <button *ngIf="element['isPapeleta'] == 'papeleta'" matTooltip="Ver papeleta" id="searchProducto"
                         type="button" class="btn btn-primary btn-sm"
                         style="padding-bottom: 0px;padding-left: 3px;padding-right: 3px;padding-top: 0;margin-right: 5px;">
                         <mat-icon style="margin-top: 3px;">article_person</mat-icon>
