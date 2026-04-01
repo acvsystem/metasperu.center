@@ -12,19 +12,19 @@ const routes: Routes = [
     path: 'comprobantes',
     component: Dashboard,
     canActivate: [authGuard],
-    data: { roles: ['SISTEMAS'] }
+    data: { roles: ['SISTEMAS', 'RRHH'] }
   },
   {
     path: 'inventario',
     component: Inventario,
     canActivate: [authGuard],
-    data: { roles: ['SISTEMAS'] }
+    data: { roles: ['SISTEMAS', 'RRHH', 'INVENTARIO','OPERACIONES'] }
   },
   {
     path: 'asistencia',
     component: RrhhAsistencia,
     canActivate: [authGuard],
-    data: { roles: ['SISTEMAS'] }
+    data: { roles: ['SISTEMAS', 'RRHH','OPERACIONES'] }
   }
 ];
 

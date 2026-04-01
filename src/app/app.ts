@@ -13,12 +13,13 @@ export class App {
   menuFiltrado: Array<any> = [];
   protected readonly title = signal('metasperu.center');
   roleUser: string = "";
+  name: string = "";
   authService = inject(AuthService);
 
   constructor(private router: Router, private nav: NavController, private menu: MenuController) { }
   ngOnInit(): void {
     this.roleUser = localStorage.getItem('role') || "";
-
+    this.name = localStorage.getItem('name') || "";
     if (this.menuFiltrado.length == 0 && localStorage.getItem('menu')) {
       this.menuFiltrado = JSON.parse(localStorage.getItem('menu') || '[]');
     }
@@ -31,7 +32,7 @@ export class App {
     });
 
 
-    
+
   }
 
   get isLogged() {

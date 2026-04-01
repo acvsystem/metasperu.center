@@ -8,9 +8,21 @@ export const authGuard: CanActivateFn = (route, state) => {
     const authService = inject(AuthService);
     const router = inject(Router);
 
+    const rolesPermitidos = route.data['roles'] as Array<string>;
+
+    const hasAccess = (role: string | null): boolean => {
+        // Si la ruta no requiere roles específicos, permitimos el paso
+        if (!rolesPermitidos || rolesPermitidos.length === 0) return true;
+        // Validamos si el rol del usuario está en la lista permitida
+        if (role && rolesPermitidos.includes(role)) return true;
+        
+        router.navigate(['/login']);
+        return false;
+    };
+
     // Si ya sabemos que está autenticado por el Signal, permitimos el paso
     if (authService.isAuthenticated()) {
-        return true;
+        return hasAccess(localStorage.getItem('role'));
     }
 
     // Si no, verificamos la sesión con el servidor (útil para F5 o acceso directo por URL)
@@ -18,22 +30,7 @@ export const authGuard: CanActivateFn = (route, state) => {
         take(1),
         map(isLoggedIn => {
             if (isLoggedIn) {
-
-                // 1. Obtener el rol del usuario (desde localStorage o un servicio)
-                const userRole = localStorage.getItem('role');
-
-                // 2. Obtener los roles permitidos para esta ruta desde la data
-                const rolesPermitidos = route.data['roles'] as Array<string>;
-
-                // 3. Validar
-
-                if (userRole && rolesPermitidos.includes(userRole)) {
-                    return true; // Acceso permitido
-                } else {
-                    // Redirigir al dashboard o login si no tiene permiso
-                    router.navigate(['/login']);
-                    return false; // Acceso denegado
-                }
+                return hasAccess(localStorage.getItem('role'));
             } else {
                 // Redirigimos al login y guardamos la URL a la que quería ir
                 return router.createUrlTree(['/' + state.url], { queryParams: { returnUrl: state.url } });
