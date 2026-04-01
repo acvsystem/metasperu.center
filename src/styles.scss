@@ -592,3 +592,67 @@ body>ion-alert {
     overflow: hidden;
   }
 }
+
+.modal-grande {
+  .mat-mdc-dialog-container .mdc-dialog__surface {
+    overflow: auto !important;
+    width: 500px !important;
+    /* Casi toda la pantalla */
+    min-width: 870px !important;
+    max-width: 870px !important;
+    /* Pero con un tope para monitores grandes */
+    height: 900px !important;
+    padding: 20px;
+  }
+}
+
+
+/* Print Rules */
+/* REGLAS PARA EL PDF / IMPRESIÓN */
+@media print {
+  @page {
+    size: A4;
+    margin: 0;
+    /* Quitamos los márgenes físicos de la hoja */
+  }
+
+  /* 1. Ocultamos absolutamente todo lo que pertenezca a la interfaz de la web */
+  ion-header {
+    display: none !important;
+  }
+
+  /* 2. Si tu papeleta está dentro de un mat-sidenav o un layout, 
+     tenemos que ocultar los hermanos y ancestros */
+  .header-app,
+  .sidebar,
+  .no-print,
+  button {
+    display: none !important;
+  }
+
+  .papeleta-wrapper {
+    padding: 0px !important;
+  }
+
+  /* 3. Forzamos que la papeleta ocupe todo el ancho y se resetee la posición */
+  .papeleta-sheet {
+    position: absolute !important;
+    top: 0 !important;
+    left: -100px !important;
+    box-shadow: none !important;
+    border: none !important;
+    visibility: visible !important;
+    padding-top: 0px !important;
+    /* Ancho exacto del A4 */
+    min-height: 200mm;
+    /* Alto exacto del A4 (o 148mm si es media hoja) */
+    margin: 0 auto;
+    /* La centramos */
+    padding: 30mm !important;
+    /* El margen interno que TÚ controlas */
+
+    /* Para que el padding no sume ancho extra */
+    transform: scale(1);
+  }
+
+}

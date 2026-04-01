@@ -9,6 +9,7 @@ import {
   MatDialogContent,
 } from '@angular/material/dialog';
 import { MtMarcacionesEmployes } from './component/mt-marcaciones-employes/mt-marcaciones-employes';
+import { MtViewPapeleta } from '@metasperu/component/mt-view-papeleta/mt-view-papeleta';
 
 @Component({
   selector: 'mt-datatable',
@@ -72,6 +73,13 @@ export class MtDatatable implements OnInit, OnChanges, AfterViewInit {
     this.dialog.open(MtMarcacionesEmployes, {
       panelClass: 'modal-mediano',
       data: data,
+    });
+  }
+
+  openDialogBallot(codeBallot: string) {
+    this.dialog.open(MtViewPapeleta, {
+      panelClass: 'modal-grande',
+      data: { codeBallot: codeBallot },
     });
   }
 

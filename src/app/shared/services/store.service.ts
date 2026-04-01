@@ -226,4 +226,15 @@ export class StoreService {
             catchError(this.handleError)
         );
     }
+
+    getOneBallot(codeBallot: string): Observable<any> {
+        return this.http.post(
+            `${this.API_URL_RESOURCES_HUMAN}/api/ballot/employes/store`,
+            {
+                "codeBallot": codeBallot
+            }
+        ).pipe(
+            catchError(this.handleError)
+        );
+    }
 }

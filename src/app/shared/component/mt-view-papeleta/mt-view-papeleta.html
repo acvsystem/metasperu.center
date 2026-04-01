@@ -1,0 +1,104 @@
+<div class="papeleta-wrapper">
+    <button class="btn-export no-print" (click)="imprimir()">
+        <i class="fas fa-file-pdf"></i> Exportar a PDF
+    </button>
+
+    <div class="papeleta-sheet" id="papeleta" *ngIf="!isLoading">
+        <header class="header">
+            <div class="brand">
+                <div class="logo">
+                    <span class="m-logo">M</span>
+                    <div class="brand-text">
+                        <strong>METAS</strong>
+                        <span>PERÚ SAC</span>
+                    </div>
+                </div>
+            </div>
+            <div class="doc-type">
+                <h1>PAPELETA PERMISO DE SALIDA</h1>
+            </div>
+            <div class="doc-code">
+                <span class="label">Nro. Papeleta</span>
+                <span class="value">{{ dataBallot.head_ballot.CODIGO_PAPELETA }}</span>
+            </div>
+        </header>
+
+        <section class="section-user">
+            <div class="field">
+                <span class="label">Apellidos y Nombre</span>
+                <span class="value">{{ dataBallot.head_ballot.NOMBRE_COMPLETO }}</span>
+            </div>
+            <div class="row">
+                <div class="field">
+                    <span class="label">Fecha Solicitud</span>
+                    <span class="value">{{ dataBallot.head_ballot.FECHA_CREACION | date:'dd/MM/yyyy' }}</span>
+                </div>
+                <div class="field">
+                    <span class="label">Cargo</span>
+                    <span class="value">{{ dataBallot.head_ballot.CARGO_EMPLEADO }}</span>
+                </div>
+            </div>
+            <div class="row">
+                <div class="field">
+                    <span class="label">Unidad de Servicio</span>
+                    <span class="value">{{ dataBallot.head_ballot.CODIGO_TIENDA }}</span>
+                </div>
+                <div class="field">
+                    <span class="label">Tipo Papeleta</span>
+                    <span class="value">{{ dataBallot.head_ballot.ID_PAP_TIPO_PAPELETA }}</span>
+                </div>
+            </div>
+        </section>
+
+        <section class="section-details">
+            <div class="detail-grid">
+                <div class="detail-group">
+                    <div class="item"><span>Desde:</span> <strong>{{ dataBallot.head_ballot.FECHA_DESDE | date:'dd/MM/yyyy'
+                            }}</strong></div>
+                    <div class="item"><span>Hasta:</span> <strong>{{ dataBallot.head_ballot.FECHA_HASTA | date:'dd/MM/yyyy'
+                            }}</strong></div>
+                </div>
+                <div class="detail-group">
+                    <div class="item"><span>Salida:</span> <strong>{{ dataBallot.head_ballot.HORA_SALIDA }}</strong></div>
+                    <div class="item"><span>Llegada:</span> <strong>{{ dataBallot.head_ballot.HORA_LLEGADA }}</strong></div>
+                </div>
+                <div class="hours-badge">
+                    <span class="label">Horas Solicitadas</span>
+                    <span class="value">{{ dataBallot.head_ballot.HORA_SOLICITADA }}</span>
+                </div>
+            </div>
+        </section>
+
+        <section class="section-table">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Fecha Compensación</th>
+                        <th>Hora Extra Acum.</th>
+                        <th>Hora Solicitada</th>
+                        <th>Hora Sobrante</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let item of dataBallot.detail_ballot">
+                        <td>{{ item.FECHA | date:'dd/MM/yyyy' }}</td>
+                        <td>{{ item.HR_EXTRA_ACUMULADO }}</td>
+                        <td>{{ item.HR_EXTRA_SOLICITADO }}</td>
+                        <td>{{ item.HR_EXTRA_SOBRANTE }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <footer class="footer-signatures">
+            <div class="sig-line">
+                <div class="line"></div>
+                <span>Firma del Colaborador</span>
+            </div>
+            <div class="sig-line">
+                <div class="line"></div>
+                <span>V°B° Jefe Inmediato</span>
+            </div>
+        </footer>
+    </div>
+</div>

@@ -1,0 +1,271 @@
+$primary: #004a87;
+$dark: #333;
+$gray-light: #f8f9fa;
+$border: #dee2e6;
+
+.papeleta-wrapper {
+    background: #f0f2f5;
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    .btn-export {
+        margin-bottom: 1rem;
+        padding: 0.8rem 1.5rem;
+        background: #28a745;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: 0.3s;
+
+        &:hover {
+            background: #218838;
+        }
+    }
+}
+
+.papeleta-sheet {
+    width: 210mm;
+    min-height: 148mm; // Media A4
+    background: white;
+    padding: 15mm;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    color: $dark;
+    font-family: 'Inter', sans-serif;
+
+    .header {
+        display: grid;
+        grid-template-columns: 1fr 2fr 1fr;
+        align-items: center;
+        border-bottom: 3px solid $primary;
+        padding-bottom: 1rem;
+        margin-bottom: 1.5rem;
+
+        .brand {
+            .logo {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+
+                .m-logo {
+                    background: $primary;
+                    color: white;
+                    font-weight: 900;
+                    padding: 4px 8px;
+                    border-radius: 4px;
+                }
+
+                .brand-text {
+                    line-height: 1;
+
+                    strong {
+                        font-size: 18px;
+                        color: $primary;
+                    }
+
+                    span {
+                        font-size: 10px;
+                        display: block;
+                        color: #666;
+                    }
+                }
+            }
+        }
+
+        .doc-type h1 {
+            font-size: 16px;
+            text-align: center;
+            margin: 0;
+            letter-spacing: 1px;
+        }
+
+        .doc-code {
+            text-align: right;
+
+            .label {
+                font-size: 10px;
+                display: block;
+                color: #888;
+            }
+
+            .value {
+                font-size: 18px;
+                font-weight: 700;
+                color: $primary;
+            }
+        }
+    }
+
+    .section-user {
+        margin-bottom: 1.5rem;
+
+        .row {
+            display: flex;
+            gap: 2rem;
+            margin-top: 10px;
+        }
+
+        .field {
+            flex: 1;
+
+            .label {
+                font-size: 11px;
+                color: #777;
+                text-transform: uppercase;
+                display: block;
+            }
+
+            .value {
+                font-size: 14px;
+                font-weight: 500;
+                border-bottom: 1px solid #eee;
+                display: block;
+                padding-bottom: 2px;
+            }
+        }
+    }
+
+    .section-details {
+        background: $gray-light;
+        padding: 1.2rem;
+        border-radius: 8px;
+        margin-bottom: 1.5rem;
+
+        .detail-grid {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .detail-group {
+            .item {
+                font-size: 13px;
+                margin-bottom: 4px;
+
+                span {
+                    color: #666;
+                    width: 60px;
+                    display: inline-block;
+                }
+            }
+        }
+
+        .hours-badge {
+            text-align: right;
+            background: white;
+            padding: 10px 20px;
+            border-radius: 6px;
+            border: 1px dashed $primary;
+
+            .label {
+                font-size: 10px;
+                display: block;
+                color: $primary;
+                font-weight: 700;
+            }
+
+            .value {
+                font-size: 24px;
+                font-weight: 800;
+                color: $primary;
+            }
+        }
+    }
+
+    .section-table {
+        table {
+            width: 100%;
+            border-collapse: collapse;
+
+            th {
+                background: #444;
+                color: white;
+                font-size: 11px;
+                padding: 10px;
+                text-align: center;
+            }
+
+            td {
+                border: 1px solid $border;
+                padding: 10px;
+                font-size: 13px;
+                text-align: center;
+            }
+        }
+    }
+
+    .footer-signatures {
+        margin-top: 3rem;
+        display: flex;
+        justify-content: space-around;
+
+        .sig-line {
+            text-align: center;
+
+            .line {
+                width: 180px;
+                border-top: 1px solid #000;
+                margin-bottom: 8px;
+            }
+
+            span {
+                font-size: 11px;
+                font-weight: 600;
+            }
+        }
+    }
+}
+
+/* Print Rules */
+/* REGLAS PARA EL PDF / IMPRESIÓN */
+@media print {
+    @page {
+        size: A4;
+        margin: 0;
+        /* Quitamos los márgenes físicos de la hoja */
+    }
+
+
+
+    /* 2. Si tu papeleta está dentro de un mat-sidenav o un layout, 
+     tenemos que ocultar los hermanos y ancestros */
+    .header-app,
+    .sidebar,
+    .no-print,
+    button {
+        display: none !important;
+    }
+
+    /* 3. Forzamos que la papeleta ocupe todo el ancho y se resetee la posición */
+    .papeleta-sheet {
+        position: absolute !important;
+        top: -70px !important;
+        left: -100px !important;
+        box-shadow: none !important;
+        border: none !important;
+        visibility: visible !important;
+
+        /* Ancho exacto del A4 */
+        min-height: 200mm;
+        /* Alto exacto del A4 (o 148mm si es media hoja) */
+        margin: 0 auto;
+        /* La centramos */
+        padding: 30mm !important;
+        /* El margen interno que TÚ controlas */
+
+        /* Para que el padding no sume ancho extra */
+        transform: scale(1);
+    }
+
+    /* 4. Aseguramos que el contenedor padre no tenga márgenes que descuadren */
+    html,
+    body {
+        height: auto;
+        background: #fff !important;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+}

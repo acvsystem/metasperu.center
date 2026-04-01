@@ -37,6 +37,7 @@ import { MtCalendar } from './shared/component/mt-calendar/mt-calendar';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatChipsModule } from '@angular/material/chips';
 import { MtMarcacionesEmployes } from './shared/component/mt-datatable/component/mt-marcaciones-employes/mt-marcaciones-employes';
+import { MtViewPapeleta } from './shared/component/mt-view-papeleta/mt-view-papeleta';
 
 registerLocaleData(localeEsPe);
 @NgModule({
@@ -53,7 +54,8 @@ registerLocaleData(localeEsPe);
     MtLoader,
     RrhhAsistencia,
     MtCalendar,
-    MtMarcacionesEmployes
+    MtMarcacionesEmployes,
+    MtViewPapeleta
   ],
   imports: [
     IonicModule.forRoot(),
