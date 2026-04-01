@@ -591,6 +591,9 @@ body>ion-alert {
     padding: 20px;
     overflow: hidden;
   }
+
+  max-width: none !important;
+  min-width: auto !important;
 }
 
 .modal-grande {
@@ -603,7 +606,11 @@ body>ion-alert {
     /* Pero con un tope para monitores grandes */
     height: 900px !important;
     padding: 20px;
+
   }
+
+  max-width: none !important;
+  min-width: auto !important;
 }
 
 
@@ -638,17 +645,19 @@ body>ion-alert {
   .papeleta-sheet {
     position: absolute !important;
     top: 0 !important;
-    left: -100px !important;
+    left: 10px !important;
+    right: 0 !important;
     box-shadow: none !important;
     border: none !important;
     visibility: visible !important;
     padding-top: 0px !important;
     /* Ancho exacto del A4 */
     min-height: 200mm;
+    min-width: 100% !important;
     /* Alto exacto del A4 (o 148mm si es media hoja) */
     margin: 0 auto;
     /* La centramos */
-    padding: 30mm !important;
+    padding: 0 !important;
     /* El margen interno que TÚ controlas */
 
     /* Para que el padding no sume ancho extra */
