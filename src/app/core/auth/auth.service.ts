@@ -92,8 +92,9 @@ export class AuthService {
         localStorage.clear();
         this.socketService.desconectar();
         localStorage.removeItem('auth_token'); // Limpiar el token
-        localStorage.removeItem('codeSession');
-        localStorage.removeItem('pocketCode');
+        localStorage.removeItem('menu');
+        localStorage.removeItem('name');
+        localStorage.removeItem('role');
         this.#user.set(null);                  // Limpiar el estado
         this.#menu.set([]);                    // Limpiar el menú
         this.navCtrl.navigateRoot('/login');      // Redirigir
