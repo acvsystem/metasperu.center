@@ -14,8 +14,12 @@ import {
 })
 export class MtMarcacionesEmployes {
   data = inject(MAT_DIALOG_DATA);
+  dataMarcaciones: Array<any> = [];
+  isFeriado: boolean = false;
 
   ngOnInit() {
-    console.log(this.data);
+    this.dataMarcaciones = this.data.dataDialog;
+    console.log(this.dataMarcaciones);
+    this.isFeriado = this.data.isFeriado;
   }
 }

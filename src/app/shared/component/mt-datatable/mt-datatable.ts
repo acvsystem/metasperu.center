@@ -21,6 +21,7 @@ export class MtDatatable implements OnInit, OnChanges, AfterViewInit {
   @Input() dataIn: any[] = [];
   @Input() dataColumnsIn: columnsTable[] = [];
   @Input() extraColumns: string[] = [];
+  @Input() isFeriado: boolean = false;
   @Output() currentDataFilter = new EventEmitter<any[]>();
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
@@ -72,7 +73,10 @@ export class MtDatatable implements OnInit, OnChanges, AfterViewInit {
   openDialog(data: any) {
     this.dialog.open(MtMarcacionesEmployes, {
       panelClass: 'modal-mediano',
-      data: data,
+      data: {
+        dataDialog: data,
+        isFeriado: this.isFeriado
+      }
     });
   }
 

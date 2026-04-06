@@ -4,6 +4,7 @@
 </div>
 
 <div class="table-container">
+    @if(!isFeriado){
     <table class="custom-table">
         <thead>
             <tr>
@@ -15,7 +16,7 @@
             </tr>
         </thead>
         <tbody>
-            @for (item of data; track item) {
+            @for (item of dataMarcaciones; track item) {
             <tr>
                 <td>{{item.caja}}</td>
                 <td>{{item.dia}}</td>
@@ -27,4 +28,28 @@
 
         </tbody>
     </table>
+    }@else{
+    <table class="custom-table">
+        <thead>
+            <tr>
+                <th>Dia</th>
+                <th>H.Entrada</th>
+                <th>H.Salida</th>
+                <th>H.Trabajadas</th>
+            </tr>
+        </thead>
+        <tbody>
+            @for (item of dataMarcaciones; track item) {
+            <tr>
+                <td>{{item.fecha}}</td>
+                <td>{{item.entrada}}</td>
+                <td>{{item.salidaFinal}}</td>
+                <td><span class="status present">{{item.horasEfectivas}}</span></td>
+            </tr>
+            }
+
+        </tbody>
+    </table>
+    }
+
 </div>

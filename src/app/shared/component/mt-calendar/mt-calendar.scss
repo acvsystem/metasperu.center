@@ -151,7 +151,11 @@ ion-input::-webkit-outer-spin-button {
 }
 
 .mtChip .mat-mdc-form-field-infix {
-    padding-top: 5px !important;
+    padding-top: 2px !important;
+}
+
+.noneItem{
+    display: none !important;
 }
 
 .mat-mdc-chip {

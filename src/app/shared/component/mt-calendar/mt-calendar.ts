@@ -99,7 +99,7 @@ export class MtCalendar implements OnInit {
 
     if (this.isPeriodo) {
       var futureMonth = moment(this.date.value).add(1, 'months');
-      this.afterChange.emit({ isPeriodo: true, value: [`${moment(this.date.value).format('YYYY')}`, `${moment(this.date.value).format('MM')}`, `${moment(futureMonth).format('MM')}`] });
+      this.afterChange.emit({ isPeriodo: true, value: [`${moment(this.date.value).format('YYYY')}`, `${moment(this.date.value).format('MM')}`] });
     }
   }
 
@@ -118,7 +118,7 @@ export class MtCalendar implements OnInit {
 
     if (this.isPeriodo) {
       var futureMonth = moment(this.date.value).add(1, 'months');
-      this.afterChange.emit({ isPeriodo: true, type: 'isFeriados', value: [`${moment(this.date.value).format('YYYY')}`, `${moment(this.date.value).format('MM')}`, `${moment(futureMonth).format('MM')}`] });
+      this.afterChange.emit({ isPeriodo: true, type: 'isPeriodo', value: [`${moment(this.date.value).format('YYYY')}`, `${moment(this.date.value).format('MM')}`] });
     }
 
     if (this.isMultiSelect && this.model.length >= 1 && this.model.length <= 3) {
@@ -227,7 +227,7 @@ export class MtCalendar implements OnInit {
     this.date.setValue(ctrlValue);
     datepicker.close();
     var futureMonth = moment(this.date.value).add(1, 'months');
-    this.afterChange.emit({ isPeriodo: true, value: [`${moment(this.date.value).format('YYYY')}`, `${moment(this.date.value).format('MM')}`, `${moment(futureMonth).format('MM')}`] });
+    this.afterChange.emit({ isPeriodo: true, value: [`${moment(this.date.value).format('YYYY')}`, `${moment(this.date.value).format('MM')}`] });
 
   }
 }

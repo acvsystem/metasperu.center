@@ -12,7 +12,7 @@
                 (selectdOption)="onChangeSelect($event)">
             </mt-select>
         </ion-col>
-        <ion-col size="12" size-md="4" size-lg="2">
+        <ion-col size="12" size-md="4" size-lg="3" *ngIf="!isViewFeriados">
             @if(isViewDefault){
             <mt-calendar [isPeriodo]="false" [isMultiSelect]="false" [isDefault]="true"
                 placeholder="Seleccione la fecha" (afterChange)="onCalendar($event)"></mt-calendar>
@@ -21,10 +21,16 @@
             <mt-calendar [isPeriodo]="false" [isMultiSelect]="false" [isDefault]="false" [isRange]="true"
                 placeholder="Seleccione rango de fecha" (afterChange)="onCalendar($event)"></mt-calendar>
             }
-            @if(isViewFeriados){
-                <mt-calendar [isPeriodo]="false" [isMultiSelect]="true"
-                    placeholder="Seleccione las fechas" (afterChange)="onCalendar($event)"></mt-calendar>
-            }
+        </ion-col>
+
+        <ion-col size="12" size-md="4" size-lg="1" *ngIf="isViewFeriados">
+            <mt-calendar [isPeriodo]="true" [isMultiSelect]="false" placeholder="Seleccione periodo"
+                (afterChange)="onCalendar($event)"></mt-calendar>
+        </ion-col>
+
+        <ion-col size="12" size-md="4" size-lg="3" *ngIf="isViewFeriados">
+            <mt-calendar [isPeriodo]="false" [isMultiSelect]="true" placeholder="Seleccione las fechas"
+                (afterChange)="onCalendar($event)"></mt-calendar>
         </ion-col>
         <ion-col size="12" size-md="4" size-lg="1" style="display: flex;align-items: center;">
             <button type="button" matTooltip="Verificar" (click)="onSearchAsistence()"
@@ -35,17 +41,33 @@
 
         <hr style="background-color: black;width: 1px;margin-right: 10px;">
 
+
+        <ion-col size="12" size-md="4" size-lg="12" style="display: flex;justify-content: flex-end;"
+            *ngIf="isViewFeriados">
+            <button mat-raised-button class=" btn-excel" (click)="exportFeriados()">
+                <mat-icon>file_download</mat-icon>
+                <span>Exportar Feriado</span>
+            </button>
+        </ion-col>
     </ion-row>
 
     <ion-row>
         <ion-col size="12">
             <div class="table-card">
-                <mt-datatable [dataIn]="dataTable" [dataColumnsIn]="columnsInventory"
-                    [extraColumns]="displayedColumnsInventory">
+                <mt-datatable 
+                    [isFeriado]="isViewFeriados"
+                    [dataIn]="isViewFeriados ? dataTableFeriado : dataTable"
+                    [dataColumnsIn]="isViewFeriados ? columnsFeriado : columnsInventory"
+                    [extraColumns]="isViewFeriados ? displayedColumnsFeriado : displayedColumnsInventory">
                 </mt-datatable>
             </div>
         </ion-col>
     </ion-row>
 </ion-grid>
+
+@if (isNotification) {
+<mt-notification [type]="typeNotification" [message]="messageNotification"
+    (onClose)="cerrarNotificacion()"></mt-notification>
+}
 
 <mt-loader *ngIf="isLoading" [title]="titleLoader"></mt-loader>
