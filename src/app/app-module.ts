@@ -38,6 +38,8 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatChipsModule } from '@angular/material/chips';
 import { MtMarcacionesEmployes } from './shared/component/mt-datatable/component/mt-marcaciones-employes/mt-marcaciones-employes';
 import { MtViewPapeleta } from './shared/component/mt-view-papeleta/mt-view-papeleta';
+import { RrhhHorario } from './features/pages/rrhh-horario/rrhh-horario';
+import { Kardex } from './features/pages/kardex/kardex';
 
 registerLocaleData(localeEsPe);
 @NgModule({
@@ -55,7 +57,9 @@ registerLocaleData(localeEsPe);
     RrhhAsistencia,
     MtCalendar,
     MtMarcacionesEmployes,
-    MtViewPapeleta
+    MtViewPapeleta,
+    RrhhHorario,
+    Kardex
   ],
   imports: [
     IonicModule.forRoot(),

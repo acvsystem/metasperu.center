@@ -232,7 +232,7 @@ export class RrhhAsistencia {
     const { isPeriodo, isMultiSelect, isDefault, isRange, value } = event;
 
     if (isPeriodo) {
-      this.periodoFeriado = `${value[0]}-${value[1]}`;
+      this.periodoFeriado = `${value[0]}${value[1]}`;
     } else {
       this.dateCalendar = [];
       // 1. Manejo de estados simples

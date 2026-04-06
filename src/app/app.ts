@@ -17,6 +17,7 @@ export class App {
   authService = inject(AuthService);
 
   constructor(private router: Router, private nav: NavController, private menu: MenuController) { }
+
   ngOnInit(): void {
     this.roleUser = localStorage.getItem('role') || "";
     this.name = localStorage.getItem('name') || "";
@@ -30,9 +31,6 @@ export class App {
       }
 
     });
-
-
-
   }
 
   get isLogged() {
@@ -40,6 +38,7 @@ export class App {
   }
 
   logout() {
+    this.menuFiltrado = [];
     this.authService.logout();
   }
 
