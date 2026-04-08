@@ -1,0 +1,221 @@
+/* Variables de color para unificar Material e Ionic */
+$primary-color: #3f51b5; // Azul Material
+$bg-color: #f8f9fa; // Gris muy suave de fondo
+$text-sub: #6c757d; // Gris secundario
+$border-color: #e0e0e0; // Gris de borde
+$negative-color: #d32f2f; // Rojo para valores negativos
+
+.kardex-dashboard {
+    display: flex;
+    height: 100vh;
+    gap: 20px;
+    padding: 20px;
+    background-color: $bg-color;
+    font-family: 'Roboto', sans-serif; // Material Font
+}
+
+/* Sidebar Styling */
+.sidebar {
+    padding-bottom: 50px;
+    overflow: auto;
+    max-height: 500px;
+    width: 280px;
+    flex-shrink: 0;
+
+    .selection-card {
+        height: 100%;
+
+        mat-card-header {
+            padding-bottom: 10px;
+        }
+    }
+
+    /* Estilo para la opción seleccionada */
+    ::v-deep .mat-mdc-list-option.mdc-list-item--selected {
+        background-color: #e8eaf6 !important; // Azul pálido
+        border-left: 4px solid $primary-color;
+
+        .option-container .main-info {
+            color: $primary-color;
+        }
+    }
+
+    .option-container {
+        display: flex;
+        flex-direction: column;
+        padding: 8px 0;
+        line-height: 1.2;
+
+        .main-info {
+            font-size: 1.1em;
+            color: #333;
+
+            strong {
+                font-weight: 700;
+            }
+        }
+
+        .sub-info {
+            font-size: 0.85em;
+            color: $text-sub;
+        }
+    }
+}
+
+/* Main Content Styling */
+.main-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    background: white;
+}
+
+/* Header Grid Styling (Muy compacta) */
+.header-data-card {
+    padding: 12px;
+
+    .header-grid {
+        display: grid;
+        // Automatiza las columnas para que se ajusten al ancho disponible
+        grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+        gap: 15px;
+        align-items: end; // Alinea los campos editables y no editables
+    }
+
+    // Estilo para campos de solo lectura
+    .data-field.read-only {
+        display: flex;
+        flex-direction: column;
+        padding-bottom: 5px; // Alinear con el input editable
+
+        .label {
+            font-size: 13px;
+            color: $text-sub;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .value {
+            font-size: 1.1em;
+            font-weight: 600;
+            color: #333;
+        }
+
+        &.large {
+            .value {
+                font-size: 1.2em;
+                font-family: monospace;
+            }
+        }
+
+        // monospace para albarán
+    }
+
+    // Reduce el padding de MatFormField para ser más compacto
+    ::v-deep .mat-mdc-form-field-subscript-sizing-dynamic {
+        padding-bottom: 0;
+    }
+
+    ::v-deep .mat-mdc-text-field-wrapper {
+        background-color: white;
+    }
+}
+
+/* Table and Totals Area */
+.table-totals-area {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    overflow: hidden; // Vital para el scroll de la tabla
+
+    .table-card {
+        flex: 1;
+        overflow: hidden; // Vital para el scroll
+        padding: 0; // Quitar padding para que la tabla llegue al borde
+    }
+
+    .table-scroll-container {
+        height: 100%;
+
+        // Estilos personalizados para la tabla Material
+        .custom-table {
+            width: 100%;
+
+            th {
+                font-weight: 600;
+                color: #333;
+            }
+        }
+    }
+
+    // Zona de Totales (Alineada a la derecha)
+    .totals-summary {
+        width: 320px;
+        align-self: flex-end;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        padding: 15px 20px;
+        background-color: white;
+        border-radius: 8px;
+        border: 1px solid $border-color;
+        margin-right: 25px;
+
+        .total-item {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.9em;
+            font-size: 14px;
+
+            .t-label {
+                color: $text-sub;
+            }
+
+            .t-value {
+                font-weight: 500;
+                color: #333;
+            }
+
+            // Estilo para valores negativos
+            .negative {
+                color: $negative-color;
+                font-weight: 700;
+            }
+
+            // Resaltado Neto
+            &.highlight-net {
+                margin-top: 5px;
+                padding-top: 10px;
+                border-top: 2px solid $primary-color;
+
+                .t-label {
+                    font-size: 15px;
+                    font-weight: 500;
+                    color: #3f87b5;
+                }
+
+                .t-value.price {
+                    font-size: 1.5em;
+                    letter-spacing: -1px;
+                }
+            }
+        }
+    }
+}
+
+// Estilo para estado vacío de la tabla (usando Ionic)
+.empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 200px;
+    color: $text-sub;
+
+    ion-icon {
+        font-size: 3em;
+        margin-bottom: 10px;
+    }
+}

@@ -29,7 +29,7 @@ ion-label {
 
 
 
-mat-form-field {
+mt-calendar mat-form-field {
     box-sizing: border-box !important;
     margin: 0 !important;
     padding: 0 !important;
@@ -146,7 +146,7 @@ ion-input::-webkit-outer-spin-button {
     display: none;
 }
 
-.mdc-floating-label {
+mt-calendar .mdc-floating-label {
     padding-bottom: 18px !important;
 }
 

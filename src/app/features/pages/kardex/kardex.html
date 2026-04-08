@@ -6,9 +6,12 @@
         </ion-col>
     </ion-row>
 
-    <mat-tab-group mat-stretch-tabs="false" mat-align-tabs="center">
-        <mat-tab label="First">KARDEX</mat-tab>
-        <mat-tab label="Second">CUO</mat-tab>
+    <mat-tab-group dynamicHeight>
+        <mat-tab label="KARDEX">
+            <mt-kardex [cboStore]="cboStoreList"></mt-kardex>
+        </mat-tab>
+        <mat-tab label="CUO">
+            <mt-cuo [cboStore]="cboStoreList"></mt-cuo>
+        </mat-tab>
     </mat-tab-group>
-
 </ion-grid>

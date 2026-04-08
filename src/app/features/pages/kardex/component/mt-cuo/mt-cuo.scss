@@ -1,0 +1,186 @@
+.table-container {
+    margin: 20px;
+    background: white;
+    border-radius: 8px;
+    overflow: hidden;
+
+    .filter-field {
+        width: 100%;
+        padding: 15px 20px 0;
+    }
+
+    table {
+        width: 100%;
+    }
+
+    // Estilo para la celda editable
+    .editable-cell {
+        width: 100%;
+        font-size: 13px;
+        margin-top: -10px; // Ajuste para centrar en la fila
+
+        ::v-deep .mat-mdc-text-field-wrapper {
+            background-color: transparent !important;
+        }
+    }
+
+    // Badges de colores para la columna Tabla
+    .badge {
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-size: 15px;
+        font-weight: 500 !important;
+        text-transform: uppercase;
+
+        &.venta {
+            background: #e3f2fd;
+            color: #1976d2;
+        }
+
+        &.compra {
+            background: #f1f8e9;
+            color: #388e3c;
+        }
+
+        &.traspaso {
+            background: #fff3e0;
+            color: #f57c00;
+        }
+    }
+}
+
+.compact-input {
+    width: 216px; // Tamaño fijo para que no baile la tabla
+    font-size: 15px;
+
+    // 1. Quitar el fondo gris y el espacio inferior de mensajes de error
+    ::v-deep {
+        .mat-mdc-text-field-wrapper {
+            background-color: transparent !important; // Fondo transparente
+            padding: 0 8px !important;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border-bottom: 1px solid #e0e0e0; // Línea sutil por defecto
+            border-radius: 4px 4px 0 0;
+
+            &:hover {
+                background-color: rgba(63, 81, 181, 0.04) !important; // Azul muy tenue al pasar el mouse
+                border-bottom-color: #3f51b5;
+            }
+        }
+
+        // 2. Quitar la línea gruesa de enfoque original de Material
+        .mdc-line-ripple {
+            display: none;
+        }
+
+        // 3. Ocultar el espacio de errores/hints para ganar espacio vertical
+        .mat-mdc-form-field-subscript-sizing-dynamic {
+            display: none;
+        }
+
+        // 4. Centrar el texto e icono
+        .mat-mdc-form-field-infix {
+            padding-top: 10px !important;
+            padding-bottom: 8px !important;
+            min-height: auto !important;
+        }
+
+    }
+
+    .edit-icon {
+        font-size: 18px;
+        height: 18px;
+        width: 18px;
+        color: #9e9e9e;
+        margin-right: 4px;
+    }
+
+    // Estilo cuando el input está enfocado (escribiendo)
+    &.mat-focused {
+        ::v-deep .mat-mdc-text-field-wrapper {
+            background-color: #ffffff !important;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            border-bottom: 2px solid #3f51b5;
+        }
+
+        .edit-icon {
+            color: #3f51b5;
+        }
+    }
+}
+
+
+// 1. Asegurar el centrado de la celda <td>
+.editable-td-glow {
+    text-align: center;
+    vertical-align: middle !important; // Centrado vertical HTML clásico
+    padding: 0 10px !important; // Solo padding horizontal
+    height: 50px; // Altura fija y limpia para la fila
+}
+
+.glow-input {
+  width: 200px;
+  display: inline-flex;
+  margin: 0 auto;
+
+  ::v-deep {
+    // 1. Eliminamos el contenedor de errores/hints para que no empuje el input
+    .mat-mdc-form-field-subscript-wrapper {
+      display: none !important;
+    }
+
+    // 2. Contenedor principal: Forzamos Flex y centrado vertical
+    .mat-mdc-text-field-wrapper {
+      height: 40px !important; // Ajusta según el alto que desees
+      padding: 0 12px !important;
+      display: flex;
+      align-items: center; 
+      justify-content: center;
+      background-color: transparent !important;
+    }
+
+    // 3. EL CAMBIO VITAL: Quitar el padding superior que Material pone por defecto
+    .mat-mdc-form-field-flex {
+      height: 100% !important;
+      align-items: center !important;
+    }
+
+    .mat-mdc-form-field-infix {
+      padding: 0 !important; // Esto elimina el espacio de la etiqueta y centra el texto
+      min-height: auto !important;
+      width: auto !important;
+      display: flex;
+      align-items: center;
+    }
+
+    // 4. Centrado del texto dentro del input nativo
+    input.mat-mdc-input-element {
+      text-align: center; // Centrado horizontal
+      margin: 0 !important;
+      padding: 0 !important;
+      height: auto !important;
+      line-height: normal !important; // Evita desplazamientos por tipografía
+      vertical-align: middle !important;
+    }
+
+    // 5. Estética del borde (opcional, para que se vea fino como en la imagen)
+    .mdc-notched-outline__lead,
+    .mdc-notched-outline__notch,
+    .mdc-notched-outline__trail {
+      border-color: rgba(0, 0, 0, 0.3) !important; // Borde suave
+    }
+  }
+
+  // Brillo al Focus
+  &.mat-focused {
+    ::v-deep .mat-mdc-text-field-wrapper {
+      border-color: #3f51b5 !important;
+      box-shadow: 0 0 8px rgba(63, 81, 181, 0.3) !important;
+    }
+  }
+}
+// Opcional: Centrar también la cabecera
+.text-center {
+    text-align: center !important;
+}

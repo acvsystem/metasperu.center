@@ -228,7 +228,6 @@ export class RrhhAsistencia {
 
   onCalendar(event: any): void {
 
-
     const { isPeriodo, isMultiSelect, isDefault, isRange, value } = event;
 
     if (isPeriodo) {

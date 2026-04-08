@@ -28,6 +28,7 @@ export class StoreService {
     private readonly API_URL = 'https://api.metasperu.net.pe/s1/center';
     private readonly API_URL_INVENTORY = 'https://api.metasperu.net.pe/s4/center/inventory';
     private readonly API_URL_RESOURCES_HUMAN = 'https://api.metasperu.net.pe/s5/center/resources/human';
+    private readonly API_URL_ACCOUNTING = 'https://api.metasperu.net.pe/s6/center/accounting';
     /**
      * Manejo centralizado de errores de HTTP
      */
@@ -233,6 +234,50 @@ export class StoreService {
             {
                 "codeBallot": codeBallot
             }
+        ).pipe(
+            catchError(this.handleError)
+        );
+    }
+
+    postKardex(bodyStore: any): Observable<any> {
+        return this.http.post(
+            `${this.API_URL_ACCOUNTING}/api/kardex/store`,
+            {
+                serieStore: bodyStore.serieStore,
+                socketId: bodyStore.socket,
+                init: bodyStore.init,
+                end: bodyStore.end
+            }
+        ).pipe(
+            catchError(this.handleError)
+        );
+    }
+
+    postKardexCamposLibres(bodyStore: any): Observable<any> {
+        return this.http.post(
+            `${this.API_URL_ACCOUNTING}/api/kardex/camposlibres`, bodyStore
+        ).pipe(
+            catchError(this.handleError)
+        );
+    }
+
+    postCuo(bodyStore: any): Observable<any> {
+        return this.http.post(
+            `${this.API_URL_ACCOUNTING}/api/cuo/store`,
+            {
+                serieStore: bodyStore.serieStore,
+                socketId: bodyStore.socket,
+                init: bodyStore.init,
+                end: bodyStore.end
+            }
+        ).pipe(
+            catchError(this.handleError)
+        );
+    }
+
+    postInsertCuo(bodyStore: any): Observable<any> {
+        return this.http.post(
+            `${this.API_URL_ACCOUNTING}/api/cuo/insert`, bodyStore
         ).pipe(
             catchError(this.handleError)
         );

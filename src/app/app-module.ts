@@ -40,6 +40,9 @@ import { MtMarcacionesEmployes } from './shared/component/mt-datatable/component
 import { MtViewPapeleta } from './shared/component/mt-view-papeleta/mt-view-papeleta';
 import { RrhhHorario } from './features/pages/rrhh-horario/rrhh-horario';
 import { Kardex } from './features/pages/kardex/kardex';
+import { MtKardex } from './features/pages/kardex/component/mt-kardex/mt-kardex';
+import { MatListModule } from '@angular/material/list';
+import { MtCuo } from './features/pages/kardex/component/mt-cuo/mt-cuo';
 
 registerLocaleData(localeEsPe);
 @NgModule({
@@ -59,7 +62,9 @@ registerLocaleData(localeEsPe);
     MtMarcacionesEmployes,
     MtViewPapeleta,
     RrhhHorario,
-    Kardex
+    Kardex,
+    MtKardex,
+    MtCuo
   ],
   imports: [
     IonicModule.forRoot(),
@@ -83,6 +88,7 @@ registerLocaleData(localeEsPe);
     AppRoutingModule,
     MatDatepickerModule,
     MatChipsModule,
+    MatListModule,
     ServiceWorkerModule.register('ngsw-worker.js', {
       enabled: !isDevMode(),
       registrationStrategy: 'registerWhenStable:30000'

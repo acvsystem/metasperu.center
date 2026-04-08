@@ -16,6 +16,7 @@ export class MtSelect {
   @Input() modalUser: string = "";
   @Input() checkAll: boolean = false;
   @Input() id: string = "";
+  @Input() autoValue: string = "";
   isAllSelected = false;
 
   isIndeterminate = false;
@@ -71,6 +72,10 @@ export class MtSelect {
       if (this.checkAll) {
         this.toggleSelectAll();
       }
+    }
+
+    if (changes['autoValue'] && changes['autoValue'].currentValue) {
+      this.setDefaultItem(this.autoValue);
     }
   }
 
@@ -131,7 +136,7 @@ export class MtSelect {
       key: (selected || {}).key,
       value: (selected || {}).value
     };
-  
+
     this.selectedText = (selected || {}).value;
     this.selectdOption.emit(this.optionSelected);
   }

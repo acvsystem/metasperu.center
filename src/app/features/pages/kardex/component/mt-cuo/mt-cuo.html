@@ -1,0 +1,81 @@
+<div style="padding-top: 10px;">
+    <ion-row>
+        <ion-col size="12" size-md="4" size-lg="2">
+            <div class="control-container">
+                <mt-select [data]="cboStore" label="Seleccione Unidad Servicio" title="Tienda"
+                    (selectdOption)="onChangeSelect($event)">
+                </mt-select>
+            </div>
+        </ion-col>
+        <ion-col size="12" size-md="4" size-lg="2">
+            <mt-calendar [isPeriodo]="false" [isMultiSelect]="false" [isDefault]="false" [isRange]="true"
+                placeholder="Seleccione la fecha" (afterChange)="onCalendar($event)"></mt-calendar>
+        </ion-col>
+        <ion-col size="12" size-md="4" size-lg="4" style="display: flex;align-items: center">
+            <button type="button" matTooltip="Buscar kardex" (click)="onSearchCuo()"
+                style="display: flex;justify-content: center;align-items: center;margin-right: 10px;"
+                class="btn btn-primary btn-sm mobil-margin-button"><mat-icon>search</mat-icon>
+            </button>
+
+            <button type="button" matTooltip="Registrar"
+                style="display: flex;justify-content: center;align-items: center;" (click)="onSaveCuo()"
+                class="btn btn-primary btn-sm mobil-margin-button"><mat-icon>article_shortcut</mat-icon>
+                <span style="margin-left: 5px;">Registrar cuo</span>
+            </button>
+        </ion-col>
+    </ion-row>
+    <ion-row>
+        <ion-col>
+            <div class="table-container mat-elevation-z8">
+                <table mat-table [dataSource]="dataSource">
+
+                    <ng-container matColumnDef="tabla">
+                        <th mat-header-cell *matHeaderCellDef> TABLA </th>
+                        <td mat-cell *matCellDef="let element">
+                            <span class="badge" [ngClass]="element.dtTabla.toLowerCase()">{{element.dtTabla}}</span>
+                        </td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="documento">
+                        <th mat-header-cell *matHeaderCellDef> DOCUMENTO </th>
+                        <td mat-cell *matCellDef="let element"> {{element.dtDocumento}} </td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="fecha">
+                        <th mat-header-cell *matHeaderCellDef> FECHA </th>
+                        <td mat-cell *matCellDef="let element"> {{element.dtFecha | date:'dd/MM/yyyy'}} </td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="comentario">
+                        <th mat-header-cell *matHeaderCellDef> COMENTARIO </th>
+                        <td mat-cell *matCellDef="let element"> {{element.dtComentario}} </td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="cuo">
+                        <th mat-header-cell *matHeaderCellDef class="text-center"> CUO (Editable) </th>
+                        <td mat-cell *matCellDef="let element" class="editable-td-glow">
+                            <mat-form-field appearance="outline" subscriptSizing="dynamic" class="glow-input">
+                                <input matInput [value]="element.dtCuo" placeholder="Ingrese CUO"
+                                    (change)="onCuoChange(element, $any($event.target).value)">
+                            </mat-form-field>
+                        </td>
+                    </ng-container>
+
+                    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+
+                    <tr class="mat-row" *matNoDataRow>
+                        <td class="mat-cell" colspan="5">No se encontraron datos.</td>
+                    </tr>
+                </table>
+
+                <mat-paginator [pageSizeOptions]="[10, 25, 100]" aria-label="Seleccionar página"></mat-paginator>
+            </div>
+        </ion-col>
+    </ion-row>
+</div>
+
+@if (isNotification) {
+<mt-notification [type]="typeNotification" [message]="messageNotification"
+    (onClose)="cerrarNotificacion()"></mt-notification>
+}

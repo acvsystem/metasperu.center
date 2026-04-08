@@ -1,0 +1,182 @@
+<div style="padding-top: 10px;">
+    <ion-row>
+        <ion-col size="12" size-md="4" size-lg="2">
+            <div class="control-container">
+                <mt-select [data]="cboStore" label="Seleccione Unidad Servicio" title="Tienda"
+                    (selectdOption)="onChangeSelect($event)">
+                </mt-select>
+            </div>
+        </ion-col>
+        <ion-col size="12" size-md="4" size-lg="2">
+            <mt-calendar [isPeriodo]="false" [isMultiSelect]="false" [isDefault]="false" [isRange]="true"
+                placeholder="Seleccione la fecha" (afterChange)="onCalendar($event)"></mt-calendar>
+        </ion-col>
+        <ion-col size="12" size-md="4" size-lg="1" style="display: flex;align-items: center">
+            <button type="button" matTooltip="Buscar kardex" (click)="onSearchKardex()"
+                style="display: flex;justify-content: center;align-items: center;margin-right: 10px;"
+                class="btn btn-primary btn-sm mobil-margin-button"><mat-icon>search</mat-icon>
+            </button>
+        </ion-col>
+    </ion-row>
+
+    <div class="kardex-dashboard">
+        <aside class="sidebar">
+            <mat-card appearance="outlined" class="selection-card">
+                <mat-card-header>
+                    <mat-card-title>Comprobantes</mat-card-title>
+                    <mat-card-subtitle>2 opciones disponibles</mat-card-subtitle>
+                </mat-card-header>
+
+                <mat-selection-list [multiple]="false">
+                    @for (alb of dataAlbaran; track alb) {
+                    <mat-list-option [value]="alb.cmpNumero" (click)="onSelectAlbaran(alb)">
+                        <div class="option-container">
+                            <div class="main-info">{{alb.cmpSerie}} | <strong>{{alb.cmpNumero}}</strong></div>
+                            <div class="sub-info">Ref: {{alb.cmpSuAlbaran}}</div>
+                        </div>
+                    </mat-list-option>
+                    }
+                </mat-selection-list>
+            </mat-card>
+        </aside>
+
+        <section class="main-content">
+
+            <mat-card appearance="outlined" class="header-data-card">
+                <div class="header-grid">
+                    <div class="data-field read-only large">
+                        <span class="label">Serie</span>
+                        <span class="value">{{albSelectionated.cmpSerie}}</span>
+                    </div>
+
+                    <div class="data-field read-only large">
+                        <span class="label">Número</span>
+                        <span class="value">{{albSelectionated.cmpNumero}}</span>
+                    </div>
+
+                    <div class="data-field read-only large">
+                        <span class="label">Albarán Referencia</span>
+                        <span class="value">{{albSelectionated.cmpSuAlbaran}}</span>
+                    </div>
+
+                    <div class="data-field read-only large">
+                        <span class="label">Fecha</span>
+                        <span class="value">{{albSelectionated.cmpFecha}}</span>
+                    </div>
+
+                    <div class="data-field read-only large">
+                        <span class="label">Hora</span>
+                        <span class="value">{{albSelectionated.cmpHora}}</span>
+                    </div>
+                </div>
+            </mat-card>
+
+            <div class="table-totals-area">
+                <aside class="totals-summary">
+                    <div class="total-item">
+                        <span class="t-label">Total bruto</span>
+                        <span class="t-value">$ {{albSelectionated.dtBruto}}</span>
+                    </div>
+                    <div class="total-item">
+                        <span class="t-label">Total Cargos/Dtos.</span>
+                        <span class="t-value">$ {{albSelectionated.dtTDescuento}}</span>
+                    </div>
+                    <div class="total-item">
+                        <span class="t-label">Base imponible</span>
+                        <span class="t-value">$ {{albSelectionated.dtBaseImponible}}</span>
+                    </div>
+                    <div class="total-item">
+                        <span class="t-label">Impuestos - USD</span>
+                        <span class="t-value">$ {{albSelectionated.dtImpuesto}}</span>
+                    </div>
+
+                    <div class="total-item highlight-net">
+                        <span class="t-label">Total Neto USD</span>
+                        <span class="t-value price">$ {{albSelectionated.dtTotalBruto}}</span>
+                    </div>
+                </aside>
+            </div>
+        </section>
+
+
+        <section class="main-content">
+
+            <mat-card appearance="outlined" class="header-data-card">
+                <div class="header-grid">
+                    <ion-row class="ion-align-items-center"
+                        style="border-bottom: 2px solid #f4f4f4; margin-bottom: 20px;">
+                        <ion-col size="12" size-md="8">
+                            <div style="display: flex;align-items: center;">
+                                <h3 class="title-page" style="margin: 0; font-weight: 700; color: #25282b;">Campos
+                                    Libres
+                                </h3>
+                                <h5 style="margin: 0;color: #2c3e50;margin-left: 10px;" >- {{albSelectionated.cmpSerie}} | {{albSelectionated.cmpNumero}}</h5>
+                            </div>
+                            <p style="color: #7f8c8d; margin: 4px 0 15px 0;">Registro de campos libres</p>
+                        </ion-col>
+                        <ion-col size="12" size-md="4" style="display: flex;justify-content: end;align-items: center;">
+                            <button type="button" matTooltip="Registrar" (click)="onSaveCamposLibres()"
+                                style="display: flex;justify-content: center;align-items: center;"
+                                class="btn btn-primary btn-sm mobil-margin-button"><mat-icon>article_shortcut</mat-icon>
+                                <span style="margin-left: 5px;">Registrar</span>
+                            </button>
+                        </ion-col>
+                    </ion-row>
+                </div>
+                <ion-row>
+                    <ion-col size="12" size-md="4" size-lg="6">
+                        <mt-input (keyup)="onChangeInput($event,'v_numero_despacho')" label="Despacho PO"
+                            [autoText]="v_numero_despacho" placeholder="Ingrese datos..."></mt-input>
+                    </ion-col>
+                    <ion-col size="12" size-md="4" size-lg="6">
+                        <mt-input (keyup)="onChangeInput($event,'v_contenedor')" label="Contenedor"
+                            [autoText]="v_contenedor" placeholder="Ingrese datos..."></mt-input>
+                    </ion-col>
+                    <ion-col size="12" size-md="4" size-lg="6">
+                        <mt-input (keyup)="onChangeInput($event,'v_tasa_cambio')" label="Tasa de cambio"
+                            [autoText]="v_tasa_cambio" placeholder="Ingrese datos..."></mt-input>
+                    </ion-col>
+                    <ion-col size="12" size-md="4" size-lg="6">
+                        <mt-input (keyup)="onChangeInput($event,'v_total_gastos')" label="Total de gastos (En soles)"
+                            [autoText]="v_total_gastos" placeholder="Ingrese datos..."></mt-input>
+                    </ion-col>
+                    <ion-col size="12" size-md="4" size-lg="6">
+                        <mt-input (keyup)="onChangeInput($event,'v_flete_acarreo')" label="Flete y acarreo (En soles)"
+                            [autoText]="v_flete_acarreo" placeholder="Ingrese datos..."></mt-input>
+                    </ion-col>
+                    <ion-col size="12" size-md="4" size-lg="6">
+                        <mt-input (keyup)="onChangeInput($event,'v_registro_sanitario')"
+                            [autoText]="v_registro_sanitario" label="Registro sanitario (En soles)"
+                            placeholder="Ingrese datos..."></mt-input>
+                    </ion-col>
+                    <ion-col size="12" size-md="4" size-lg="6">
+                        <mt-select [data]="cboMotivoList" [autoValue]="v_motivo"
+                            (selectdOption)="onChangeSelect($event,'v_motivo')" [isMultiselect]=false
+                            label="Seleccione motivo" title="Motivo">
+                        </mt-select>
+                    </ion-col>
+                    <ion-col size="12" size-md="4" size-lg="6">
+                        <mt-select [data]="cboTipoDocList" [autoValue]="v_tipo_documento"
+                            (selectdOption)="onChangeSelect($event,'v_tipo_documento')" [isMultiselect]=false
+                            label="Tipo documento" title="Tipo documento">
+                        </mt-select>
+                    </ion-col>
+                    <ion-col size="12" size-md="4" size-lg="6">
+                        <mt-input (keyup)="onChangeInput($event,'v_numero_serie')" label="Numero serie documento"
+                            [autoText]="v_numero_serie" placeholder="Ingrese datos..."></mt-input>
+                    </ion-col>
+                    <ion-col size="12" size-md="4" size-lg="6">
+                        <mt-input (keyup)="onChangeInput($event,'v_observacion')" label="Observacion"
+                            [autoText]="v_observacion" placeholder="Ingrese datos..."></mt-input>
+                    </ion-col>
+
+                </ion-row>
+            </mat-card>
+        </section>
+    </div>
+
+    @if (isNotification) {
+    <mt-notification [type]="typeNotification" [message]="messageNotification"
+        (onClose)="cerrarNotificacion()"></mt-notification>
+    }
+</div>
