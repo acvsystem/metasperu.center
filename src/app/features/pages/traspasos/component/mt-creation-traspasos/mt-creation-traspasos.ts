@@ -26,6 +26,8 @@ export class MtCreationTraspasos {
   messageNotification: string = '';
   unsOrigen: string = '';
   unsDestino: string = '';
+  searchCodigoBarra: string = '';
+  searchCantidad: number = 0;
 
 
   columnsInventory: tableColumns[] = [
@@ -266,7 +268,7 @@ export class MtCreationTraspasos {
           details: detalleProductos || []
         };
 
-        this.storeService.postInsertTraspasos(body).subscribe((r)=>{
+        this.storeService.postInsertTraspasos(body).subscribe((r) => {
           console.log(r);
         });
 
@@ -282,6 +284,50 @@ export class MtCreationTraspasos {
     });
   }
 
+
+  onChangeInput(ev: any, property?: string) {
+    const value = ev.target.value;
+
+    if (property === 'searchCantidad') {
+      this.searchCantidad = Number(value);
+    }
+
+    if (property === 'searchCodigoBarra') {
+      this.searchCodigoBarra = String(value).trim();
+    }
+
+    if (this.searchCodigoBarra.length >= 12) {
+
+      if (this.searchCantidad <= 0) {
+        this.messageNotification = `Ingrese la cantidad a solicitar.`;
+        this.abrirNotificacion('danger');
+        return;
+      }
+
+      if (this.selectedUnidServicio === '' || this.storesSelectedOrigen.length === 0 || this.storesSelectedDestino.length === 0) {
+        this.messageNotification = 'Seleccione Unidad de Servicio, Tienda Origen y Tienda Destino.';
+        this.abrirNotificacion('danger');
+        return;
+      }
+
+      let dataSearch = {
+        codigo_barra: String(this.searchCodigoBarra ?? '').trim(),
+        cantidad_solicitada: this.searchCantidad
+      };
+
+      this.dataExcelImport.push(dataSearch);
+
+      const body = {
+        "serieStore": this.storesSelectedOrigen[0].serie,
+        "socketId": this.socketInventoryService.socketID,
+        "dataCode": this.dataExcelImport
+      }
+
+      this.storeService.postOneInventoryStore(body).subscribe((data: any) => {
+        console.log(data);
+      });
+    }
+  }
 
   obtenerFechaMysql(): string {
     const ahora = new Date();
