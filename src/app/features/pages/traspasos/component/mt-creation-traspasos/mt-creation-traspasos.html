@@ -39,15 +39,6 @@
                     Traspaso</span>
             </button>
         </ion-col>
-        <ion-col sizeXs="12" sizeSm="12" sizeMd="12" sizeLg="3"
-            style="display: flex;justify-content: end;align-items: center;">
-            <div class="footer-stats">
-                <span style="margin-right: 50px;font-size: 17px;"><span style="font-weight: 500;">Items:</span> {{
-                    dataInventory.length }}</span>
-                <span style="margin-right: 50px;font-size: 17px;"><span style="font-weight: 500;">Total Unidades:</span>
-                    {{ calcularSumaTotal() }}</span>
-            </div>
-        </ion-col>
     </ion-row>
     <ion-row>
         <ion-col sizeXs="12" sizeSm="12" sizeMd="12" sizeLg="2">
@@ -57,6 +48,15 @@
         <ion-col sizeXs="12" sizeSm="12" sizeMd="12" sizeLg="1">
             <mt-input (keyup)="onChangeInput($event,'searchCantidad')" label="Cantidad"
                 placeholder="Cantidad"></mt-input>
+        </ion-col>
+        <ion-col sizeXs="12" sizeSm="12" sizeMd="12" sizeLg="9"
+            style="display: flex;justify-content: end;align-items: center;">
+            <div class="footer-stats">
+                <span style="margin-right: 50px;font-size: 17px;"><span style="font-weight: 500;">Items:</span> {{
+                    dataInventory.length }}</span>
+                <span style="margin-right: 50px;font-size: 17px;"><span style="font-weight: 500;">Total Unidades:</span>
+                    {{ calcularSumaTotal() }}</span>
+            </div>
         </ion-col>
     </ion-row>
     <ion-row>
