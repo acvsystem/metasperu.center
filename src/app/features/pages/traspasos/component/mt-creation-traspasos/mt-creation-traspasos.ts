@@ -219,18 +219,40 @@ export class MtCreationTraspasos {
     window.URL.revokeObjectURL(url);
 
     // 5. Preparar envío al servidor (Metas Perú API)
-    const nmCarpeta = this.onVerificarTipoTienda(); // Asumo que usas esto para la ruta real
+
+    let tipoTienda = "";
+
+    if ((this.unsOrigen == 'VSBA' && this.unsDestino == 'VSBA')) {
+      tipoTienda = 'VSBA';
+    }
+
+    if ((this.unsOrigen == 'VSBA' && this.unsDestino == 'VSFA')) {
+      tipoTienda = 'VSBA_VSFA';
+    }
+
+    if ((this.unsOrigen == 'VSFA' && this.unsDestino == 'VSBA')) {
+      tipoTienda = 'VSFA_VSBA';
+    }
+
+    if ((this.unsOrigen == 'VSFA' && this.unsDestino == 'VSFA')) {
+      tipoTienda = 'VSFA';
+    }
+
+    if (this.unsOrigen == 'BBW' && this.unsDestino == 'BBW') {
+      tipoTienda = 'BBW';
+    }
+
     const archivo = new File([blob], fileName, { type: 'text/plain' });
 
     const formData = new FormData();
     formData.append('file', archivo);
-    formData.append('ftpDirectorio', nmCarpeta);
+    formData.append('ftpDirectorio', tipoTienda);
     formData.append('origenStore', almacenOrigen.nombre || 'Origen'); // Para el cuerpo del email
     formData.append('destinoStore', almacenDestino.nombre || 'Destino');
     formData.append('email', 'andrecanalesv@gmail.com'); // El correo del solicitante
-
+    console.log('FormData preparado para envío:', tipoTienda);
     // 6. Suscripción con manejo de estados
-    this.storeService.postTraspasos(formData).subscribe({
+    /*this.storeService.postTraspasos(formData).subscribe({
       next: (resp) => {
         this.messageNotification = resp.message;
         this.abrirNotificacion(resp.status);
@@ -241,7 +263,7 @@ export class MtCreationTraspasos {
         this.messageNotification = 'Error al procesar el traspaso.';
         this.abrirNotificacion('danger');
       }
-    });
+    });*/
   }
 
 
