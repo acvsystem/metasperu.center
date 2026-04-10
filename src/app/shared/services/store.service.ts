@@ -298,4 +298,12 @@ export class StoreService {
             catchError(this.handleError)
         );
     }
+
+    getTraspasos(): Observable<any> {
+        return this.http.get(
+            `${this.API_URL_INVENTORY}/api/inventory/traspasos`
+        ).pipe(
+            catchError(this.handleError)
+        );
+    }
 }
