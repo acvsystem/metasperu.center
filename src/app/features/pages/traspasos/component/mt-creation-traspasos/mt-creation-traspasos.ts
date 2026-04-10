@@ -250,9 +250,9 @@ export class MtCreationTraspasos {
     formData.append('origenStore', almacenOrigen.nombre || 'Origen'); // Para el cuerpo del email
     formData.append('destinoStore', almacenDestino.nombre || 'Destino');
     formData.append('email', 'andrecanalesv@gmail.com'); // El correo del solicitante
-    console.log('FormData preparado para envío:', tipoTienda);
+    console.log('FormData preparado para envío:', this.unsOrigen, this.unsDestino, tipoTienda);
     // 6. Suscripción con manejo de estados
-    /*this.storeService.postTraspasos(formData).subscribe({
+   /* this.storeService.postTraspasos(formData).subscribe({
       next: (resp) => {
         this.messageNotification = resp.message;
         this.abrirNotificacion(resp.status);
