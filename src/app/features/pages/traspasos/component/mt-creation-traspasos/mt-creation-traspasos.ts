@@ -4,6 +4,7 @@ import { StoreService } from '@metasperu/services/store.service';
 import * as XLSX from 'xlsx';
 import { tableColumns } from '../../../rrhh-asistencia/rrhh-asistencia';
 export type NotificationType = 'success' | 'warning' | 'danger';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'mt-creation-traspasos',
@@ -43,7 +44,7 @@ export class MtCreationTraspasos {
 
   displayedColumnsInventory = this.columnsInventory.map(col => col.matColumnDef);
 
-  constructor(private socketInventoryService: SocketInventoryService, private storeService: StoreService) { }
+  constructor(private socketInventoryService: SocketInventoryService, private storeService: StoreService, private router: Router) { }
 
   ngOnInit() {
     this.socketInventoryService.onOneInvenrotyStore((data: any) => {
@@ -135,6 +136,12 @@ export class MtCreationTraspasos {
     };
 
     reader.readAsArrayBuffer(file);
+  }
+
+  onNewTraspaso() {
+    this.router.navigate(['/traspaso_inventario', { ts: Date.now() }], {
+      replaceUrl: true
+    });
   }
 
   onSearchInventory() {

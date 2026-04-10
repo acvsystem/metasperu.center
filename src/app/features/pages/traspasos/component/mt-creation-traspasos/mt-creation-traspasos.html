@@ -24,13 +24,18 @@
             </div>
         </ion-col>
         <ion-col sizeXs="12" sizeSm="12" sizeMd="3" sizeLg="3" style="display: flex;align-items: center;">
+            <button type="button" matTooltip="Generar Traspaso" (click)="onNewTraspaso()"
+                style="display: flex;justify-content: center;align-items: center;margin-right: 10px;"
+                class="btn btn-primary btn-sm mobil-margin-button"><mat-icon>refresh</mat-icon><span>Nevo
+                    Traspaso</span>
+            </button>
             <input #fileInput hidden type="file" (change)="onImportarExcel($event)" accept=".xml,.xlsx" />
             <button type="file" matTooltip="Importar Productos" class="btn btn-success btn-sm btn-impor-excel"
                 (click)="fileInput.click()"><mat-icon>upload</mat-icon> <span>Importar Excel</span></button>
 
             <button type="button" matTooltip="Generar Traspaso" (click)="onGenerarTraspaso()"
                 style="display: flex;justify-content: center;align-items: center;margin-left: 10px;"
-                class="btn btn-primary btn-sm mobil-margin-button"><mat-icon>trolley</mat-icon><span>Generar
+                class="btn btn-danger btn-sm mobil-margin-button"><mat-icon>trolley</mat-icon><span>Generar
                     Traspaso</span>
             </button>
         </ion-col>
@@ -46,10 +51,12 @@
     </ion-row>
     <ion-row>
         <ion-col sizeXs="12" sizeSm="12" sizeMd="12" sizeLg="2">
-            <mt-input (keyup)="onChangeInput($event,'searchCodigoBarra')" label="Codigo barra" placeholder="Buscar codigo barra"></mt-input>
+            <mt-input (keyup)="onChangeInput($event,'searchCodigoBarra')" label="Codigo barra"
+                placeholder="Buscar codigo barra"></mt-input>
         </ion-col>
         <ion-col sizeXs="12" sizeSm="12" sizeMd="12" sizeLg="1">
-            <mt-input (keyup)="onChangeInput($event,'searchCantidad')" label="Cantidad" placeholder="Cantidad"></mt-input>
+            <mt-input (keyup)="onChangeInput($event,'searchCantidad')" label="Cantidad"
+                placeholder="Cantidad"></mt-input>
         </ion-col>
     </ion-row>
     <ion-row>
