@@ -43,6 +43,9 @@ import { Kardex } from './features/pages/kardex/kardex';
 import { MtKardex } from './features/pages/kardex/component/mt-kardex/mt-kardex';
 import { MatListModule } from '@angular/material/list';
 import { MtCuo } from './features/pages/kardex/component/mt-cuo/mt-cuo';
+import { Traspasos } from './features/pages/traspasos/traspasos';
+import { MtCreationTraspasos } from './features/pages/traspasos/component/mt-creation-traspasos/mt-creation-traspasos';
+import { MtRegistrosTraspasos } from './features/pages/traspasos/component/mt-registros-traspasos/mt-registros-traspasos';
 
 registerLocaleData(localeEsPe);
 @NgModule({
@@ -64,7 +67,10 @@ registerLocaleData(localeEsPe);
     RrhhHorario,
     Kardex,
     MtKardex,
-    MtCuo
+    MtCuo,
+    Traspasos,
+    MtCreationTraspasos,
+    MtRegistrosTraspasos
   ],
   imports: [
     IonicModule.forRoot(),

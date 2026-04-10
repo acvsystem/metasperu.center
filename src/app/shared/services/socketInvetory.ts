@@ -28,7 +28,7 @@ export class SocketInventoryService {
         this.socket.on('connect', () => {
             console.log('Conectado al servicio de inventario');
             //this.socket?.emit('registrar_dashboard');
-            //this.socketID = this.socket?.id;
+            this.socketID = this.socket?.id;
         });
 
     }
@@ -43,4 +43,7 @@ export class SocketInventoryService {
         this.socket?.on('update_inventory', callback);
     }
 
+    onOneInvenrotyStore(callback: (data: any) => void) {
+        this.socket?.on('dashboard_response_one_store_inventory', callback);
+    }
 }

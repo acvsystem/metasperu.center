@@ -46,9 +46,10 @@
                 </td>
                 }@else{
                 <td mat-cell *matCellDef="let element">
-                    
+
                     @if(col.propertyValue == 'horasEfectivas'){
-                        {{element[col.propertyValue]}} <span style="color: green;"  *ngIf="element['isPapeleta'] == 'con papeleta'">+{{element['horaSolicitada']}}</span>
+                    {{element[col.propertyValue]}} <span style="color: green;"
+                        *ngIf="element['isPapeleta'] == 'con papeleta'">+{{element['horaSolicitada']}}</span>
                     }@else if(col.propertyValue == 'rango' && element[col.propertyValue] == 'Sin Horario'){
                     <span class="badge text-bg-danger">
                         {{element[col.propertyValue]}}
@@ -78,6 +79,16 @@
                     <span class="badge text-bg-danger">{{element[col.propertyValue]}}</span>
                     }@else if(col.propertyValue == 'marcacionesLen' && element[col.propertyValue] == 2){
                     <span class="badge text-bg-primary">{{element[col.propertyValue]}}</span>
+                    }@else if(col.propertyValue == 'cStatus' && element[col.propertyValue] == 'Correcto'){
+                    <span class="badge text-bg-primary">Correcto</span>
+                    }@else if(col.propertyValue == 'cStatus' && element[col.propertyValue] == 'Faltante'){
+                    <span class="badge text-bg-danger">Faltante</span>
+                    }@else if(col.propertyValue == 'cAccion'){
+                    <button matTooltip="Eliminar" id="searchProducto" type="button" class="btn btn-danger btn-sm"
+                        (click)="onDeleteRow(element)"
+                        style="padding-bottom: 0px;padding-left: 2px;padding-right: 2px;padding-top: 0;margin-right: 3px;">
+                        <mat-icon style="margin-top: 6px;">delete_forever</mat-icon>
+                    </button>
                     }@else if(col.propertyValue == 'accion'){
 
                     <button matTooltip="Marcaciones" id="searchProducto" type="button" class="btn btn-primary btn-sm"

@@ -165,6 +165,14 @@ export class MtDatatable implements OnInit, OnChanges, AfterViewInit {
       }
     });
   }
+
+  onDeleteRow(row: any) {
+    // 1. Filtramos el arreglo actual eliminando el ID seleccionado
+    const data = this.dataSource.data.filter(item => item.cCodigoBarra !== row.cCodigoBarra);
+
+    // 2. Sobreescribimos la data del datasource (esto refresca la tabla)
+    this.dataSource.data = data;
+  }
 }
 
 // Interfaces mejoradas

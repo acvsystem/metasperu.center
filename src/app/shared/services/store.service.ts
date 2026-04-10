@@ -282,4 +282,20 @@ export class StoreService {
             catchError(this.handleError)
         );
     }
+
+    postOneInventoryStore(bodyStore: any): Observable<any> {
+        return this.http.post(
+            `${this.API_URL_INVENTORY}/api/inventory/one/search`, bodyStore
+        ).pipe(
+            catchError(this.handleError)
+        );
+    }
+
+    postTraspasos(formData: any): Observable<any> {
+        return this.http.post(
+            `${this.API_URL_INVENTORY}/api/inventory/traspasos`, formData
+        ).pipe(
+            catchError(this.handleError)
+        );
+    }
 }

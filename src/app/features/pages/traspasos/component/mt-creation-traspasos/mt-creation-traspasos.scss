@@ -1,0 +1,30 @@
+.conteiner-cbo-store {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.control-container {
+    width: 50%;
+}
+
+.content-icon {
+    border: solid 1px #a3a3a3;
+    border-radius: 4px;
+    color: #585858;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    .icon {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+}
+
+.btn-impor-excel {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
