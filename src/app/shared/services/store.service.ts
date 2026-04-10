@@ -306,4 +306,12 @@ export class StoreService {
             catchError(this.handleError)
         );
     }
+
+    postInsertTraspasos(body: any): Observable<any> {
+        return this.http.post(
+            `${this.API_URL_INVENTORY}/api/inventory/traspasos/insert`, body
+        ).pipe(
+            catchError(this.handleError)
+        );
+    }
 }

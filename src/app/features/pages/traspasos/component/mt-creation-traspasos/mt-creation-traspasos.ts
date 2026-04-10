@@ -241,6 +241,35 @@ export class MtCreationTraspasos {
     // 6. Suscripción con manejo de estados
     this.storeService.postTraspasos(formData).subscribe({
       next: (resp) => {
+
+        let detalleProductos: any = [];
+
+        this.dataInventory.filter((dt) => {
+          (detalleProductos || []).push({
+            barcode: dt.cCodigoBarra,
+            article_code: dt.cCodigoArticulo,
+            description: dt.cDescripcion,
+            size: dt.cTalla,
+            color: dt.cColor,
+            stock: dt.cStock,
+            stock_required: dt.cCantidadSolicitada
+          });
+        });
+
+        const body = {
+          unid_service: this.selectedUnidServicio || "",
+          store_origin: almacenOrigen.nombre || "",
+          store_destination: almacenDestino.nombre || "",
+          code_warehouse_origin: almacenOrigen.codigo_almacen || "",
+          code_warehouse_destination: almacenDestino.codigo_almacen || "",
+          datetime: this.obtenerFechaMysql(),
+          details: detalleProductos || []
+        };
+
+        this.storeService.postInsertTraspasos(body).subscribe((r)=>{
+          console.log(r);
+        });
+
         this.messageNotification = resp.message;
         this.abrirNotificacion(resp.status);
         // Aquí podrías disparar un SweetAlert o notificación de éxito
@@ -251,6 +280,21 @@ export class MtCreationTraspasos {
         this.abrirNotificacion('danger');
       }
     });
+  }
+
+
+  obtenerFechaMysql(): string {
+    const ahora = new Date();
+
+    const año = ahora.getFullYear();
+    const mes = String(ahora.getMonth() + 1).padStart(2, '0'); // Meses van de 0 a 11
+    const dia = String(ahora.getDate()).padStart(2, '0');
+
+    const horas = String(ahora.getHours()).padStart(2, '0');
+    const minutos = String(ahora.getMinutes()).padStart(2, '0');
+    const segundos = String(ahora.getSeconds()).padStart(2, '0');
+
+    return `${dia}-${mes}-${año} ${horas}:${minutos}:${segundos}`;
   }
 
   onVerificarTipoTienda(): string {
