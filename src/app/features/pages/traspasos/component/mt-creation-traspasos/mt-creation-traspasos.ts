@@ -184,47 +184,63 @@ export class MtCreationTraspasos {
   }
 
   exportarTxt() {
-    let min = 1000;
-    let max = 99000;
-    let idFile = Math.floor(Math.random() * (max - min + 1) + min);
-    // 1. Definir los encabezados (opcional, si los necesitas)
-    // const encabezado = "cOrigen|cDestino|CCodigoArticulo|cColor|cTalla|cCantidadSolicitada\n";
-    const almacenOrigen: any = this.storeList.find(store => store.serie === this.storesSelectedOrigen[0].serie);
-    const almacenDestino: any = this.storeList.find(store => store.serie === this.storesSelectedDestino[0].serie);
-    this.unsOrigen = almacenOrigen['tipo_tienda'];
-    this.unsDestino = almacenDestino['tipo_tienda'];
+    // 1. Generar ID único más robusto
+    const idFile = Math.floor(Math.random() * 98001) + 1000;
+    const fileName = `traspaso_stock_${idFile}.txt`;
 
-    // 2. Transformar el array de objetos a líneas de texto
-    const contenido = this.dataInventory.map(item => {
-      return [
-        almacenOrigen['codigo_almacen'], // O la variable donde guardes el origen
-        almacenDestino['codigo_almacen'], // O la variable donde guardes el destino
-        item.cCodigoArticulo,
-        item.cColor,
-        item.cTalla,
-        item.cCantidadSolicitada
-      ].join(' | '); // Unimos cada campo con el pipe
-    }).join('\n'); // Unimos cada fila con un salto de línea
+    // 2. Obtener almacenes con desestructuración y seguridad
+    const almacenOrigen = this.storeList.find(s => s.serie === this.storesSelectedOrigen[0]?.serie);
+    const almacenDestino = this.storeList.find(s => s.serie === this.storesSelectedDestino[0]?.serie);
 
-    // 3. Crear el archivo y descargarlo
+    if (!almacenOrigen || !almacenDestino) {
+      console.error('No se pudo determinar el origen o destino');
+      return;
+    }
+
+    this.unsOrigen = almacenOrigen.tipo_tienda;
+    this.unsDestino = almacenDestino.tipo_tienda;
+
+    // 3. Transformar datos (usando template literals para mayor claridad)
+    const contenido = this.dataInventory
+      .map(item =>
+        `${almacenOrigen.codigo_almacen} | ${almacenDestino.codigo_almacen} | ${item.cCodigoArticulo} | ${item.cColor} | ${item.cTalla} | ${item.cCantidadSolicitada}`
+      )
+      .join('\n');
+
+    // 4. Crear Blob y archivo
     const blob = new Blob([contenido], { type: 'text/plain' });
+
+    // --- OPCIONAL: Descarga local (Solo si realmente la necesitas en el cliente) ---
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement('a');
-
     a.href = url;
-    a.download = `traspaso_stock_${idFile}.txt`;
+    a.download = fileName;
     a.click();
-
-    // Limpieza
     window.URL.revokeObjectURL(url);
-    let nmCarpeta = this.onVerificarTipoTienda();
-    const archivo = new File([blob], `traspaso_stock_${idFile}.txt`, { type: 'text/plain' });
+
+    // 5. Preparar envío al servidor (Metas Perú API)
+    const nmCarpeta = this.onVerificarTipoTienda(); // Asumo que usas esto para la ruta real
+    const archivo = new File([blob], fileName, { type: 'text/plain' });
+
     const formData = new FormData();
     formData.append('file', archivo);
     formData.append('ftpDirectorio', nmCarpeta);
+    formData.append('origenStore', almacenOrigen.nombre || 'Origen'); // Para el cuerpo del email
+    formData.append('destinoStore', almacenDestino.nombre || 'Destino');
+    formData.append('email', 'andrecanalesv@gmail.com'); // El correo del solicitante
 
-    this.storeService.postTraspasos(formData).subscribe((data: any) => {
-      console.log(data);
+    // 6. Suscripción con manejo de estados
+    this.storeService.postTraspasos(formData).subscribe({
+      next: (resp) => {
+        this.messageNotification = resp.message;
+        this.abrirNotificacion(resp.status);
+        // Aquí podrías disparar un SweetAlert o notificación de éxito
+      },
+      error: (err) => {
+        console.error('Error al procesar traspaso:', err);
+        this.messageNotification = 'Error al procesar el traspaso.';
+        this.abrirNotificacion('danger');
+      }
     });
   }
 
