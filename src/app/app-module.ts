@@ -47,6 +47,8 @@ import { Traspasos } from './features/pages/traspasos/traspasos';
 import { MtCreationTraspasos } from './features/pages/traspasos/component/mt-creation-traspasos/mt-creation-traspasos';
 import { MtRegistrosTraspasos } from './features/pages/traspasos/component/mt-registros-traspasos/mt-registros-traspasos';
 import { PanelHorario } from './features/pages/panel-horario/panel-horario';
+import { MtRegistrosHorarios } from './features/pages/panel-horario/component/mt-registros-horarios/mt-registros-horarios';
+import { MtRwHorario } from './features/pages/panel-horario/component/mt-rw-horario/mt-rw-horario';
 
 registerLocaleData(localeEsPe);
 @NgModule({
@@ -72,7 +74,9 @@ registerLocaleData(localeEsPe);
     Traspasos,
     MtCreationTraspasos,
     MtRegistrosTraspasos,
-    PanelHorario
+    PanelHorario,
+    MtRegistrosHorarios,
+    MtRwHorario
   ],
   imports: [
     IonicModule.forRoot(),

@@ -314,4 +314,13 @@ export class StoreService {
             catchError(this.handleError)
         );
     }
+
+
+    getHorarios(): Observable<any> {
+        return this.http.get(
+            `${this.API_URL_RESOURCES_HUMAN}/api/schedule/store`
+        ).pipe(
+            catchError(this.handleError)
+        );
+    }
 }

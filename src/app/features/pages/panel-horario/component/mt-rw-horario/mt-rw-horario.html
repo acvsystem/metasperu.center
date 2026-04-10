@@ -1,0 +1,35 @@
+<div class="main-schedule-wrapper">
+    <div class="scrollable-content">
+        <div class="cargo-section" *ngFor="let item of horariosProcesados">
+            <div class="cargo-header">
+                {{ item.cargo }} - Tienda {{ item.codigo_tienda }}
+            </div>
+
+            <div class="grid-horario">
+                <div class="header-spacer"></div>
+                <div *ngFor="let dia of item.dias" class="header-dia">
+                    <span>{{ dia.dia }} </span>
+                    <small>{{ dia.fecha }}</small>
+                </div>
+
+                <ng-container *ngFor="let fila of item.filasTrabajo">
+                    <div class="rango-label">{{ fila.rango }}</div>
+                    <div *ngFor="let celda of fila.celdas" class="celda-trabajo">
+                        <div *ngFor="let trab of celda.trabajadores" class="chip-trabajador">
+                            {{ trab.nombre_completo }}
+                        </div>
+                    </div>
+                </ng-container>
+
+                <div class="rango-label libre-label">DIAS LIBRES</div>
+                <div *ngFor="let celda of item.filaLibres" class="celda-libre">
+                    <div *ngFor="let trab of celda.trabajadores" class="chip-libre">
+                        {{ trab.nombre_completo }}
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
