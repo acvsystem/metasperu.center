@@ -8,6 +8,7 @@ import { RrhhAsistencia } from '@metasperu/page/features/pages/rrhh-asistencia/r
 import { RrhhHorario } from '@metasperu/page/features/pages/rrhh-horario/rrhh-horario';
 import { Kardex } from '@metasperu/page/features/pages/kardex/kardex';
 import { Traspasos } from '@metasperu/page/features/pages/traspasos/traspasos';
+import { PanelHorario } from './features/pages/panel-horario/panel-horario';
 
 const routes: Routes = [
   { path: '', component: Login },
@@ -47,6 +48,12 @@ const routes: Routes = [
     component: Traspasos,
     canActivate: [authGuard],
     data: { roles: ['SISTEMAS', 'OPERACIONES', 'INVENTARIO'] }
+  },
+  {
+    path: 'panel-horario',
+    component: PanelHorario,
+    canActivate: [authGuard],
+    data: { roles: ['SISTEMAS', 'OPERACIONES', 'TIENDA', 'RRHH'] }
   }
 ];
 

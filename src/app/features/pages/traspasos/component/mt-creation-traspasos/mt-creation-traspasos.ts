@@ -221,7 +221,7 @@ export class MtCreationTraspasos {
     // 3. Transformar datos (usando template literals para mayor claridad)
     const contenido = this.dataInventory
       .map(item =>
-        `${almacenOrigen.codigo_almacen} | ${almacenDestino.codigo_almacen} | ${item.cCodigoArticulo} | ${item.cColor} | ${item.cTalla} | ${item.cCantidadSolicitada}`
+        `${almacenOrigen.codigo_almacen}|${almacenDestino.codigo_almacen}|${item.cCodigoArticulo}|${item.cColor}|${item.cTalla}|${item.cCantidadSolicitada}`
       )
       .join('\n');
 
