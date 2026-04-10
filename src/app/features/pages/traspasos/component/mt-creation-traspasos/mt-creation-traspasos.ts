@@ -193,12 +193,21 @@ export class MtCreationTraspasos {
     const almacenDestino = this.storeList.find(s => s.serie === this.storesSelectedDestino[0]?.serie);
 
     if (!almacenOrigen || !almacenDestino) {
-      console.error('No se pudo determinar el origen o destino');
+      this.messageNotification = 'No se pudo determinar el origen o destino.';
+      this.abrirNotificacion('danger');
       return;
     }
 
     this.unsOrigen = almacenOrigen.tipo_tienda;
     this.unsDestino = almacenDestino.tipo_tienda;
+
+    const nmCarpeta = this.onVerificarTipoTienda(); // Asumo que usas esto para la ruta real
+
+    if (nmCarpeta === '') {
+      this.messageNotification = `No se pudo determinar la carpeta destino ITPERU/${nmCarpeta}.`;
+      this.abrirNotificacion('danger');
+      return;
+    }
 
     // 3. Transformar datos (usando template literals para mayor claridad)
     const contenido = this.dataInventory
@@ -220,39 +229,17 @@ export class MtCreationTraspasos {
 
     // 5. Preparar envío al servidor (Metas Perú API)
 
-    let tipoTienda = "";
-
-    if ((this.unsOrigen == 'VSBA' && this.unsDestino == 'VSBA')) {
-      tipoTienda = 'VSBA';
-    }
-
-    if ((this.unsOrigen == 'VSBA' && this.unsDestino == 'VSFA')) {
-      tipoTienda = 'VSBA_VSFA';
-    }
-
-    if ((this.unsOrigen == 'VSFA' && this.unsDestino == 'VSBA')) {
-      tipoTienda = 'VSFA_VSBA';
-    }
-
-    if ((this.unsOrigen == 'VSFA' && this.unsDestino == 'VSFA')) {
-      tipoTienda = 'VSFA';
-    }
-
-    if (this.unsOrigen == 'BBW' && this.unsDestino == 'BBW') {
-      tipoTienda = 'BBW';
-    }
-
     const archivo = new File([blob], fileName, { type: 'text/plain' });
 
     const formData = new FormData();
     formData.append('file', archivo);
-    formData.append('ftpDirectorio', tipoTienda);
+    formData.append('ftpDirectorio', nmCarpeta);
     formData.append('origenStore', almacenOrigen.nombre || 'Origen'); // Para el cuerpo del email
     formData.append('destinoStore', almacenDestino.nombre || 'Destino');
     formData.append('email', 'andrecanalesv@gmail.com'); // El correo del solicitante
-    console.log('FormData preparado para envío:', this.unsOrigen, this.unsDestino, tipoTienda);
+
     // 6. Suscripción con manejo de estados
-   /* this.storeService.postTraspasos(formData).subscribe({
+    this.storeService.postTraspasos(formData).subscribe({
       next: (resp) => {
         this.messageNotification = resp.message;
         this.abrirNotificacion(resp.status);
@@ -263,9 +250,8 @@ export class MtCreationTraspasos {
         this.messageNotification = 'Error al procesar el traspaso.';
         this.abrirNotificacion('danger');
       }
-    });*/
+    });
   }
-
 
   onVerificarTipoTienda(): string {
     let tipoTienda = "";
