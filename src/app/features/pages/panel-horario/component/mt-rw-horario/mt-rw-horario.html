@@ -1,35 +1,130 @@
-<div class="main-schedule-wrapper">
-    <div class="scrollable-content">
-        <div class="cargo-section" *ngFor="let item of horariosProcesados">
-            <div class="cargo-header">
-                {{ item.cargo }} - Tienda {{ item.codigo_tienda }}
-            </div>
+<ion-row class="ion-align-items-center"
+    style="border-bottom: 2px solid #f4f4f4; margin-bottom: 20px;margin-top: 20px;margin-left: 10px;">
+    <ion-col size="12" size-md="8">
+        <h1 class="title-page" style="margin: 0; font-weight: 700; color: #2c3e50;">Gestión de Horario</h1>
+        <p style="color: #7f8c8d; margin: 4px 0 15px 0;">Gestion de horarios, papeletas y horas extras</p>
+    </ion-col>
+    <ion-col size="12" *ngIf="hayCambios">
+        <div class="alert alert-warning d-flex align-items-center justify-content-between"
+            style="margin: 0 10px 15px 10px; border-left: 5px solid #ffc107;">
+            <span style="display: flex;align-items: center;">
+                <mat-icon style="margin: 0 5px;">info</mat-icon>
+                Tienes cambios sin guardar.
+            </span>
+        </div>
+    </ion-col>
+</ion-row>
+<ion-row>
+    <ion-col size="12" size-md="5" size-lg="5">
+        <div style="margin-left: 12px;width: 100%;display: flex;align-items: center">
+            <button (click)="onInitHorario()" type="button" matTooltip="Inicializar horario"
+                style="display: flex;justify-content: center;align-items: center;margin-right: 10px;"
+                class="btn btn-primary btn-sm mobil-margin-button">
+                <mat-icon style="margin-right: 5px;">calendar_month</mat-icon>
+                <span>Generar Horario</span>
+            </button>
+            <mt-calendar [isPeriodo]="false" [isMultiSelect]="false" [isDefault]="false" [isRange]="true"
+                placeholder="Seleccione la fecha" (afterChange)="onCalendar($event)"></mt-calendar>
+            <button (click)="onInitHorario()" type="button" matTooltip="Buscar horario"
+                style="display: flex;justify-content: center;align-items: center;margin-left: 10px;"
+                class="btn btn-primary btn-sm mobil-margin-button">
+                <mat-icon>search</mat-icon>
+            </button>
+            <button (click)="onInitHorario()" type="button" matTooltip="Panel papeletas"
+                style="display: flex;justify-content: center;align-items: center;margin-left: 10px;"
+                class="btn btn-primary btn-sm mobil-margin-button">
+                <mat-icon style="margin-right: 5px;">ballot</mat-icon>
+                <span>Papeletas</span>
+            </button>
+        </div>
+    </ion-col>
+    <ion-col size="7">
+        <div style="width: 100%;display: flex;align-items: center;justify-content: end;height: 100%;">
+            <button (click)="guardarHorarioCompleto()" type="button" matTooltip="Finalizar y guardar horario"
+                style="display: flex;justify-content: center;align-items: center;margin-right: 27px;"
+                class="btn btn-success btn-sm mobil-margin-button" [disabled]="horariosProcesados.length === 0">
+                <mat-icon style="margin-right: 5px;">save</mat-icon> <span>Registrar en Sistema</span>
+            </button>
+        </div>
+    </ion-col>
+</ion-row>
+<ion-row>
+    <ion-col size="12">
+        <div class="main-schedule-wrapper">
+            <div class="scrollable-content" *ngIf="horariosProcesados.length > 0; else emptyState">
+                <div class="cargo-section" *ngFor="let item of horariosProcesados">
+                    <div class="cargo-header">
+                        {{ item.cargo }} - Tienda {{ item.codigo_tienda }}
+                    </div>
 
-            <div class="grid-horario">
-                <div class="header-spacer"></div>
-                <div *ngFor="let dia of item.dias" class="header-dia">
-                    <span>{{ dia.dia }} </span>
-                    <small>{{ dia.fecha }}</small>
-                </div>
+                    <div class="grid-horario">
+                        <div class="header-spacer">
 
-                <ng-container *ngFor="let fila of item.filasTrabajo">
-                    <div class="rango-label">{{ fila.rango }}</div>
-                    <div *ngFor="let celda of fila.celdas" class="celda-trabajo">
-                        <div *ngFor="let trab of celda.trabajadores" class="chip-trabajador">
-                            {{ trab.nombre_completo }}
+                            <button class="btn btn-primary btn-sm" (click)="openDialog(MtMdlRangoHora,item)"
+                                *ngIf="esEditable(item.dias[0].fecha)" style="background-color: #195ea7;">Agregar Rango
+                                +</button>
                         </div>
-                    </div>
-                </ng-container>
+                        <div *ngFor="let dia of item.dias" class="header-dia">
+                            <span>{{ dia.dia }} </span>
+                            <small style="display: inline-flex">{{ dia.fecha }}
+                                <button matTooltip="Observaciones" class="btn-add-mini btn-danger"
+                                    *ngIf="item.notasDia[dia.id]?.length > 0">
+                                    <mat-icon
+                                        style="font-size: 16px;  display: flex;justify-content: center;align-items: center;">priority_high</mat-icon>
+                                </button>
+                            </small>
+                        </div>
 
-                <div class="rango-label libre-label">DIAS LIBRES</div>
-                <div *ngFor="let celda of item.filaLibres" class="celda-libre">
-                    <div *ngFor="let trab of celda.trabajadores" class="chip-libre">
-                        {{ trab.nombre_completo }}
+                        <ng-container *ngFor="let fila of item.filasTrabajo">
+                            <div class="rango-label">{{ fila.rango }}
+                                <button class="btn-add-mini" (click)="openDialog(MtMdlRangoHora, item, fila)"
+                                    *ngIf="esEditable(item.dias[0].fecha)" matTooltip="Editar Rango"><mat-icon
+                                        style="height: 13px;width: 13px;font-size: 13px;">edit</mat-icon></button>
+                            </div>
+                            <div *ngFor="let celda of fila.celdas" class="celda-trabajo">
+                                <div *ngFor="let trab of celda.trabajadores" class="chip-trabajador">
+                                    {{ trab.nombre_completo }}
+                                    <span class="close-chip" (click)="quitarTrabajador(celda, trab)">×</span>
+                                </div>
+                                <button class="btn-add-mini" (click)="abrirModalAsignar(celda, celda.id_dia)"
+                                    *ngIf="esEditable(item.dias[0].fecha)" matTooltip="Agregar Trabajador">+</button>
+                            </div>
+                        </ng-container>
+                        @if(item.cargo != 'Vacaciones'){
+                        <div class="rango-label libre-label">DIAS LIBRES</div>
+                        <div *ngFor="let celda of item.filaLibres" class="celda-libre">
+                            <div *ngFor="let trab of celda.trabajadores" class="chip-libre">
+                                {{ trab.nombre_completo }}
+                                <span class="close-chip" (click)="quitarTrabajador(celda, trab)">×</span>
+                            </div>
+                            <button class="btn-add-mini" (click)="abrirModalAsignarLibre(celda, celda.id_dia)"
+                                *ngIf="esEditable(item.dias[0].fecha)" matTooltip="Agregar Trabajador">+</button>
+                        </div>
+                        }
                     </div>
                 </div>
-
             </div>
         </div>
-    </div>
-</div>
+    </ion-col>
+</ion-row>
 
+
+
+<mt-loader *ngIf="isLoading" [title]="titleLoader"></mt-loader>
+
+
+<ng-template #emptyState>
+    <div class="empty-schedule-container">
+        <div class="empty-icon">
+            <i class="fas fa-calendar-times"></i>
+        </div>
+        <h3>Horario Vacío</h3>
+        <p>No se encontraron horarios programados para esta tienda en el rango de fechas seleccionado.
+        </p>
+    </div>
+</ng-template>
+
+@if (isNotification) {
+<mt-notification [type]="typeNotification" [message]="messageNotification"
+    (onClose)="cerrarNotificacion()"></mt-notification>
+}

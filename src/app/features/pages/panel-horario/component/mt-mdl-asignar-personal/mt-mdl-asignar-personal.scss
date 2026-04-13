@@ -1,0 +1,22 @@
+.list-container {
+    &::-webkit-scrollbar {
+        width: 6px;
+    }
+    &::-webkit-scrollbar-thumb {
+        background: #ddd;
+        border-radius: 10px;
+    }
+    &::-webkit-scrollbar-thumb:hover {
+        background: #ccc;
+    }
+}
+
+.list-group-item {
+    transition: background 0.2s;
+    border-left: 3px solid transparent;
+    
+    &:hover {
+        background-color: #f8fbff !important;
+        border-left: 3px solid #195ea7;
+    }
+}

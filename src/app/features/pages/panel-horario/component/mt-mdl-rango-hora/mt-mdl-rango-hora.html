@@ -1,0 +1,32 @@
+<ion-row class="ion-align-items-center"
+    style="border-bottom: 2px solid #f4f4f4; margin-bottom: 20px;margin-top: 20px;margin-left: 10px;">
+    <ion-col size="12" size-md="8">
+        <h4 class="title-page" style="margin: 0; font-weight: 700; color: #2c3e50;">Agregar Rango Horario</h4>
+    </ion-col>
+</ion-row>
+<ion-row>
+    <ion-col>
+        <form (ngSubmit)="validarYGuardar()" #rangoForm="ngForm">
+            <div class="mb-3">
+                <label for="horaInicio" class="form-label">Hora Inicio</label>
+                <input type="time" class="form-control" id="horaInicio" name="horaInicio" [(ngModel)]="horaInicio"
+                    required>
+            </div>
+            <div class="mb-3">
+                <label for="horaFin" class="form-label">Hora Fin</label>
+                <input type="time" class="form-control" id="horaFin" name="horaFin" [(ngModel)]="horaFin" required>
+            </div>
+
+            <div *ngIf="error" class="alert alert-danger p-2" style="font-size: 0.85rem;">
+                {{ error }}
+            </div>
+
+            <button type="submit" class="btn btn-primary" style="margin-right: 10px;">
+                Guardar Rango
+            </button>
+            <button type="button" class="btn btn-secondary" (click)="onCancel()">
+                Cancelar
+            </button>
+        </form>
+    </ion-col>
+</ion-row>

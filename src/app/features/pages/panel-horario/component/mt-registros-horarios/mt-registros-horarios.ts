@@ -19,6 +19,8 @@ export class MtRegistrosHorarios {
 
   displayedColumnsHorarios = this.columnsHorartio.map(col => col.matColumnDef);
   dataHorarios: Array<any> = [];
+  isVisibleHorario: boolean = false;
+  horarioSelected: any = null;
 
   constructor(private storeService: StoreService) { }
 
@@ -31,5 +33,17 @@ export class MtRegistrosHorarios {
       this.dataHorarios = horarios.data;
     });
   }
+
+  toggleHorarios(element: any) {
+    if (Object.keys(element).length !== 0) {
+      this.horarioSelected = {
+        range_days: `${element?.cRango_1} ${element?.cRango_2}`,
+        code_store: element?.cSerieStore
+      };
+    }
+
+    this.isVisibleHorario = !this.isVisibleHorario;
+  }
+
 
 }

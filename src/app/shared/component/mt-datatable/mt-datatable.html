@@ -89,6 +89,12 @@
                         style="padding-bottom: 0px;padding-left: 2px;padding-right: 2px;padding-top: 0;margin-right: 3px;">
                         <mat-icon style="margin-top: 6px;">delete_forever</mat-icon>
                     </button>
+                    }@else if(col.propertyValue == 'cAccionHorario'){
+                    <button matTooltip="Eliminar" id="searchProducto" type="button" class="btn btn-success btn-sm"
+                        (click)="onSelectedRow(element)"
+                        style="padding-bottom: 0px;padding-left: 2px;padding-right: 2px;padding-top: 0;margin-right: 3px;">
+                        <mat-icon style="margin-top: 6px;">calendar_month</mat-icon>
+                    </button>
                     }@else if(col.propertyValue == 'accion'){
 
                     <button matTooltip="Marcaciones" id="searchProducto" type="button" class="btn btn-primary btn-sm"

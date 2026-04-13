@@ -323,4 +323,12 @@ export class StoreService {
             catchError(this.handleError)
         );
     }
+
+    postSearchHorarios(body: any): Observable<any> {
+        return this.http.post(
+            `${this.API_URL_RESOURCES_HUMAN}/api/search/schedule/store`, body
+        ).pipe(
+            catchError(this.handleError)
+        );
+    }
 }

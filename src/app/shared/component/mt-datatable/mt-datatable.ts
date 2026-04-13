@@ -23,6 +23,7 @@ export class MtDatatable implements OnInit, OnChanges, AfterViewInit {
   @Input() extraColumns: string[] = [];
   @Input() isFeriado: boolean = false;
   @Output() currentDataFilter = new EventEmitter<any[]>();
+  @Output() rowSelected = new EventEmitter<any[]>();
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
@@ -172,6 +173,10 @@ export class MtDatatable implements OnInit, OnChanges, AfterViewInit {
 
     // 2. Sobreescribimos la data del datasource (esto refresca la tabla)
     this.dataSource.data = data;
+  }
+
+  onSelectedRow(row: any) {
+    this.rowSelected.emit(row);
   }
 }
 

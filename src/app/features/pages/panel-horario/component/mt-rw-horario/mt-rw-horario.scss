@@ -133,6 +133,14 @@
   border: 1px solid #fde047;
   min-height: 40px;
   padding: 4px;
+
+  display: flex;
+  flex-direction: column;
+  /* Alinea chips arriba y botón abajo */
+  min-height: 80px;
+  /* Altura mínima para que siempre haya espacio */
+  padding: 6px;
+  box-sizing: border-box;
 }
 
 /* Chips de trabajadores en día libre (puedes cambiar el color si gustas) */
@@ -145,4 +153,191 @@
   text-align: center;
   border-radius: 4px;
   padding: 2px;
+}
+
+
+
+
+
+.empty-schedule-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 60vh;
+  /* Centrado vertical en el área disponible */
+  text-align: center;
+  color: #64748b;
+  background: #ffffff;
+  border-radius: 12px;
+  border: 2px dashed #e2e8f0;
+  margin: 20px;
+  padding: 40px;
+}
+
+.empty-icon {
+  font-size: 64px;
+  color: #cbd5e1;
+  margin-bottom: 16px;
+}
+
+.empty-schedule-container h3 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #1e293b;
+  margin-bottom: 8px;
+}
+
+.empty-schedule-container p {
+  max-width: 300px;
+  line-height: 1.5;
+  margin-bottom: 24px;
+}
+
+.btn-refresh {
+  background-color: #195ea7;
+  /* Tu azul corporativo */
+  color: white;
+  border: none;
+  padding: 10px 24px;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.btn-refresh:hover {
+  background-color: #003366;
+}
+
+/* Botón pequeño para agregar rangos o personas */
+.btn-add-mini {
+  width: 20px;
+  height: 20px;
+  border-radius: 30%;
+  border: none;
+  background-color: #2175cf;
+  /* Azul corporativo */
+  color: white;
+  font-size: 14px;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-left: 8px;
+  /* Separación del texto */
+  padding: 0;
+  line-height: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.btn-add-mini:hover {
+  background-color: #195ea7;
+  /* Cambia a verde al pasar el mouse */
+
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.header-spacer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.celda-trabajo {
+  display: flex;
+  flex-direction: column;
+  /* Alinea chips arriba y botón abajo */
+  min-height: 80px;
+  /* Altura mínima para que siempre haya espacio */
+  padding: 6px;
+  background: #ffffff;
+  box-sizing: border-box;
+}
+
+/* Este es el truco clave */
+.celda-trabajo .btn-add-mini {
+  margin-top: auto;
+  /* Empuja el botón al fondo de la celda */
+  align-self: center;
+  /* Lo centra horizontalmente */
+  opacity: 0.2;
+  /* Lo hace sutil para que no estorbe visualmente */
+  transition: opacity 0.2s;
+}
+
+.celda-trabajo:hover .btn-add-mini {
+  opacity: 1;
+  /* Se aclara cuando pasas el mouse por la celda */
+}
+
+.btn-danger {
+  background-color: rgb(218, 5, 5);
+}
+
+.btn-danger:hover {
+  background-color: rgb(218, 5, 5);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.celda-libre .btn-add-mini {
+  margin-top: auto;
+  /* Empuja el botón al fondo de la celda */
+  align-self: center;
+  /* Lo centra horizontalmente */
+  opacity: 0.2;
+  /* Lo hace sutil para que no estorbe visualmente */
+  transition: opacity 0.2s;
+}
+
+.celda-libre:hover .btn-add-mini {
+  opacity: 1;
+  /* Se aclara cuando pasas el mouse por la celda */
+}
+
+.close-chip {
+    margin-left: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    color: #d32f2f;
+}
+
+
+
+.chip-trabajador {
+    background: #a3e2ff;
+    color: #084263;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    border: 1px solid #5bcbff;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.chip-libre {
+ 
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.alert-warning {
+    animation: pulse-border 2s infinite;
+}
+
+@keyframes pulse-border {
+    0% { box-shadow: 0 0 0 0 rgba(255, 193, 7, 0.4); }
+    70% { box-shadow: 0 0 0 10px rgba(255, 193, 7, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(255, 193, 7, 0); }
 }

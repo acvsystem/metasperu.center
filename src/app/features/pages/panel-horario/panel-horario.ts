@@ -8,4 +8,11 @@ import { Component } from '@angular/core';
 })
 export class PanelHorario {
 
+
+  constructor() { }
+
+  ngOnInit() {
+
+  }
+
 }

@@ -1,9 +1,22 @@
 <ion-row>
+    @if(!isVisibleHorario){
     <ion-col size="12">
         <div class="table-card">
-            <mt-datatable [dataIn]="dataHorarios" [dataColumnsIn]="columnsHorartio"
-                [extraColumns]="displayedColumnsHorarios">
+            <mt-datatable (rowSelected)="toggleHorarios($event)" [dataIn]="dataHorarios"
+                [dataColumnsIn]="columnsHorartio" [extraColumns]="displayedColumnsHorarios">
             </mt-datatable>
         </div>
     </ion-col>
+    }@else{
+    <ion-col *ngIf="isVisibleHorario" size="12">
+        <button matTooltip="Regresar" id="searchProducto" type="button" class="btn btn-outline-secondary btn-sm" style="margin-left: 12px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 41px;" (click)="toggleHorarios({})">
+            <mat-icon>keyboard_arrow_left</mat-icon>
+        </button>
+        <mt-rw-horario [dataSearch]="horarioSelected" *ngIf="isVisibleHorario"></mt-rw-horario>
+    </ion-col>
+    }
 </ion-row>

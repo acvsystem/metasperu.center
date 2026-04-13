@@ -1,4 +1,16 @@
-import { Component } from '@angular/core';
+import { Component, inject, Input, SimpleChanges } from '@angular/core';
+import { StoreService } from '@metasperu/services/store.service';
+import {
+  MatDialog,
+  MAT_DIALOG_DATA,
+  MatDialogTitle,
+  MatDialogContent,
+} from '@angular/material/dialog';
+import { MtMdlRangoHora } from '../mt-mdl-rango-hora/mt-mdl-rango-hora'
+import { MtMdlAsignarPersonal } from '../mt-mdl-asignar-personal/mt-mdl-asignar-personal';
+export type NotificationType = 'success' | 'warning' | 'danger';
+import { HostListener } from '@angular/core';
+import { CanComponentDeactivate } from '@metasperu/page/core/auth/pending-changes.guard';
 
 @Component({
   selector: 'mt-rw-horario',
@@ -6,976 +18,67 @@ import { Component } from '@angular/core';
   templateUrl: './mt-rw-horario.html',
   styleUrl: './mt-rw-horario.scss',
 })
-export class MtRwHorario {
+export class MtRwHorario implements CanComponentDeactivate {
 
-  dataHorario: Array<any> = [
-    {
-      "id": 7742,
-      "cargo": "Cajeros",
-      "codigo_tienda": "7D",
-      "rg_hora": [
-        {
-          "id": 17704,
-          "position": 1,
-          "rg": "09:30 a 18:30",
-          "codigo_tienda": "7D"
-        },
-        {
-          "id": 17705,
-          "position": 2,
-          "rg": "13:30 a 22:30",
-          "codigo_tienda": "7D"
-        }
-      ],
-      "dias": [
-        {
-          "dia": "Lunes",
-          "fecha": "13 - abr",
-          "fecha_number": "13-4-2026",
-          "id": 53076,
-          "position": 1
-        },
-        {
-          "dia": "Martes",
-          "fecha": "14 - abr",
-          "fecha_number": "14-4-2026",
-          "id": 53077,
-          "position": 2
-        },
-        {
-          "dia": "Miercoles",
-          "fecha": "15 - abr",
-          "fecha_number": "15-4-2026",
-          "id": 53078,
-          "position": 3
-        },
-        {
-          "dia": "Jueves",
-          "fecha": "16 - abr",
-          "fecha_number": "16-4-2026",
-          "id": 53079,
-          "position": 4
-        },
-        {
-          "dia": "Viernes",
-          "fecha": "17 - abr",
-          "fecha_number": "17-4-2026",
-          "id": 53080,
-          "position": 5
-        },
-        {
-          "dia": "Sabado",
-          "fecha": "18 - abr",
-          "fecha_number": "18-4-2026",
-          "id": 53081,
-          "position": 6
-        },
-        {
-          "dia": "Domingo",
-          "fecha": "19 - abr",
-          "fecha_number": "19-4-2026",
-          "id": 53082,
-          "position": 7
-        }
-      ],
-      "dias_trabajo": [
-        {
-          "id": 183523,
-          "id_cargo": 7742,
-          "id_dia": 53078,
-          "nombre_completo": "GARAMENDI PALOMINO ANDREA MILAGROS",
-          "numero_documento": "73437781",
-          "rg": 17704,
-          "codigo_tienda": "7D"
-        },
-        {
-          "id": 183524,
-          "id_cargo": 7742,
-          "id_dia": 53076,
-          "nombre_completo": "GARAMENDI PALOMINO ANDREA MILAGROS",
-          "numero_documento": "73437781",
-          "rg": 17704,
-          "codigo_tienda": "7D"
-        },
-        {
-          "id": 183525,
-          "id_cargo": 7742,
-          "id_dia": 53079,
-          "nombre_completo": "GARAMENDI PALOMINO ANDREA MILAGROS",
-          "numero_documento": "73437781",
-          "rg": 17704,
-          "codigo_tienda": "7D"
-        },
-        {
-          "id": 183526,
-          "id_cargo": 7742,
-          "id_dia": 53080,
-          "nombre_completo": "GARAMENDI PALOMINO ANDREA MILAGROS",
-          "numero_documento": "73437781",
-          "rg": 17704,
-          "codigo_tienda": "7D"
-        },
-        {
-          "id": 183527,
-          "id_cargo": 7742,
-          "id_dia": 53081,
-          "nombre_completo": "GARAMENDI PALOMINO ANDREA MILAGROS",
-          "numero_documento": "73437781",
-          "rg": 17704,
-          "codigo_tienda": "7D"
-        },
-        {
-          "id": 183528,
-          "id_cargo": 7742,
-          "id_dia": 53082,
-          "nombre_completo": "GARAMENDI PALOMINO ANDREA MILAGROS",
-          "numero_documento": "73437781",
-          "rg": 17704,
-          "codigo_tienda": "7D"
-        }
-      ],
-      "dias_libres": [
-        {
-          "id": 34130,
-          "id_cargo": 7742,
-          "id_dia": 53077,
-          "nombre_completo": "GARAMENDI PALOMINO ANDREA MILAGROS",
-          "numero_documento": "73437781",
-          "rg": 17704,
-          "codigo_tienda": "7D"
-        }
-      ],
-      "arListTrabajador": [],
-      "observacion": [],
-      "papeleta": []
-    },
-    {
-      "id": 7743,
-      "cargo": "Gerentes",
-      "codigo_tienda": "7D",
-      "rg_hora": [
-        {
-          "id": 17706,
-          "position": 1,
-          "rg": "09:30 a 18:30",
-          "codigo_tienda": "7D"
-        },
-        {
-          "id": 17707,
-          "position": 2,
-          "rg": "13:30 a 22:30",
-          "codigo_tienda": "7D"
-        }
-      ],
-      "dias": [
-        {
-          "dia": "Lunes",
-          "fecha": "13 - abr",
-          "fecha_number": "13-4-2026",
-          "id": 53083,
-          "position": 1
-        },
-        {
-          "dia": "Martes",
-          "fecha": "14 - abr",
-          "fecha_number": "14-4-2026",
-          "id": 53084,
-          "position": 2
-        },
-        {
-          "dia": "Miercoles",
-          "fecha": "15 - abr",
-          "fecha_number": "15-4-2026",
-          "id": 53085,
-          "position": 3
-        },
-        {
-          "dia": "Jueves",
-          "fecha": "16 - abr",
-          "fecha_number": "16-4-2026",
-          "id": 53086,
-          "position": 4
-        },
-        {
-          "dia": "Viernes",
-          "fecha": "17 - abr",
-          "fecha_number": "17-4-2026",
-          "id": 53087,
-          "position": 5
-        },
-        {
-          "dia": "Sabado",
-          "fecha": "18 - abr",
-          "fecha_number": "18-4-2026",
-          "id": 53088,
-          "position": 6
-        },
-        {
-          "dia": "Domingo",
-          "fecha": "19 - abr",
-          "fecha_number": "19-4-2026",
-          "id": 53089,
-          "position": 7
-        }
-      ],
-      "dias_trabajo": [
-        {
-          "id": 183529,
-          "id_cargo": 7743,
-          "id_dia": 53083,
-          "nombre_completo": "CHIROQUE PINEDA JULIO NICOLAS",
-          "numero_documento": "46548649",
-          "rg": 17707,
-          "codigo_tienda": "7D"
-        },
-        {
-          "id": 183530,
-          "id_cargo": 7743,
-          "id_dia": 53084,
-          "nombre_completo": "CHIROQUE PINEDA JULIO NICOLAS",
-          "numero_documento": "46548649",
-          "rg": 17706,
-          "codigo_tienda": "7D"
-        },
-        {
-          "id": 183531,
-          "id_cargo": 7743,
-          "id_dia": 53085,
-          "nombre_completo": "CHIROQUE PINEDA JULIO NICOLAS",
-          "numero_documento": "46548649",
-          "rg": 17707,
-          "codigo_tienda": "7D"
-        },
-        {
-          "id": 183532,
-          "id_cargo": 7743,
-          "id_dia": 53086,
-          "nombre_completo": "CHIROQUE PINEDA JULIO NICOLAS",
-          "numero_documento": "46548649",
-          "rg": 17707,
-          "codigo_tienda": "7D"
-        },
-        {
-          "id": 183533,
-          "id_cargo": 7743,
-          "id_dia": 53087,
-          "nombre_completo": "CHIROQUE PINEDA JULIO NICOLAS",
-          "numero_documento": "46548649",
-          "rg": 17707,
-          "codigo_tienda": "7D"
-        },
-        {
-          "id": 183534,
-          "id_cargo": 7743,
-          "id_dia": 53088,
-          "nombre_completo": "CHIROQUE PINEDA JULIO NICOLAS",
-          "numero_documento": "46548649",
-          "rg": 17707,
-          "codigo_tienda": "7D"
-        },
-        {
-          "id": 183535,
-          "id_cargo": 7743,
-          "id_dia": 53089,
-          "nombre_completo": "CHIROQUE PINEDA JULIO NICOLAS",
-          "numero_documento": "46548649",
-          "rg": 17707,
-          "codigo_tienda": "7D"
-        }
-      ],
-      "dias_libres": [],
-      "arListTrabajador": [],
-      "observacion": [],
-      "papeleta": []
-    },
-    {
-      "id": 7744,
-      "cargo": "Almaceneros",
-      "codigo_tienda": "7D",
-      "rg_hora": [],
-      "dias": [
-        {
-          "dia": "Lunes",
-          "fecha": "13 - abr",
-          "fecha_number": "13-4-2026",
-          "id": 53104,
-          "position": 1
-        },
-        {
-          "dia": "Martes",
-          "fecha": "14 - abr",
-          "fecha_number": "14-4-2026",
-          "id": 53105,
-          "position": 2
-        },
-        {
-          "dia": "Miercoles",
-          "fecha": "15 - abr",
-          "fecha_number": "15-4-2026",
-          "id": 53106,
-          "position": 3
-        },
-        {
-          "dia": "Jueves",
-          "fecha": "16 - abr",
-          "fecha_number": "16-4-2026",
-          "id": 53107,
-          "position": 4
-        },
-        {
-          "dia": "Viernes",
-          "fecha": "17 - abr",
-          "fecha_number": "17-4-2026",
-          "id": 53108,
-          "position": 5
-        },
-        {
-          "dia": "Sabado",
-          "fecha": "18 - abr",
-          "fecha_number": "18-4-2026",
-          "id": 53109,
-          "position": 6
-        },
-        {
-          "dia": "Domingo",
-          "fecha": "19 - abr",
-          "fecha_number": "19-4-2026",
-          "id": 53110,
-          "position": 7
-        }
-      ],
-      "dias_trabajo": [],
-      "dias_libres": [],
-      "arListTrabajador": [],
-      "observacion": [],
-      "papeleta": []
-    },
-    {
-      "id": 7745,
-      "cargo": "Asesores",
-      "codigo_tienda": "7D",
-      "rg_hora": [
-        {
-          "id": 17708,
-          "position": 1,
-          "rg": "10:00 a 19:00",
-          "codigo_tienda": "7D"
-        },
-        {
-          "id": 17709,
-          "position": 2,
-          "rg": "11:00 a 20:00",
-          "codigo_tienda": "7D"
-        },
-        {
-          "id": 17710,
-          "position": 3,
-          "rg": "12:00 a 21:00",
-          "codigo_tienda": "7D"
-        },
-        {
-          "id": 17711,
-          "position": 4,
-          "rg": "12:30 a 21:30",
-          "codigo_tienda": "7D"
-        },
-        {
-          "id": 17712,
-          "position": 5,
-          "rg": "13:30 a 22:30",
-          "codigo_tienda": "7D"
-        }
-      ],
-      "dias": [
-        {
-          "dia": "Lunes",
-          "fecha": "13 - abr",
-          "fecha_number": "13-4-2026",
-          "id": 53097,
-          "position": 1
-        },
-        {
-          "dia": "Martes",
-          "fecha": "14 - abr",
-          "fecha_number": "14-4-2026",
-          "id": 53098,
-          "position": 2
-        },
-        {
-          "dia": "Miercoles",
-          "fecha": "15 - abr",
-          "fecha_number": "15-4-2026",
-          "id": 53099,
-          "position": 3
-        },
-        {
-          "dia": "Jueves",
-          "fecha": "16 - abr",
-          "fecha_number": "16-4-2026",
-          "id": 53100,
-          "position": 4
-        },
-        {
-          "dia": "Viernes",
-          "fecha": "17 - abr",
-          "fecha_number": "17-4-2026",
-          "id": 53101,
-          "position": 5
-        },
-        {
-          "dia": "Sabado",
-          "fecha": "18 - abr",
-          "fecha_number": "18-4-2026",
-          "id": 53102,
-          "position": 6
-        },
-        {
-          "dia": "Domingo",
-          "fecha": "19 - abr",
-          "fecha_number": "19-4-2026",
-          "id": 53103,
-          "position": 7
-        }
-      ],
-      "dias_trabajo": [
-        {
-          "id": 183538,
-          "id_cargo": 7745,
-          "id_dia": 53101,
-          "nombre_completo": "BENITEZ ARAGON MARIA FERNANDA",
-          "numero_documento": "72185832",
-          "rg": 17708,
-          "codigo_tienda": "7D"
-        },
-        {
-          "id": 183539,
-          "id_cargo": 7745,
-          "id_dia": 53102,
-          "nombre_completo": "BENITEZ ARAGON MARIA FERNANDA",
-          "numero_documento": "72185832",
-          "rg": 17708,
-          "codigo_tienda": "7D"
-        },
-        {
-          "id": 183542,
-          "id_cargo": 7745,
-          "id_dia": 53100,
-          "nombre_completo": "FERNANDEZ ADRIANZEN CECILIA GLADYS AMELIA",
-          "numero_documento": "71948191",
-          "rg": 17712,
-          "codigo_tienda": "7D"
-        },
-        {
-          "id": 183544,
-          "id_cargo": 7745,
-          "id_dia": 53101,
-          "nombre_completo": "FERNANDEZ ADRIANZEN CECILIA GLADYS AMELIA",
-          "numero_documento": "71948191",
-          "rg": 17708,
-          "codigo_tienda": "7D"
-        },
-        {
-          "id": 183545,
-          "id_cargo": 7745,
-          "id_dia": 53102,
-          "nombre_completo": "FERNANDEZ ADRIANZEN CECILIA GLADYS AMELIA",
-          "numero_documento": "71948191",
-          "rg": 17712,
-          "codigo_tienda": "7D"
-        },
-        {
-          "id": 183547,
-          "id_cargo": 7745,
-          "id_dia": 53097,
-          "nombre_completo": "VARGAS CISNEROS MERYGEAN MIA",
-          "numero_documento": "70595915",
-          "rg": 17712,
-          "codigo_tienda": "7D"
-        },
-        {
-          "id": 183553,
-          "id_cargo": 7745,
-          "id_dia": 53099,
-          "nombre_completo": "SOLARI RIVAS FRANCESCA GRISELE",
-          "numero_documento": "72492663",
-          "rg": 17708,
-          "codigo_tienda": "7D"
-        },
-        {
-          "id": 183556,
-          "id_cargo": 7745,
-          "id_dia": 53099,
-          "nombre_completo": "VARGAS CISNEROS MERYGEAN MIA",
-          "numero_documento": "70595915",
-          "rg": 17712,
-          "codigo_tienda": "7D"
-        },
-        {
-          "id": 183559,
-          "id_cargo": 7745,
-          "id_dia": 53100,
-          "nombre_completo": "VARGAS CISNEROS MERYGEAN MIA",
-          "numero_documento": "70595915",
-          "rg": 17708,
-          "codigo_tienda": "7D"
-        },
-        {
-          "id": 183562,
-          "id_cargo": 7745,
-          "id_dia": 53100,
-          "nombre_completo": "SOLARI RIVAS FRANCESCA GRISELE",
-          "numero_documento": "72492663",
-          "rg": 17712,
-          "codigo_tienda": "7D"
-        },
-        {
-          "id": 183563,
-          "id_cargo": 7745,
-          "id_dia": 53101,
-          "nombre_completo": "VARGAS CISNEROS MERYGEAN MIA",
-          "numero_documento": "70595915",
-          "rg": 17712,
-          "codigo_tienda": "7D"
-        },
-        {
-          "id": 183571,
-          "id_cargo": 7745,
-          "id_dia": 53103,
-          "nombre_completo": "GALLARDO ROMERO ALONSO MATTIAS",
-          "numero_documento": "74921615",
-          "rg": 17712,
-          "codigo_tienda": "7D"
-        },
-        {
-          "id": 183572,
-          "id_cargo": 7745,
-          "id_dia": 53102,
-          "nombre_completo": "GALLARDO ROMERO ALONSO MATTIAS",
-          "numero_documento": "74921615",
-          "rg": 17712,
-          "codigo_tienda": "7D"
-        },
-        {
-          "id": 183573,
-          "id_cargo": 7745,
-          "id_dia": 53102,
-          "nombre_completo": "VARGAS CISNEROS MERYGEAN MIA",
-          "numero_documento": "70595915",
-          "rg": 17708,
-          "codigo_tienda": "7D"
-        },
-        {
-          "id": 184530,
-          "id_cargo": 7745,
-          "id_dia": 53097,
-          "nombre_completo": "BENITEZ ARAGON MARIA FERNANDA",
-          "numero_documento": "72185832",
-          "rg": 17709,
-          "codigo_tienda": "7D"
-        },
-        {
-          "id": 184531,
-          "id_cargo": 7745,
-          "id_dia": 53097,
-          "nombre_completo": "FERNANDEZ ADRIANZEN CECILIA GLADYS AMELIA",
-          "numero_documento": "71948191",
-          "rg": 17708,
-          "codigo_tienda": "7D"
-        },
-        {
-          "id": 184532,
-          "id_cargo": 7745,
-          "id_dia": 53097,
-          "nombre_completo": "GALLARDO ROMERO ALONSO MATTIAS",
-          "numero_documento": "74921615",
-          "rg": 17712,
-          "codigo_tienda": "7D"
-        },
-        {
-          "id": 184533,
-          "id_cargo": 7745,
-          "id_dia": 53098,
-          "nombre_completo": "SOLARI RIVAS FRANCESCA GRISELE",
-          "numero_documento": "72492663",
-          "rg": 17708,
-          "codigo_tienda": "7D"
-        },
-        {
-          "id": 184534,
-          "id_cargo": 7745,
-          "id_dia": 53098,
-          "nombre_completo": "GALLARDO ROMERO ALONSO MATTIAS",
-          "numero_documento": "74921615",
-          "rg": 17712,
-          "codigo_tienda": "7D"
-        },
-        {
-          "id": 184535,
-          "id_cargo": 7745,
-          "id_dia": 53098,
-          "nombre_completo": "FERNANDEZ ADRIANZEN CECILIA GLADYS AMELIA",
-          "numero_documento": "71948191",
-          "rg": 17712,
-          "codigo_tienda": "7D"
-        },
-        {
-          "id": 184537,
-          "id_cargo": 7745,
-          "id_dia": 53099,
-          "nombre_completo": "GALLARDO ROMERO ALONSO MATTIAS",
-          "numero_documento": "74921615",
-          "rg": 17712,
-          "codigo_tienda": "7D"
-        },
-        {
-          "id": 184538,
-          "id_cargo": 7745,
-          "id_dia": 53099,
-          "nombre_completo": "BENITEZ ARAGON MARIA FERNANDA",
-          "numero_documento": "72185832",
-          "rg": 17709,
-          "codigo_tienda": "7D"
-        },
-        {
-          "id": 184539,
-          "id_cargo": 7745,
-          "id_dia": 53100,
-          "nombre_completo": "BENITEZ ARAGON MARIA FERNANDA",
-          "numero_documento": "72185832",
-          "rg": 17709,
-          "codigo_tienda": "7D"
-        },
-        {
-          "id": 184540,
-          "id_cargo": 7745,
-          "id_dia": 53101,
-          "nombre_completo": "SOLARI RIVAS FRANCESCA GRISELE",
-          "numero_documento": "72492663",
-          "rg": 17712,
-          "codigo_tienda": "7D"
-        },
-        {
-          "id": 184541,
-          "id_cargo": 7745,
-          "id_dia": 53101,
-          "nombre_completo": "GALLARDO ROMERO ALONSO MATTIAS",
-          "numero_documento": "74921615",
-          "rg": 17711,
-          "codigo_tienda": "7D"
-        },
-        {
-          "id": 184542,
-          "id_cargo": 7745,
-          "id_dia": 53102,
-          "nombre_completo": "SOLARI RIVAS FRANCESCA GRISELE",
-          "numero_documento": "72492663",
-          "rg": 17711,
-          "codigo_tienda": "7D"
-        },
-        {
-          "id": 184543,
-          "id_cargo": 7745,
-          "id_dia": 53103,
-          "nombre_completo": "FERNANDEZ ADRIANZEN CECILIA GLADYS AMELIA",
-          "numero_documento": "71948191",
-          "rg": 17712,
-          "codigo_tienda": "7D"
-        },
-        {
-          "id": 184544,
-          "id_cargo": 7745,
-          "id_dia": 53103,
-          "nombre_completo": "BENITEZ ARAGON MARIA FERNANDA",
-          "numero_documento": "72185832",
-          "rg": 17709,
-          "codigo_tienda": "7D"
-        },
-        {
-          "id": 184545,
-          "id_cargo": 7745,
-          "id_dia": 53103,
-          "nombre_completo": "VARGAS CISNEROS MERYGEAN MIA",
-          "numero_documento": "70595915",
-          "rg": 17708,
-          "codigo_tienda": "7D"
-        },
-        {
-          "id": 184546,
-          "id_cargo": 7745,
-          "id_dia": 53103,
-          "nombre_completo": "SOLARI RIVAS FRANCESCA GRISELE",
-          "numero_documento": "72492663",
-          "rg": 17710,
-          "codigo_tienda": "7D"
-        }
-      ],
-      "dias_libres": [
-        {
-          "id": 34131,
-          "id_cargo": 7745,
-          "id_dia": 53099,
-          "nombre_completo": "FERNANDEZ ADRIANZEN CECILIA GLADYS AMELIA",
-          "numero_documento": "71948191",
-          "rg": 17708,
-          "codigo_tienda": "7D"
-        },
-        {
-          "id": 34132,
-          "id_cargo": 7745,
-          "id_dia": 53097,
-          "nombre_completo": "DEL AGUILA NUÑEZ ALBERTO ARMANDO",
-          "numero_documento": "72316622",
-          "rg": 17708,
-          "codigo_tienda": "7D"
-        },
-        {
-          "id": 34133,
-          "id_cargo": 7745,
-          "id_dia": 53097,
-          "nombre_completo": "SOLARI RIVAS FRANCESCA GRISELE",
-          "numero_documento": "72492663",
-          "rg": 17708,
-          "codigo_tienda": "7D"
-        },
-        {
-          "id": 34134,
-          "id_cargo": 7745,
-          "id_dia": 53100,
-          "nombre_completo": "GALLARDO ROMERO ALONSO MATTIAS",
-          "numero_documento": "74921615",
-          "rg": 17712,
-          "codigo_tienda": "7D"
-        },
-        {
-          "id": 34136,
-          "id_cargo": 7745,
-          "id_dia": 53098,
-          "nombre_completo": "VARGAS CISNEROS MERYGEAN MIA",
-          "numero_documento": "70595915",
-          "rg": 17709,
-          "codigo_tienda": "7D"
-        },
-        {
-          "id": 34283,
-          "id_cargo": 7745,
-          "id_dia": 53098,
-          "nombre_completo": "BENITEZ ARAGON MARIA FERNANDA",
-          "numero_documento": "72185832",
-          "rg": 17709,
-          "codigo_tienda": "7D"
-        }
-      ],
-      "arListTrabajador": [],
-      "observacion": [],
-      "papeleta": []
-    },
-    {
-      "id": 7746,
-      "cargo": "Asesores part time",
-      "codigo_tienda": "7D",
-      "rg_hora": [],
-      "dias": [
-        {
-          "dia": "Lunes",
-          "fecha": "13 - abr",
-          "fecha_number": "13-4-2026",
-          "id": 53111,
-          "position": 1
-        },
-        {
-          "dia": "Martes",
-          "fecha": "14 - abr",
-          "fecha_number": "14-4-2026",
-          "id": 53112,
-          "position": 2
-        },
-        {
-          "dia": "Miercoles",
-          "fecha": "15 - abr",
-          "fecha_number": "15-4-2026",
-          "id": 53113,
-          "position": 3
-        },
-        {
-          "dia": "Jueves",
-          "fecha": "16 - abr",
-          "fecha_number": "16-4-2026",
-          "id": 53114,
-          "position": 4
-        },
-        {
-          "dia": "Viernes",
-          "fecha": "17 - abr",
-          "fecha_number": "17-4-2026",
-          "id": 53115,
-          "position": 5
-        },
-        {
-          "dia": "Sabado",
-          "fecha": "18 - abr",
-          "fecha_number": "18-4-2026",
-          "id": 53116,
-          "position": 6
-        },
-        {
-          "dia": "Domingo",
-          "fecha": "19 - abr",
-          "fecha_number": "19-4-2026",
-          "id": 53117,
-          "position": 7
-        }
-      ],
-      "dias_trabajo": [],
-      "dias_libres": [],
-      "arListTrabajador": [],
-      "observacion": [],
-      "papeleta": []
-    },
-    {
-      "id": 7747,
-      "cargo": "Vacaciones",
-      "codigo_tienda": "7D",
-      "rg_hora": [
-        {
-          "id": 17724,
-          "position": 1,
-          "rg": "00:00 a 00:00",
-          "codigo_tienda": "7D"
-        }
-      ],
-      "dias": [
-        {
-          "dia": "Lunes",
-          "fecha": "13 - abr",
-          "fecha_number": "13-4-2026",
-          "id": 53090,
-          "position": 1
-        },
-        {
-          "dia": "Martes",
-          "fecha": "14 - abr",
-          "fecha_number": "14-4-2026",
-          "id": 53091,
-          "position": 2
-        },
-        {
-          "dia": "Miercoles",
-          "fecha": "15 - abr",
-          "fecha_number": "15-4-2026",
-          "id": 53092,
-          "position": 3
-        },
-        {
-          "dia": "Jueves",
-          "fecha": "16 - abr",
-          "fecha_number": "16-4-2026",
-          "id": 53093,
-          "position": 4
-        },
-        {
-          "dia": "Viernes",
-          "fecha": "17 - abr",
-          "fecha_number": "17-4-2026",
-          "id": 53094,
-          "position": 5
-        },
-        {
-          "dia": "Sabado",
-          "fecha": "18 - abr",
-          "fecha_number": "18-4-2026",
-          "id": 53095,
-          "position": 6
-        },
-        {
-          "dia": "Domingo",
-          "fecha": "19 - abr",
-          "fecha_number": "19-4-2026",
-          "id": 53096,
-          "position": 7
-        }
-      ],
-      "dias_trabajo": [
-        {
-          "id": 183639,
-          "id_cargo": 7747,
-          "id_dia": 53090,
-          "nombre_completo": "VELASQUEZ LAREZ ANDREINA DEL VALLE",
-          "numero_documento": "003630092",
-          "rg": 17724,
-          "codigo_tienda": "7D"
-        },
-        {
-          "id": 183640,
-          "id_cargo": 7747,
-          "id_dia": 53091,
-          "nombre_completo": "VELASQUEZ LAREZ ANDREINA DEL VALLE",
-          "numero_documento": "003630092",
-          "rg": 17724,
-          "codigo_tienda": "7D"
-        },
-        {
-          "id": 183641,
-          "id_cargo": 7747,
-          "id_dia": 53092,
-          "nombre_completo": "VELASQUEZ LAREZ ANDREINA DEL VALLE",
-          "numero_documento": "003630092",
-          "rg": 17724,
-          "codigo_tienda": "7D"
-        },
-        {
-          "id": 183642,
-          "id_cargo": 7747,
-          "id_dia": 53093,
-          "nombre_completo": "VELASQUEZ LAREZ ANDREINA DEL VALLE",
-          "numero_documento": "003630092",
-          "rg": 17724,
-          "codigo_tienda": "7D"
-        },
-        {
-          "id": 183643,
-          "id_cargo": 7747,
-          "id_dia": 53094,
-          "nombre_completo": "VELASQUEZ LAREZ ANDREINA DEL VALLE",
-          "numero_documento": "003630092",
-          "rg": 17724,
-          "codigo_tienda": "7D"
-        },
-        {
-          "id": 183644,
-          "id_cargo": 7747,
-          "id_dia": 53095,
-          "nombre_completo": "VELASQUEZ LAREZ ANDREINA DEL VALLE",
-          "numero_documento": "003630092",
-          "rg": 17724,
-          "codigo_tienda": "7D"
-        },
-        {
-          "id": 183645,
-          "id_cargo": 7747,
-          "id_dia": 53096,
-          "nombre_completo": "VELASQUEZ LAREZ ANDREINA DEL VALLE",
-          "numero_documento": "003630092",
-          "rg": 17724,
-          "codigo_tienda": "7D"
-        }
-      ],
-      "dias_libres": [],
-      "arListTrabajador": [],
-      "observacion": [],
-      "papeleta": []
-    }
+  @Input() dataSearch: any = {};
+  @Input() isCreateHorario: boolean = false;
+  public readonly MtMdlRangoHora = MtMdlRangoHora;
+  public readonly MtMdlAsignarPersonal = MtMdlAsignarPersonal;
+  isLoading: boolean = false;
+  titleLoader: string = `Procesando Horario...`;
+  dataHorario: Array<any> = [];
+  //VARIABLE DE PERMISO PARA EDITAR HORARIOS PASADOS
+  puedeEditarPasado: boolean = false;
+  horariosProcesados: any[] = [];
+  messageNotification: string = '';
+  typeNotification: NotificationType = 'success';
+  isNotification: boolean = false;
+  dateCalendar: any[] = [];
+  hayCambios: boolean = false;
+  listaMaestraTrabajadores: Array<any> = [
+    { nombre_completo: 'Juan Pérez', dni: '12345678', id_trabajador: 1 },
+    { nombre_completo: 'María Gómez', dni: '87654321', id_trabajador: 2 },
+    { nombre_completo: 'Carlos Sánchez', dni: '11223344', id_trabajador: 3 },
+    { nombre_completo: 'Ana Rodríguez', dni: '44332211', id_trabajador: 4 },
+    { nombre_completo: 'Luis Fernández', dni: '55667788', id_trabajador: 5 },
+    { nombre_completo: 'Laura Martínez', dni: '99887766', id_trabajador: 6 },
+    { nombre_completo: 'Pedro López', dni: '22334455', id_trabajador: 7 },
+    { nombre_completo: 'Sofía Ramírez', dni: '66778899', id_trabajador: 8 },
+    { nombre_completo: 'Diego Torres', dni: '33445566', id_trabajador: 9 },
+    { nombre_completo: 'Valentina Díaz', dni: '77889900', id_trabajador: 10 }
   ];
-
-  constructor() { }
-
-  ngOnInit() {
-    this.prepararDataHorario(this.dataHorario);
+  dialog = inject(MatDialog);
+  @HostListener('window:beforeunload', ['$event'])
+  unloadNotification($event: any) {
+    if (this.hayCambios) {
+      // Esto muestra el mensaje estándar del navegador
+      $event.returnValue = true;
+    }
   }
 
+  constructor(private storeService: StoreService) { }
 
+  ngOnInit() {
+    this.cargarDeCache();
+  }
 
-  // mt-rw-horario.component.ts
-  horariosProcesados: any[] = [];
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes && changes.hasOwnProperty('dataSearch')) {
+      this.isLoading = true;
+      this.dataSearch = changes['dataSearch'].currentValue;
+      this.onSearhchHorario();
+    }
+  }
+
+  canDeactivate(): boolean {
+    return !this.hayCambios; // Si hay cambios, devuelve false y activa el confirm()
+  }
+
+  registrarCambio() {
+    this.hayCambios = true;
+    this.guardarEnCache(); // Aprovechamos para persistir en el LocalStorage
+    localStorage.setItem('hayCambios', 'true');
+  }
 
   // Llama a esta función cuando recibas tus datos del servicio
   // mt-rw-horario.component.ts
@@ -983,28 +86,409 @@ export class MtRwHorario {
   prepararDataHorario(data: any[]) {
     this.horariosProcesados = data.map(cargo => ({
       ...cargo,
-      // 1. Filas para los rangos horarios (07:00, 09:00, etc.)
+      // 1. Filas para los rangos horarios
       filasTrabajo: cargo.rg_hora.map((rango: any) => ({
         rango: rango.rg,
         celdas: cargo.dias.map((dia: any) => ({
-          // Solo buscamos trabajadores que tengan asignado este RANGO y este DÍA
           trabajadores: cargo.dias_trabajo.filter((dt: any) =>
             dt.id_dia === dia.id && dt.rg === rango.id
           )
         }))
       })),
-      // 2. Fila única para Días Libres (La que va al final de cada cargo)
+      // 2. Fila para Días Libres
       filaLibres: cargo.dias.map((dia: any) => ({
-        // Solo buscamos trabajadores en la lista de 'dias_libres' para este día
         trabajadores: cargo.dias_libres.filter((dl: any) => dl.id_dia === dia.id)
-      }))
+      })),
+      // 3. Mapeo de observaciones por día (NUEVO)
+      // Esto crea un acceso rápido: observacionesPorDia[id_del_dia]
+      notasDia: cargo.dias.reduce((acc: any, dia: any) => {
+        acc[dia.id] = cargo.observacion.filter((obs: any) =>
+          obs.id_dia === dia.id && obs.observacion.trim() !== ''
+        );
+        return acc;
+      }, {})
     }));
   }
-}
 
-// En tu componente .ts
-interface CeldaHorario {
-  id_dia: number;
-  trabajadores: any[];
-  esDiaLibre: boolean;
+
+  onInitHorario() {
+    this.validarFechaCreacion(this.dateCalendar[0]);
+  }
+
+  generarHorarioMaestroVacio(fechaInicio: string) {
+    const nombresCargos = [
+      'Gerentes',
+      'Cajeros',
+      'Asesores',
+      'Almaceneros',
+      'Asesores PartTime',
+      'Vacaciones'
+    ];
+
+    const diasSemana = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
+
+    // CORRECCIÓN: Reemplazamos '-' por '/' para evitar el desfase de zona horaria de JS
+    // Esto asegura que la fecha se interprete como local y no como UTC.
+    const fechaBase = new Date(fechaInicio.replace(/-/g, '\/'));
+
+    const diasCalculados = Array.from({ length: 7 }, (_, i) => {
+      const nuevaFecha = new Date(fechaBase);
+      nuevaFecha.setDate(fechaBase.getDate() + i);
+
+      const indiceDia = nuevaFecha.getDay(); // 0 = Domingo, 1 = Lunes...
+      const nombreDia = diasSemana[indiceDia === 0 ? 6 : indiceDia - 1];
+
+      // Formatear fecha manualmente a YYYY-MM-DD para evitar toISOString() que usa UTC
+      const anio = nuevaFecha.getFullYear();
+      const mes = String(nuevaFecha.getMonth() + 1).padStart(2, '0');
+      const diaNum = String(nuevaFecha.getDate()).padStart(2, '0');
+      const fechaFormateada = `${anio}-${mes}-${diaNum}`;
+
+      return {
+        id: i + 1,
+        dia: nombreDia,
+        fecha: fechaFormateada
+      };
+    });
+
+    this.horariosProcesados = nombresCargos.map(nombreCargo => ({
+      cargo: nombreCargo,
+      dias: diasCalculados,
+      filasTrabajo: [],
+      filaLibres: diasCalculados.map(dia => ({
+        id_dia: dia.id,
+        trabajadores: []
+      })),
+      notasDia: {}
+    }));
+
+    // Guardar en caché inmediatamente después de generar
+    this.registrarCambio();
+  }
+
+  onSearhchHorario() {
+    const body = {
+      range_days: this.dataSearch.range_days,
+      code_store: this.dataSearch.code_store
+    };
+
+    this.storeService.postSearchHorarios(body).subscribe(response => {
+      this.isLoading = false;
+      this.prepararDataHorario(response.data);
+    });
+  }
+
+  // Añadimos el parámetro 'item' que representa al cargo (Gerentes, Cajeros, etc.)
+  // fila es opcional: si viene, es EDICIÓN; si no, es CREACIÓN
+  openDialog(component: any, item: any, fila?: any) {
+    const dialogRef = this.dialog.open(component, {
+      panelClass: 'modal-mediano',
+      data: {
+        rangosExistentes: item.filasTrabajo,
+        // Pasamos los datos de la fila si vamos a editar
+        edicion: fila ? { ...fila } : null
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        if (fila) {
+          // Lógica de Edición: actualizamos el texto del rango
+          fila.rango = result.rango;
+          this.registrarCambio();
+        } else {
+          // Lógica de Creación: insertamos nueva fila
+          this.agregarFilaARango(item, result.rango);
+          this.registrarCambio();
+        }
+      }
+    });
+  }
+
+
+  confirmarLimpieza() {
+    if (confirm('¿Estás seguro de borrar todo el progreso actual?')) {
+      this.limpiarCache();
+      // Vuelves a generar la estructura vacía
+      this.generarHorarioMaestroVacio(this.dateCalendar[0]);
+    }
+  }
+
+  agregarFilaARango(item: any, nuevoRango: string) {
+    // 1. Creamos la estructura de la nueva fila
+    const nuevaFila = {
+      rango: nuevoRango,
+      // Creamos las 7 celdas (una por cada día que tiene el cargo)
+      celdas: item.dias.map((dia: any) => ({
+        id_dia: dia.id,
+        trabajadores: [] // Lista de trabajadores vacía para empezar
+      }))
+    };
+
+    // 2. La insertamos en el cargo correspondiente
+    item.filasTrabajo.push(nuevaFila);
+
+    console.log(`Rango ${nuevoRango} agregado a ${item.cargo}`);
+  }
+
+
+  // 2. Función para guardar en LocalStorage
+  guardarEnCache() {
+    try {
+      const dataString = JSON.stringify(this.horariosProcesados);
+      localStorage.setItem('horario_metas_peru', dataString);
+      console.log('Progreso guardado automáticamente');
+    } catch (e) {
+      console.error('Error guardando en caché', e);
+    }
+  }
+
+  // 3. Función para recuperar los datos
+  cargarDeCache() {
+    const hayCambios = localStorage.getItem('hayCambios');
+    if (hayCambios === 'true') {
+      this.hayCambios = true;
+    } else {
+      this.hayCambios = false;
+    }
+
+    const cache: any = localStorage.getItem('horario_metas_peru');
+    console.log('Cargando progreso desde caché:', JSON.parse(cache || "[]").length);
+    if (JSON.parse(cache || "[]").length > 0) {
+      this.horariosProcesados = JSON.parse(cache || "[]");
+    }
+  }
+
+  // 4. Limpiar el horario (para cuando ya se envíe a la base de datos)
+  limpiarCache() {
+    localStorage.removeItem('horario_metas_peru');
+  }
+
+  // Esta función devuelve solo los trabajadores que NO están trabajando ese día
+  obtenerDisponiblesPorDia(diaId: number): any[] {
+    // 1. Obtener todos los IDs de trabajadores ya asignados en ese día específico
+    const asignadosEseDia = new Set();
+
+    this.horariosProcesados.forEach(cargo => {
+      // Revisamos rangos de trabajo
+      cargo.filasTrabajo.forEach((fila: any) => {
+        const celdaDia = fila.celdas.find((c: any) => c.id_dia === diaId);
+        celdaDia?.trabajadores.forEach((t: any) => asignadosEseDia.add(t.id_trabajador));
+      });
+
+      // Revisamos también los días libres (porque si está libre, no está disponible para turnos)
+      const celdaLibre = cargo.filaLibres.find((c: any) => c.id_dia === diaId);
+      celdaLibre?.trabajadores.forEach((t: any) => asignadosEseDia.add(t.id_trabajador));
+    });
+
+    // 2. Filtramos la lista maestra
+    return this.listaMaestraTrabajadores.filter((t: any) => !asignadosEseDia.has(t.id_trabajador));
+  }
+
+
+  abrirModalAsignar(celda: any, diaId: number) {
+    const disponibles = this.obtenerDisponiblesPorDia(diaId);
+
+    const dialogRef = this.dialog.open(MtMdlAsignarPersonal, {
+      panelClass: 'modal-grande',
+      data: { trabajadores: disponibles, diaNombre: this.obtenerNombreDia(diaId) }
+    });
+
+    dialogRef.afterClosed().subscribe((seleccionados: any[]) => {
+      if (seleccionados && seleccionados.length > 0) {
+        // Insertamos todos los trabajadores seleccionados de una vez
+        seleccionados.forEach(trab => {
+          // Validación extra por seguridad: que no exista ya en la celda
+          if (!celda.trabajadores.some((t: any) => t.id_trabajador === trab.id_trabajador)) {
+            celda.trabajadores.push(trab);
+          }
+        });
+
+        this.registrarCambio();
+      }
+    });
+  }
+
+  // Esta función ahora sirve tanto para turnos de trabajo como para Días Libres
+  abrirModalAsignarLibre(celda: any, diaId: number) {
+    const disponibles = this.obtenerDisponiblesPorDia(diaId);
+
+    const dialogRef = this.dialog.open(MtMdlAsignarPersonal, {
+      panelClass: 'modal-grande',
+      data: {
+        trabajadores: disponibles,
+        diaNombre: this.obtenerNombreDia(diaId)
+      }
+    });
+
+    dialogRef.afterClosed().subscribe((seleccionados: any[]) => {
+      if (seleccionados && seleccionados.length > 0) {
+        seleccionados.forEach(trab => {
+          // Evitamos duplicados en la misma celda de Día Libre
+          const existe = celda.trabajadores.some((t: any) =>
+            t.id_trabajador === trab.id_trabajador
+          );
+
+          if (!existe) {
+            celda.trabajadores.push(trab);
+          }
+        });
+
+        this.registrarCambio();
+      }
+    });
+  }
+
+  obtenerNombreDia(diaId: number): string {
+    // Buscamos en el primer cargo de la lista los días que generamos
+    const diaEncontrado = this.horariosProcesados[0]?.dias.find((d: any) => d.id === diaId);
+    return diaEncontrado ? diaEncontrado.dia : 'Día';
+  }
+
+  // Función para remover trabajadores de la celda
+  quitarTrabajador(celda: any, trab: any) {
+    celda.trabajadores = celda.trabajadores.filter((t: any) =>
+      t.id_trabajador !== trab.id_trabajador
+    );
+    this.registrarCambio();
+  }
+
+
+
+  validarFechaCreacion(fechaSeleccionada: string): boolean {
+    const hoy = new Date();
+    // Ajustar a lunes de esta semana
+    const lunesEstaSemana = new Date(hoy);
+    const diaHoy = hoy.getDay(); // 0 Dom, 1 Lun...
+    const diff = hoy.getDate() - (diaHoy === 0 ? 6 : diaHoy - 1);
+    lunesEstaSemana.setDate(diff);
+    lunesEstaSemana.setHours(0, 0, 0, 0);
+
+    // Definir lunes de la próxima semana
+    const lunesProximaSemana = new Date(lunesEstaSemana);
+    lunesProximaSemana.setDate(lunesEstaSemana.getDate() + 7);
+
+    // Definir lunes de subsiguiente (2 semanas)
+    const lunesSubSiguiente = new Date(lunesProximaSemana);
+    lunesSubSiguiente.setDate(lunesProximaSemana.getDate() + 7);
+
+    const fechaInput = new Date(fechaSeleccionada.replace(/-/g, '\/'));
+    fechaInput.setHours(0, 0, 0, 0);
+
+    // REGLA: Solo puede crear si es EXACTAMENTE la semana que viene
+    if ((fechaInput.getTime() === lunesProximaSemana.getTime() || this.puedeEditarPasado)) {
+      this.generarHorarioMaestroVacio(fechaSeleccionada);
+      return true;
+    } else {
+      this.messageNotification = 'Solo se permite generar el horario de la próxima semana.';
+      this.abrirNotificacion('danger');
+      return false;
+    }
+  }
+
+  esEditable(fechaStr: string): boolean {
+    // Si tiene el permiso especial, siempre es editable
+    if (this.puedeEditarPasado) return true;
+
+    const hoy = new Date();
+    hoy.setHours(0, 0, 0, 0);
+
+    const fechaCelda = new Date(fechaStr.replace(/-/g, '\/'));
+    // Si la fecha de la celda es menor a hoy, está bloqueado
+    return fechaCelda >= hoy;
+  }
+
+
+  abrirNotificacion(type: NotificationType) {
+    this.typeNotification = type;
+    this.isNotification = true;
+  }
+
+  cerrarNotificacion() {
+    // Aquí es donde realmente desaparece del DOM
+    this.isNotification = false;
+  }
+
+  onCalendar(event: any): void {
+    const { isPeriodo, isMultiSelect, isDefault, isRange, value } = event;
+    this.dateCalendar = value;
+  }
+
+  async guardarHorarioCompleto() {
+    this.isLoading = true;
+    this.titleLoader = "Preparando registros...";
+    const ahora = new Date();
+    const fechaHoyPC = ahora.toLocaleDateString('en-CA'); // 'en-CA' genera YYYY-MM-DD
+    // Fecha y hora completa para el campo DATETIME
+    const dateTimePC = ahora.toLocaleString('es-PE', {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+      hour12: false
+    }).replace(/,/, '');
+
+    // 1. Cabecera principal (tb_horario_property)
+    const cabecera = {
+      FECHA: fechaHoyPC, // Fecha de inicio
+      RANGO_DIAS: `${this.horariosProcesados[0].dias[0].fecha} al ${this.horariosProcesados[0].dias[6].fecha}`,
+      CODIGO_TIENDA: this.horariosProcesados[0].codigo_tienda,
+      DATETIME: dateTimePC,
+      ESTADO: 'ACTIVO'
+    };
+
+    // 2. Cargos y su estructura interna
+    const cargosEstructura = this.horariosProcesados.map(item => {
+      return {
+        CARGO: item.cargo,
+        // Días (tb_dias_horario)
+        dias: item.dias.map((d: any, index: any) => ({
+          DIA: d.dia,
+          FECHA: d.fecha,
+          POSITION: index,
+          FECHA_NUMBER: d.fecha.replace(/-/g, ''),
+          // Observaciones por día (tb_observacion)
+          observacion: item.notasDia[d.id] || null
+        })),
+        // Rangos (tb_rango_hora)
+        rangos: item.filasTrabajo.map((fila: any) => ({
+          RANGO_HORA: fila.rango,
+          // Trabajadores por rango y día (tb_dias_trabajo)
+          trabajadores: fila.celdas.flatMap((celda: any, indexDia: any) =>
+            celda.trabajadores.map((t: any) => ({
+              NUMERO_DOCUMENTO: t.dni || t.NUMERO_DOCUMENTO,
+              NOMBRE_COMPLETO: t.nombre_completo,
+              DIA_INDEX: indexDia // Para saber a qué día de los 7 pertenece
+            }))
+          )
+        })),
+        // Días Libres (tb_dias_libre)
+        libres: item.filaLibres.flatMap((celda: any, indexDia: any) =>
+          celda.trabajadores.map((t: any) => ({
+            NUMERO_DOCUMENTO: t.dni || t.NUMERO_DOCUMENTO,
+            NOMBRE_COMPLETO: t.nombre_completo,
+            DIA_INDEX: indexDia
+          }))
+        )
+      };
+    });
+
+    const payload = { cabecera, detalles: cargosEstructura };
+
+    console.log('Payload a enviar al servicio:', payload);
+
+    this.isLoading = false;
+    this.hayCambios = false;
+    /* // Enviar al servicio
+     this.horarioService.save(payload).subscribe({
+       next: () => {
+         this.isLoading = false;
+         this.limpiarCache();
+         alert("Horario guardado correctamente.");
+       },
+       error: () => this.isLoading = false
+     });*/
+  }
 }
