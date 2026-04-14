@@ -16,7 +16,7 @@ export class Inventario {
     { isSticky: true, matColumnDef: 'codigoBarra', titleColumn: 'Codigo Barra', propertyValue: 'cCodigoBarra', filterActive: false, isCboFilter: false, cboFilter: [] },
     { isSticky: false, matColumnDef: 'codigoArticulo', titleColumn: 'Codigo Articulo', propertyValue: 'cCodigoArticulo', filterActive: false, isCboFilter: false, cboFilter: [] },
     { isSticky: false, matColumnDef: 'referencia', titleColumn: 'Referencia', propertyValue: 'cReferencia', filterActive: false, isCboFilter: false, cboFilter: [] },
-    { isSticky: false, matColumnDef: 'departamento', titleColumn: 'Departamento', propertyValue: 'cDepartamento', filterActive: false, isCboFilter: false, cboFilter: [] },
+    { isSticky: false, matColumnDef: 'descripcion', titleColumn: 'Descripcion', propertyValue: 'cDescripcion', filterActive: false, isCboFilter: false, cboFilter: [] },
     { isSticky: false, matColumnDef: 'seccion', titleColumn: 'Seccion', propertyValue: 'cSeccion', filterActive: false, isCboFilter: false, cboFilter: [] },
     { isSticky: false, matColumnDef: 'familia', titleColumn: 'Familia', propertyValue: 'cFamilia', filterActive: false, isCboFilter: false, cboFilter: [] },
     { isSticky: false, matColumnDef: 'subFamilia', titleColumn: 'Subfamilia', propertyValue: 'cSubFamilia', filterActive: false, isCboFilter: false, cboFilter: [] },
@@ -95,7 +95,7 @@ export class Inventario {
       acc[t.serie] = t.nombre;
       return acc;
     }, {} as { [key: string]: string });
-   
+
     // 2. Transformamos el array de artículos
     const articulosAplanados = this.dataInventory.map(item => {
       const { cStock, ...resto } = item;
@@ -151,7 +151,7 @@ export class Inventario {
 
   onEmailInventory() {
     this.isLoading = true;
-     this.titleLoader = `Enviando inventario...`;
+    this.titleLoader = `Enviando inventario...`;
     this.storeService.callInventoryEmail(this.emailInvetorySend, this.storesSelected).subscribe(
       response => {
         this.isLoading = false;

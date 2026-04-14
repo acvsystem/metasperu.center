@@ -112,7 +112,13 @@ export class MtRwHorario implements CanComponentDeactivate {
 
 
   onInitHorario() {
-    this.validarFechaCreacion(this.dateCalendar[0]);
+    if (this.dateCalendar.length > 0) {
+      this.validarFechaCreacion(this.dateCalendar[0]);
+    } else {
+      this.messageNotification = 'Seleccione un rango de fechas.';
+      this.abrirNotificacion('danger');
+    }
+
   }
 
   generarHorarioMaestroVacio(fechaInicio: string) {
