@@ -331,4 +331,28 @@ export class StoreService {
             catchError(this.handleError)
         );
     }
+
+    postRegisterHorarios(body: any): Observable<any> {
+        return this.http.post(
+            `${this.API_URL_RESOURCES_HUMAN}/api/register/schedule/store`, body
+        ).pipe(
+            catchError(this.handleError)
+        );
+    }
+
+    postoneSearchHorarios(body: any): Observable<any> {
+        return this.http.post(
+            `${this.API_URL_RESOURCES_HUMAN}/api/one/search/schedule/store`, body
+        ).pipe(
+            catchError(this.handleError)
+        );
+    }
+
+    putHorario(body: any): Observable<any> {
+        return this.http.post(
+            `${this.API_URL_RESOURCES_HUMAN}/api/update/schedule/store`, body
+        ).pipe(
+            catchError(this.handleError)
+        );
+    }
 }

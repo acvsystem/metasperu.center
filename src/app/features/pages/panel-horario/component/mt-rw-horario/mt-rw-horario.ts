@@ -28,13 +28,14 @@ export class MtRwHorario implements CanComponentDeactivate {
   titleLoader: string = `Procesando Horario...`;
   dataHorario: Array<any> = [];
   //VARIABLE DE PERMISO PARA EDITAR HORARIOS PASADOS
-  puedeEditarPasado: boolean = false;
+  puedeEditarPasado: boolean = true;
   horariosProcesados: any[] = [];
   messageNotification: string = '';
   typeNotification: NotificationType = 'success';
   isNotification: boolean = false;
   dateCalendar: any[] = [];
   hayCambios: boolean = false;
+  isEditing: boolean = false;
   listaMaestraTrabajadores: Array<any> = [
     { nombre_completo: 'Juan Pérez', dni: '12345678', id_trabajador: 1 },
     { nombre_completo: 'María Gómez', dni: '87654321', id_trabajador: 2 },
@@ -122,6 +123,7 @@ export class MtRwHorario implements CanComponentDeactivate {
   }
 
   generarHorarioMaestroVacio(fechaInicio: string) {
+    this.isEditing = false;
     const nombresCargos = [
       'Gerentes',
       'Cajeros',
@@ -245,6 +247,8 @@ export class MtRwHorario implements CanComponentDeactivate {
       localStorage.setItem('horario_metas_peru', dataString);
       console.log('Progreso guardado automáticamente');
     } catch (e) {
+      this.messageNotification = 'Error al guardar el horario.';
+      this.abrirNotificacion('danger');
       console.error('Error guardando en caché', e);
     }
   }
@@ -256,12 +260,16 @@ export class MtRwHorario implements CanComponentDeactivate {
       this.hayCambios = true;
     } else {
       this.hayCambios = false;
+      localStorage.setItem('hayCambios', 'false');
     }
 
     const cache: any = localStorage.getItem('horario_metas_peru');
-    console.log('Cargando progreso desde caché:', JSON.parse(cache || "[]").length);
+
     if (JSON.parse(cache || "[]").length > 0) {
       this.horariosProcesados = JSON.parse(cache || "[]");
+    } else {
+      this.hayCambios = false;
+      localStorage.setItem('hayCambios', 'false');
     }
   }
 
@@ -279,16 +287,16 @@ export class MtRwHorario implements CanComponentDeactivate {
       // Revisamos rangos de trabajo
       cargo.filasTrabajo.forEach((fila: any) => {
         const celdaDia = fila.celdas.find((c: any) => c.id_dia === diaId);
-        celdaDia?.trabajadores.forEach((t: any) => asignadosEseDia.add(t.id_trabajador));
+        celdaDia?.trabajadores.forEach((t: any) => asignadosEseDia.add(t.dni));
       });
 
       // Revisamos también los días libres (porque si está libre, no está disponible para turnos)
       const celdaLibre = cargo.filaLibres.find((c: any) => c.id_dia === diaId);
-      celdaLibre?.trabajadores.forEach((t: any) => asignadosEseDia.add(t.id_trabajador));
+      celdaLibre?.trabajadores.forEach((t: any) => asignadosEseDia.add(t.dni));
     });
 
     // 2. Filtramos la lista maestra
-    return this.listaMaestraTrabajadores.filter((t: any) => !asignadosEseDia.has(t.id_trabajador));
+    return this.listaMaestraTrabajadores.filter((t: any) => !asignadosEseDia.has(t.dni));
   }
 
 
@@ -305,7 +313,7 @@ export class MtRwHorario implements CanComponentDeactivate {
         // Insertamos todos los trabajadores seleccionados de una vez
         seleccionados.forEach(trab => {
           // Validación extra por seguridad: que no exista ya en la celda
-          if (!celda.trabajadores.some((t: any) => t.id_trabajador === trab.id_trabajador)) {
+          if (!celda.trabajadores.some((t: any) => t.dni === trab.dni)) {
             celda.trabajadores.push(trab);
           }
         });
@@ -354,7 +362,7 @@ export class MtRwHorario implements CanComponentDeactivate {
   // Función para remover trabajadores de la celda
   quitarTrabajador(celda: any, trab: any) {
     celda.trabajadores = celda.trabajadores.filter((t: any) =>
-      t.id_trabajador !== trab.id_trabajador
+      t.dni !== trab.dni
     );
     this.registrarCambio();
   }
@@ -422,79 +430,73 @@ export class MtRwHorario implements CanComponentDeactivate {
 
   async guardarHorarioCompleto() {
     this.isLoading = true;
-    this.titleLoader = "Preparando registros...";
+    this.titleLoader = "Cargando registros...";
     const ahora = new Date();
     const fechaHoyPC = ahora.toLocaleDateString('en-CA'); // 'en-CA' genera YYYY-MM-DD
-    // Fecha y hora completa para el campo DATETIME
-    const dateTimePC = ahora.toLocaleString('es-PE', {
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit',
-      hour: '2-digit',
-      minute: '2-digit',
-      second: '2-digit',
-      hour12: false
-    }).replace(/,/, '');
 
-    // 1. Cabecera principal (tb_horario_property)
-    const cabecera = {
-      FECHA: fechaHoyPC, // Fecha de inicio
-      RANGO_DIAS: `${this.horariosProcesados[0].dias[0].fecha} al ${this.horariosProcesados[0].dias[6].fecha}`,
-      CODIGO_TIENDA: this.horariosProcesados[0].codigo_tienda,
-      DATETIME: dateTimePC,
-      ESTADO: 'ACTIVO'
-    };
-
-    // 2. Cargos y su estructura interna
-    const cargosEstructura = this.horariosProcesados.map(item => {
-      return {
-        CARGO: item.cargo,
-        // Días (tb_dias_horario)
-        dias: item.dias.map((d: any, index: any) => ({
-          DIA: d.dia,
-          FECHA: d.fecha,
-          POSITION: index,
-          FECHA_NUMBER: d.fecha.replace(/-/g, ''),
-          // Observaciones por día (tb_observacion)
-          observacion: item.notasDia[d.id] || null
-        })),
-        // Rangos (tb_rango_hora)
-        rangos: item.filasTrabajo.map((fila: any) => ({
-          RANGO_HORA: fila.rango,
-          // Trabajadores por rango y día (tb_dias_trabajo)
-          trabajadores: fila.celdas.flatMap((celda: any, indexDia: any) =>
-            celda.trabajadores.map((t: any) => ({
-              NUMERO_DOCUMENTO: t.dni || t.NUMERO_DOCUMENTO,
-              NOMBRE_COMPLETO: t.nombre_completo,
-              DIA_INDEX: indexDia // Para saber a qué día de los 7 pertenece
-            }))
-          )
-        })),
-        // Días Libres (tb_dias_libre)
-        libres: item.filaLibres.flatMap((celda: any, indexDia: any) =>
-          celda.trabajadores.map((t: any) => ({
-            NUMERO_DOCUMENTO: t.dni || t.NUMERO_DOCUMENTO,
-            NOMBRE_COMPLETO: t.nombre_completo,
-            DIA_INDEX: indexDia
-          }))
-        )
-      };
-    });
-
-    const payload = { cabecera, detalles: cargosEstructura };
-
-    console.log('Payload a enviar al servicio:', payload);
+    const payload = { codigoTienda: 'OF', fechaCabecera: fechaHoyPC, rangoDias: `${this.horariosProcesados[0].dias[0].fecha} al ${this.horariosProcesados[0].dias[6].fecha}`, datos: this.horariosProcesados };
 
     this.isLoading = false;
     this.hayCambios = false;
-    /* // Enviar al servicio
-     this.horarioService.save(payload).subscribe({
-       next: () => {
-         this.isLoading = false;
-         this.limpiarCache();
-         alert("Horario guardado correctamente.");
-       },
-       error: () => this.isLoading = false
-     });*/
+    // Enviar al servicio
+    this.storeService.postRegisterHorarios(payload).subscribe({
+      next: (response: any) => {
+        this.isLoading = false;
+        this.limpiarCache();
+        this.messageNotification = response.message || 'null';
+        this.abrirNotificacion('success');
+      },
+      error: (error: any) => {
+        this.isLoading = false;
+        this.messageNotification = error.message || 'Error al guardar el horario.';
+        this.abrirNotificacion('danger');
+      }
+    });
   }
+
+  onSearch() {
+    if (this.dateCalendar.length > 0) {
+      this.isLoading = true;
+
+      this.storeService.postoneSearchHorarios({ rango_fecha: `${this.dateCalendar[0]} al ${this.dateCalendar[1]}`, codigoTienda: 'OF' }).subscribe((response: any) => {
+        this.isLoading = false;
+        this.hayCambios = false;
+        this.isEditing = true;
+        localStorage.setItem('hayCambios', 'false');
+        this.horariosProcesados = response;
+      });
+    } else {
+      this.messageNotification = 'Seleccione un rango de fechas.';
+      this.abrirNotificacion('danger');
+    }
+
+  }
+
+  async editarHorarioCompleto() {
+    this.isLoading = true;
+    this.titleLoader = "Cargando registros...";
+    const ahora = new Date();
+    const fechaHoyPC = ahora.toLocaleDateString('en-CA'); // 'en-CA' genera YYYY-MM-DD
+
+    const payload = { codigoTienda: 'OF', fechaCabecera: fechaHoyPC, rangoDias: `${this.horariosProcesados[0].dias[0].fecha} al ${this.horariosProcesados[0].dias[6].fecha}`, datos: this.horariosProcesados };
+
+    this.isLoading = false;
+    this.hayCambios = false;
+    // Enviar al servicio
+    this.storeService.putHorario(payload).subscribe({
+      next: (response: any) => {
+        this.isLoading = false;
+        this.limpiarCache();
+        this.messageNotification = response.message || 'null';
+        this.abrirNotificacion('success');
+      },
+      error: (error: any) => {
+        this.isLoading = false;
+        this.messageNotification = error.message || 'Error al guardar el horario.';
+        this.abrirNotificacion('danger');
+      }
+    });
+  }
+
+
 }

@@ -1,16 +1,20 @@
 <ion-row class="ion-align-items-center"
     style="border-bottom: 2px solid #f4f4f4; margin-bottom: 20px;margin-top: 20px;margin-left: 10px;">
-    <ion-col size="12" size-md="8">
-        <h1 class="title-page" style="margin: 0; font-weight: 700; color: #2c3e50;">Gestión de Horario</h1>
-        <p style="color: #7f8c8d; margin: 4px 0 15px 0;">Gestion de horarios, papeletas y horas extras</p>
-    </ion-col>
-    <ion-col size="12" *ngIf="hayCambios">
-        <div class="alert alert-warning d-flex align-items-center justify-content-between"
-            style="margin: 0 10px 15px 10px; border-left: 5px solid #ffc107;">
-            <span style="display: flex;align-items: center;">
-                <mat-icon style="margin: 0 5px;">info</mat-icon>
-                Tienes cambios sin guardar.
-            </span>
+    <ion-col size="12" size-md="12">
+        <div style="display: flex;width: 100%;">
+            <div>
+                <h1 class="title-page" style="margin: 0; font-weight: 700; color: #2c3e50;">Gestión de Horario</h1>
+                <p style="color: #7f8c8d; margin: 4px 0 15px 0;">Gestion de horarios, papeletas y horas extras</p>
+            </div>
+            <div style="width: 78%;">
+                <div *ngIf="hayCambios" class="alert alert-warning d-flex align-items-center justify-content-between"
+                    style="margin: 0 10px 15px 10px; border-left: 5px solid #ffc107;height: 50px !important;">
+                    <span style="display: flex;align-items: center;">
+                        <mat-icon style="margin: 0 5px;">info</mat-icon>
+                        Tienes cambios sin guardar.
+                    </span>
+                </div>
+            </div>
         </div>
     </ion-col>
 </ion-row>
@@ -25,7 +29,7 @@
             </button>
             <mt-calendar [isPeriodo]="false" [isMultiSelect]="false" [isDefault]="false" [isRange]="true"
                 placeholder="Seleccione la fecha" (afterChange)="onCalendar($event)"></mt-calendar>
-            <button (click)="onInitHorario()" type="button" matTooltip="Buscar horario"
+            <button (click)="onSearch()" type="button" matTooltip="Buscar horario"
                 style="display: flex;justify-content: center;align-items: center;margin-left: 10px;"
                 class="btn btn-primary btn-sm mobil-margin-button">
                 <mat-icon>search</mat-icon>
@@ -40,11 +44,20 @@
     </ion-col>
     <ion-col size="7">
         <div style="width: 100%;display: flex;align-items: center;justify-content: end;height: 100%;">
+            @if(!isEditing){
             <button (click)="guardarHorarioCompleto()" type="button" matTooltip="Finalizar y guardar horario"
                 style="display: flex;justify-content: center;align-items: center;margin-right: 27px;"
                 class="btn btn-success btn-sm mobil-margin-button" [disabled]="horariosProcesados.length === 0">
                 <mat-icon style="margin-right: 5px;">save</mat-icon> <span>Registrar en Sistema</span>
             </button>
+            }@else{
+            <button (click)="editarHorarioCompleto()" type="button" matTooltip="guardar cambios en horario"
+                style="display: flex;justify-content: center;align-items: center;margin-right: 27px;"
+                class="btn btn-success btn-sm mobil-margin-button" [disabled]="horariosProcesados.length === 0 || hayCambios === false">
+                 <mat-icon style="margin-right: 5px;">save</mat-icon> <span>Guardar cambios</span>
+            </button>
+            }
+
         </div>
     </ion-col>
 </ion-row>
