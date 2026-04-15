@@ -17,15 +17,20 @@
         <ion-col size="12" size-md="8" style="display: flex;align-items: center">
             <mt-calendar [isPeriodo]="false" [isMultiSelect]="false" [isDefault]="false" [isRange]="true"
                 placeholder="Seleccione la fecha" (afterChange)="onCalendar($event)"></mt-calendar>
-            <button (click)="onSearch()" type="button" matTooltip="Buscar horario"
+            <button (click)="onSearch()" type="button" matTooltip="Buscar registros"
                 style="display: flex;justify-content: center;align-items: center;margin-left: 10px;"
                 class="btn btn-primary btn-sm mobil-margin-button">
                 <mat-icon>search</mat-icon>
             </button>
-            <button (click)="onSincronizarSunat()" type="button" matTooltip="Buscar horario"
+            <button (click)="onSincronizarSunat()" type="button" matTooltip="Discronizar con tc sunat"
                 style="display: flex;justify-content: center;align-items: center;margin-left: 10px;"
                 class="btn btn-primary btn-sm mobil-margin-button">
                 <mat-icon style="margin-right: 10px;">cloud_sync</mat-icon><span>Sincornizar Sunat</span>
+            </button>
+            <button (click)="exportarAExcel()" type="button" matTooltip="Exportar Datos"
+                style="display: flex;justify-content: center;align-items: center;margin-left: 10px;background-color: green;"
+                class="btn btn-primary btn-sm mobil-margin-button">
+                <mat-icon style="margin-right: 10px;">file_download</mat-icon><span>Exportar Excel</span>
             </button>
         </ion-col>
 

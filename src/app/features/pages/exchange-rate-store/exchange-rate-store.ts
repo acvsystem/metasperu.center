@@ -5,6 +5,7 @@ import { SocketAccountingService } from '@metasperu/services/socketAccounting';
 export type NotificationType = 'success' | 'warning' | 'danger';
 import { map, catchError } from 'rxjs/operators';
 import { Observable, of, lastValueFrom } from 'rxjs';
+import * as XLSX from 'xlsx';
 
 @Component({
   selector: 'exchange-rate-store',
@@ -132,6 +133,16 @@ export class ExchangeRateStore {
 
     });
   }
+
+  exportarAExcel() {
+    const worksheet = XLSX.utils.json_to_sheet(this.dataExchangeRate);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Reporte Feriados');
+
+    // Generar el archivo y descargarlo
+    XLSX.writeFile(workbook, `Reporte_Feriados_${new Date().getTime()}.xlsx`);
+  }
+
 
   abrirNotificacion(type: NotificationType) {
     this.typeNotification = type;
