@@ -135,12 +135,18 @@ export class ExchangeRateStore {
   }
 
   exportarAExcel() {
+    if (this.dataExchangeRate.length === 0) {
+      this.messageNotification = 'No hay datos que exportar.';
+      this.abrirNotificacion('danger');
+      return;
+    }
+
     const worksheet = XLSX.utils.json_to_sheet(this.dataExchangeRate);
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, 'Reporte Feriados');
 
     // Generar el archivo y descargarlo
-    XLSX.writeFile(workbook, `Reporte_Feriados_${new Date().getTime()}.xlsx`);
+    XLSX.writeFile(workbook, `Reporte_exchange_rate_${new Date().getTime()}.xlsx`);
   }
 
 
