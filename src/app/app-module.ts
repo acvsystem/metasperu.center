@@ -51,6 +51,7 @@ import { MtRegistrosHorarios } from './features/pages/panel-horario/component/mt
 import { MtRwHorario } from './features/pages/panel-horario/component/mt-rw-horario/mt-rw-horario';
 import { MtMdlRangoHora } from './features/pages/panel-horario/component/mt-mdl-rango-hora/mt-mdl-rango-hora';
 import { MtMdlAsignarPersonal } from './features/pages/panel-horario/component/mt-mdl-asignar-personal/mt-mdl-asignar-personal';
+import { ExchangeRateStore } from './features/pages/exchange-rate-store/exchange-rate-store';
 
 registerLocaleData(localeEsPe);
 @NgModule({
@@ -80,7 +81,8 @@ registerLocaleData(localeEsPe);
     MtRegistrosHorarios,
     MtRwHorario,
     MtMdlRangoHora,
-    MtMdlAsignarPersonal
+    MtMdlAsignarPersonal,
+    ExchangeRateStore
   ],
   imports: [
     IonicModule.forRoot(),

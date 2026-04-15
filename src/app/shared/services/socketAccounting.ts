@@ -53,4 +53,8 @@ export class SocketAccountingService {
     onResponseInsertCuo(callback: (data: any) => void) {
         this.socket?.on('dashboard_cuo_insert', callback);
     }
+
+    onResponseExchangeRate(callback: (data: any) => void) {
+        this.socket?.on('dashboard_exchange_rate_store', callback);
+    }
 }

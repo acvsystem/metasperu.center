@@ -9,7 +9,7 @@ import { RrhhHorario } from '@metasperu/page/features/pages/rrhh-horario/rrhh-ho
 import { Kardex } from '@metasperu/page/features/pages/kardex/kardex';
 import { Traspasos } from '@metasperu/page/features/pages/traspasos/traspasos';
 import { PanelHorario } from './features/pages/panel-horario/panel-horario';
-import { PendingChangesGuard } from './core/auth/pending-changes.guard';
+import { ExchangeRateStore } from './features/pages/exchange-rate-store/exchange-rate-store';
 
 const routes: Routes = [
   { path: '', component: Login },
@@ -55,6 +55,12 @@ const routes: Routes = [
     component: PanelHorario,
     canActivate: [authGuard],
     data: { roles: ['SISTEMAS', 'OPERACIONES', 'TIENDA', 'RRHH'] }
+  },
+  {
+    path: 'tipo-cambio',
+    component: ExchangeRateStore,
+    canActivate: [authGuard],
+    data: { roles: ['SISTEMAS', 'CONTABILIDAD'] }
   }
 ];
 

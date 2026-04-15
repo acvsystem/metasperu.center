@@ -1,0 +1,47 @@
+<ion-grid>
+    <ion-row class="ion-align-items-center" style="border-bottom: 2px solid #f4f4f4; margin-bottom: 20px;">
+        <ion-col size="12" size-md="8">
+            <h1 class="title-page" style="margin: 0; font-weight: 700; color: #2c3e50;">Gestion de Tipo de Cambio</h1>
+            <p style="color: #7f8c8d; margin: 4px 0 15px 0;">Los datos mostrados son del sistema Front Retail</p>
+        </ion-col>
+    </ion-row>
+
+    <ion-row>
+        <ion-col size="2" size-md="2" size-lg="2">
+            <div class="control-container">
+                <mt-select [data]="cboStoreList" [isMultiselect]=false label="Seleccione una tienda" title="Tienda" de
+                    (selectdOption)="onChangeSelect($event)">
+                </mt-select>
+            </div>
+        </ion-col>
+        <ion-col size="12" size-md="8" style="display: flex;align-items: center">
+            <mt-calendar [isPeriodo]="false" [isMultiSelect]="false" [isDefault]="false" [isRange]="true"
+                placeholder="Seleccione la fecha" (afterChange)="onCalendar($event)"></mt-calendar>
+            <button (click)="onSearch()" type="button" matTooltip="Buscar horario"
+                style="display: flex;justify-content: center;align-items: center;margin-left: 10px;"
+                class="btn btn-primary btn-sm mobil-margin-button">
+                <mat-icon>search</mat-icon>
+            </button>
+        </ion-col>
+        <ion-col size="12" size-md="12" style="display: flex;justify-content: end;">
+            <span style="padding-right: 10px;font-size: 19px;">TC Tienda: {{tcActual}}</span>
+        </ion-col>
+    </ion-row>
+    <ion-row>
+        <ion-col size="12">
+            <div class="table-card">
+                <mt-datatable [dataIn]="dataExchangeRate" [dataColumnsIn]="columnsExchangeRate"
+                    [extraColumns]="displayedColumnsExchangeRate">
+                </mt-datatable>
+            </div>
+        </ion-col>
+    </ion-row>
+</ion-grid>
+
+
+@if (isNotification) {
+<mt-notification [type]="typeNotification" [message]="messageNotification"
+    (onClose)="cerrarNotificacion()"></mt-notification>
+}
+
+<mt-loader *ngIf="isLoading" [title]="titleLoader"></mt-loader>

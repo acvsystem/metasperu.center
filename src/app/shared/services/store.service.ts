@@ -355,4 +355,12 @@ export class StoreService {
             catchError(this.handleError)
         );
     }
+
+    postExchangeRate(bodyStore: any): Observable<any> {
+        return this.http.post(
+            `${this.API_URL_ACCOUNTING}/api/exchange-rate/store`, bodyStore
+        ).pipe(
+            catchError(this.handleError)
+        );
+    }
 }
