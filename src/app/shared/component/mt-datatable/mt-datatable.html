@@ -83,6 +83,16 @@
                     <span class="badge text-bg-primary">Correcto</span>
                     }@else if(col.propertyValue == 'cStatus' && element[col.propertyValue] == 'Faltante'){
                     <span class="badge text-bg-danger">Faltante</span>
+                    }@else if(col.propertyValue == 'cEstado' && element[col.propertyValue] == 'Correcto'){
+                    <span class="badge text-bg-primary">Correcto</span>
+                    }@else if(col.propertyValue == 'cEstado' && element[col.propertyValue] == 'Diferencia'){
+                    <span class="badge text-bg-danger">Diferencia</span>
+                    }@else if(col.propertyValue == 'cCotizacion'){
+                    <span class="badge text-bg-primary">{{element[col.propertyValue]}}</span>
+                    }@else if(col.propertyValue == 'cCotiSunat' && element.cCotiSunat == element.cCotizacion){
+                    <span class="badge text-bg-success">{{element[col.propertyValue]}}</span>
+                    } @else if(col.propertyValue == 'cCotiSunat' && element.cCotiSunat != element.cCotizacion){
+                    <span class="badge text-bg-danger">{{element[col.propertyValue]}}</span>
                     }@else if(col.propertyValue == 'cAccion'){
                     <button matTooltip="Eliminar" id="searchProducto" type="button" class="btn btn-danger btn-sm"
                         (click)="onDeleteRow(element)"

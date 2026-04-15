@@ -3,6 +3,8 @@ import { tableColumns } from '../rrhh-asistencia/rrhh-asistencia';
 import { StoreService } from '@metasperu/services/store.service';
 import { SocketAccountingService } from '@metasperu/services/socketAccounting';
 export type NotificationType = 'success' | 'warning' | 'danger';
+import { map, catchError } from 'rxjs/operators';
+import { Observable, of, lastValueFrom } from 'rxjs';
 
 @Component({
   selector: 'exchange-rate-store',
@@ -23,18 +25,23 @@ export class ExchangeRateStore {
   isNotification: boolean = false;
   isLoading: boolean = false;
   tcActual: string = "";
+  tcSunat: string = "";
 
   columnsExchangeRate: tableColumns[] = [
     { isSticky: true, matColumnDef: 'fecha', titleColumn: 'Fecha', propertyValue: 'cFecha', filterActive: false, isCboFilter: false, cboFilter: [] },
     { isSticky: false, matColumnDef: 'descripcion', titleColumn: 'Descripcion', propertyValue: 'cDescripcion', filterActive: false, isCboFilter: false, cboFilter: [] },
     { isSticky: false, matColumnDef: 'iniciales', titleColumn: 'Iniciales', propertyValue: 'cIniciales', filterActive: false, isCboFilter: false, cboFilter: [] },
-    { isSticky: false, matColumnDef: 'tipo-cambio-historico', titleColumn: 'TC Historico', propertyValue: 'cCotizacion', filterActive: false, isCboFilter: false, cboFilter: [] }];
+    { isSticky: false, matColumnDef: 'tipo-cambio-historico', titleColumn: 'TC Historico', propertyValue: 'cCotizacion', filterActive: false, isCboFilter: false, cboFilter: [] },
+    { isSticky: false, matColumnDef: 'tipo-cambio-sunat', titleColumn: 'TC Sunat', propertyValue: 'cCotiSunat', filterActive: false, isCboFilter: false, cboFilter: [] },
+    { isSticky: false, matColumnDef: 'estado', titleColumn: 'Estado', propertyValue: 'cEstado', filterActive: false, isCboFilter: false, cboFilter: [] }];
 
   displayedColumnsExchangeRate = this.columnsExchangeRate.map(col => col.matColumnDef);
 
   constructor(private storeService: StoreService, private socketAccountingService: SocketAccountingService) { }
 
   ngOnInit() {
+    this.cargarTipoCambio(new Date().toISOString().split('T')[0]);
+
     this.socketAccountingService.onResponseExchangeRate((data: any) => {
       this.isLoading = false;
       this.dataExchangeRate = data;
@@ -58,6 +65,47 @@ export class ExchangeRateStore {
     this.selectedStore = data;
   }
 
+  async cargarTipoCambio(fecha: string) {
+    const res = await lastValueFrom(this.storeService.postTipoCambioSunat({ fecha }));
+    this.tcSunat = res.data.venta; // Aquí el texto ya está asignado
+  }
+
+  async onSincronizarSunat() {
+    this.isLoading = true;
+
+    // 1. Recorremos tu tabla (donde 'fila' es cada objeto de la lista)
+    for (let fila of this.dataExchangeRate) {
+
+      try {
+        // 2. Hacemos la petición y ESPERAMOS (await) a que llegue el valor
+        // Usamos lastValueFrom para convertir el observable en algo que espera el texto
+        const response = await lastValueFrom(
+          this.storeService.postTipoCambioSunat({ fecha: fila.cFecha })
+        );
+
+        // 3. Insertamos el texto directamente en la propiedad de la fila
+        // Aquí ya NO es una promesa, es el valor real (ej: "3.75")
+        fila.cCotiSunat = response?.data?.venta || "0.00";
+        fila.cEstado = fila.cCotizacion != fila.cCotiSunat ? 'Diferencia' : 'Correcto';
+      } catch (error) {
+        console.error(`Error en la fecha ${fila.fecha}:`, error);
+        fila.tipoCambio = "Error";
+      }
+    }
+    this.isLoading = false;
+    this.messageNotification = 'Sincronización realizada con éxito.';
+    this.abrirNotificacion('success');
+  }
+
+  onTipoCambioSunat(fecha: string): Observable<string> {
+    return this.storeService.postTipoCambioSunat({ fecha }).pipe(
+      map(response => response.data.venta),
+      catchError(error => {
+        console.error(error);
+        return of(""); // Retorna un string vacío en caso de error
+      })
+    );
+  }
   onSearch() {
 
     if (this.dateCalendar.length === 0) {

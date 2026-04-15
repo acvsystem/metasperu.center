@@ -22,9 +22,21 @@
                 class="btn btn-primary btn-sm mobil-margin-button">
                 <mat-icon>search</mat-icon>
             </button>
+            <button (click)="onSincronizarSunat()" type="button" matTooltip="Buscar horario"
+                style="display: flex;justify-content: center;align-items: center;margin-left: 10px;"
+                class="btn btn-primary btn-sm mobil-margin-button">
+                <mat-icon style="margin-right: 10px;">cloud_sync</mat-icon><span>Sincornizar Sunat</span>
+            </button>
         </ion-col>
-        <ion-col size="12" size-md="12" style="display: flex;justify-content: end;">
-            <span style="padding-right: 10px;font-size: 19px;">TC Tienda: {{tcActual}}</span>
+
+        <ion-col sizeXs="12" sizeSm="12" sizeMd="12" sizeLg="12"
+            style="display: flex;justify-content: end;align-items: center;">
+            <div class="footer-stats">
+                <span style="margin-right: 50px;font-size: 17px;"><span style="font-weight: 500;">Sunat:</span> {{
+                    tcSunat }}</span>
+                <span style="margin-right: 50px;font-size: 17px;"><span style="font-weight: 500;">Tienda:</span>
+                    {{ tcActual }}</span>
+            </div>
         </ion-col>
     </ion-row>
     <ion-row>

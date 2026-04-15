@@ -363,4 +363,12 @@ export class StoreService {
             catchError(this.handleError)
         );
     }
+
+    postTipoCambioSunat(bodySunat: any): Observable<any> {
+        return this.http.post(
+            `${this.API_URL_ACCOUNTING}/api/exchange-rate/sunat`, bodySunat
+        ).pipe(
+            catchError(this.handleError)
+        );
+    }
 }
