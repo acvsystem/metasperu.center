@@ -36,7 +36,7 @@ const routes: Routes = [
     path: 'horario',
     component: RrhhHorario,
     canActivate: [authGuard],
-    data: { roles: ['SISTEMAS', 'RRHH', 'OPERACIONES', 'TIENDAS'] }
+    data: { roles: ['SISTEMAS', 'RRHH', 'OPERACIONES', 'TIENDA'] }
   },
   {
     path: 'kardex',

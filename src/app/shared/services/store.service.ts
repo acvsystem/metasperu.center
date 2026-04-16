@@ -2,6 +2,7 @@ import { EventEmitter, Injectable, Output, inject, signal } from '@angular/core'
 import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http';
 import { Observable, catchError, tap, throwError } from 'rxjs';
 import { SocketService } from '@metasperu/services/socket.service';
+import * as CryptoJS from 'crypto-js';
 export interface Store {
     id?: number;
     serie: string;
@@ -19,6 +20,7 @@ export interface Store {
 })
 export class StoreService {
     @Output() onNotification: EventEmitter<any> = new EventEmitter();
+    private readonly secretKey = 'D3SP4RANCUT1R1M1CU4R0';
 
     constructor(private socketService: SocketService) { }
 
@@ -370,5 +372,19 @@ export class StoreService {
         ).pipe(
             catchError(this.handleError)
         );
+    }
+
+
+
+    encrypt(text: string): string {
+        return CryptoJS.AES.encrypt(text, this.secretKey).toString();
+    }
+
+    /**
+     * Desencripta un hash/texto cifrado (Dos vías)
+     */
+    decrypt(cipherText: string): string {
+        const bytes = CryptoJS.AES.decrypt(cipherText, this.secretKey);
+        return bytes.toString(CryptoJS.enc.Utf8);
     }
 }

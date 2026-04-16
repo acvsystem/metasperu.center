@@ -11,7 +11,9 @@ import { MtMdlAsignarPersonal } from '../mt-mdl-asignar-personal/mt-mdl-asignar-
 export type NotificationType = 'success' | 'warning' | 'danger';
 import { HostListener } from '@angular/core';
 import { CanComponentDeactivate } from '@metasperu/page/core/auth/pending-changes.guard';
-
+import { SocketResourcesHumanService } from '@metasperu/services/socketResourcesHuman';
+import { lastValueFrom } from 'rxjs';
+import { MtMdlInfoHorario } from '../mt-mdl-info-horario/mt-mdl-info-horario';
 @Component({
   selector: 'mt-rw-horario',
   standalone: false,
@@ -36,18 +38,11 @@ export class MtRwHorario implements CanComponentDeactivate {
   dateCalendar: any[] = [];
   hayCambios: boolean = false;
   isEditing: boolean = false;
-  listaMaestraTrabajadores: Array<any> = [
-    { nombre_completo: 'Juan Pérez', dni: '12345678', id_trabajador: 1 },
-    { nombre_completo: 'María Gómez', dni: '87654321', id_trabajador: 2 },
-    { nombre_completo: 'Carlos Sánchez', dni: '11223344', id_trabajador: 3 },
-    { nombre_completo: 'Ana Rodríguez', dni: '44332211', id_trabajador: 4 },
-    { nombre_completo: 'Luis Fernández', dni: '55667788', id_trabajador: 5 },
-    { nombre_completo: 'Laura Martínez', dni: '99887766', id_trabajador: 6 },
-    { nombre_completo: 'Pedro López', dni: '22334455', id_trabajador: 7 },
-    { nombre_completo: 'Sofía Ramírez', dni: '66778899', id_trabajador: 8 },
-    { nombre_completo: 'Diego Torres', dni: '33445566', id_trabajador: 9 },
-    { nombre_completo: 'Valentina Díaz', dni: '77889900', id_trabajador: 10 }
-  ];
+  keyStore: string = "";
+  storeList: Array<any> = [];
+  employeEJBList: Array<any> = [];
+
+  listaMaestraTrabajadores: Array<any> = [];
   dialog = inject(MatDialog);
   @HostListener('window:beforeunload', ['$event'])
   unloadNotification($event: any) {
@@ -57,10 +52,48 @@ export class MtRwHorario implements CanComponentDeactivate {
     }
   }
 
-  constructor(private storeService: StoreService) { }
+  constructor(private storeService: StoreService, private socketService: SocketResourcesHumanService) { }
 
-  ngOnInit() {
+  async ngOnInit() {
+    // 1. Cargar datos base
     this.cargarDeCache();
+
+    try {
+      // 2. Esperar a que las listas carguen (asumiendo que retornan Promesas u Observables)
+      // Usamos await si tus métodos son async, o convertimos a promesa.
+      await Promise.all([
+        this.onStoreList(),
+        this.onEmpleadosList()
+      ]);
+
+      // 3. Obtener y validar tienda
+      const codeStoreEncrypted = localStorage.getItem('keyStore');
+      if (!codeStoreEncrypted) return;
+
+      const serieDecrypted = this.storeService.decrypt(codeStoreEncrypted);
+      const store = this.storeList.find(s => s.serie === serieDecrypted);
+      this.keyStore = store ? store.serie : '';
+
+      if (!store) {
+        console.warn('No se encontró la tienda con serie:', serieDecrypted);
+        return;
+      }
+
+      // 4. Escuchar el socket con filtrado reactivo
+      this.socketService.onRefreshEmployesEJB((data: any[]) => {
+        if (!data) return;
+
+        // Filtramos y asignamos
+        const filtrados = data.filter(emp => emp.code_unid_servicio === store.codigo_ejb);
+
+        this.employeEJBList = filtrados;
+        this.listaMaestraTrabajadores = [...filtrados]; // Clonamos para evitar problemas de referencia
+
+      });
+
+    } catch (error) {
+      console.error('Error al inicializar datos de tienda:', error);
+    }
   }
 
   ngOnChanges(changes: SimpleChanges) {
@@ -79,6 +112,29 @@ export class MtRwHorario implements CanComponentDeactivate {
     this.hayCambios = true;
     this.guardarEnCache(); // Aprovechamos para persistir en el LocalStorage
     localStorage.setItem('hayCambios', 'true');
+  }
+
+  onEmpleadosList() {
+    return this.storeService.callRegisterEmployes().subscribe((data: any) => {
+    });
+  }
+
+  async onStoreList() {
+    try {
+      // Convertimos el observable en promesa para poder usar 'await'
+      const stores = await lastValueFrom(this.storeService.getStores());
+      this.storeList = stores;
+      return stores; // Ahora sí devuelve los datos
+    } catch (error) {
+      console.error('Error obteniendo tiendas:', error);
+      this.storeList = [];
+      throw error;
+    }
+  }
+
+  obtenerDataPorPropiedad(data: any, nombrePropiedad: string) {
+    const resultado = data.asistencia.find((item: any) => item.property === nombrePropiedad);
+    return resultado ? resultado.data : [];
   }
 
   // Llama a esta función cuando recibas tus datos del servicio
@@ -120,6 +176,7 @@ export class MtRwHorario implements CanComponentDeactivate {
       this.abrirNotificacion('danger');
     }
 
+    this.isLoading = false;
   }
 
   generarHorarioMaestroVacio(fechaInicio: string) {
@@ -214,6 +271,31 @@ export class MtRwHorario implements CanComponentDeactivate {
   }
 
 
+  openDialogRango(component: any, item: any, cargo?: any) {
+    const dialogRef = this.dialog.open(component, {
+      panelClass: 'modal-mediano',
+      data: {
+        rangosExistentes: item.filasTrabajo,
+        // Pasamos los datos de la fila si vamos a editar
+        cargo: cargo
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.agregarFilaARango(item, result.rango);
+        this.registrarCambio();
+      }
+    });
+  }
+
+  openDialogInfo() {
+    const dialogRef = this.dialog.open(MtMdlInfoHorario, {
+      panelClass: 'modal-grande',
+      data: {}
+    });
+  }
+
   confirmarLimpieza() {
     if (confirm('¿Estás seguro de borrar todo el progreso actual?')) {
       this.limpiarCache();
@@ -287,16 +369,16 @@ export class MtRwHorario implements CanComponentDeactivate {
       // Revisamos rangos de trabajo
       cargo.filasTrabajo.forEach((fila: any) => {
         const celdaDia = fila.celdas.find((c: any) => c.id_dia === diaId);
-        celdaDia?.trabajadores.forEach((t: any) => asignadosEseDia.add(t.dni));
+        celdaDia?.trabajadores.forEach((t: any) => asignadosEseDia.add(t.nro_documento));
       });
 
       // Revisamos también los días libres (porque si está libre, no está disponible para turnos)
       const celdaLibre = cargo.filaLibres.find((c: any) => c.id_dia === diaId);
-      celdaLibre?.trabajadores.forEach((t: any) => asignadosEseDia.add(t.dni));
+      celdaLibre?.trabajadores.forEach((t: any) => asignadosEseDia.add(t.nro_documento));
     });
 
     // 2. Filtramos la lista maestra
-    return this.listaMaestraTrabajadores.filter((t: any) => !asignadosEseDia.has(t.dni));
+    return this.listaMaestraTrabajadores.filter((t: any) => !asignadosEseDia.has(t.nro_documento));
   }
 
 
@@ -313,7 +395,7 @@ export class MtRwHorario implements CanComponentDeactivate {
         // Insertamos todos los trabajadores seleccionados de una vez
         seleccionados.forEach(trab => {
           // Validación extra por seguridad: que no exista ya en la celda
-          if (!celda.trabajadores.some((t: any) => t.dni === trab.dni)) {
+          if (!celda.trabajadores.some((t: any) => t.nro_documento === trab.nro_documento)) {
             celda.trabajadores.push(trab);
           }
         });
@@ -362,7 +444,7 @@ export class MtRwHorario implements CanComponentDeactivate {
   // Función para remover trabajadores de la celda
   quitarTrabajador(celda: any, trab: any) {
     celda.trabajadores = celda.trabajadores.filter((t: any) =>
-      t.dni !== trab.dni
+      t.nro_documento !== trab.nro_documento
     );
     this.registrarCambio();
   }
@@ -429,12 +511,11 @@ export class MtRwHorario implements CanComponentDeactivate {
   }
 
   async guardarHorarioCompleto() {
-    this.isLoading = true;
     this.titleLoader = "Cargando registros...";
     const ahora = new Date();
     const fechaHoyPC = ahora.toLocaleDateString('en-CA'); // 'en-CA' genera YYYY-MM-DD
 
-    const payload = { codigoTienda: 'OF', fechaCabecera: fechaHoyPC, rangoDias: `${this.horariosProcesados[0].dias[0].fecha} al ${this.horariosProcesados[0].dias[6].fecha}`, datos: this.horariosProcesados };
+    const payload = { codigoTienda: this.keyStore, fechaCabecera: fechaHoyPC, rangoDias: `${this.horariosProcesados[0].dias[0].fecha} al ${this.horariosProcesados[0].dias[6].fecha}`, datos: this.horariosProcesados };
 
     this.isLoading = false;
     this.hayCambios = false;
@@ -443,8 +524,10 @@ export class MtRwHorario implements CanComponentDeactivate {
       next: (response: any) => {
         this.isLoading = false;
         this.limpiarCache();
+        this.onSearch();
         this.messageNotification = response.message || 'null';
         this.abrirNotificacion('success');
+
       },
       error: (error: any) => {
         this.isLoading = false;
@@ -454,17 +537,55 @@ export class MtRwHorario implements CanComponentDeactivate {
     });
   }
 
+  onVerificarHorario() {
+    this.isLoading = true;
+    this.storeService.postoneSearchHorarios({ rango_fecha: `${this.dateCalendar[0]} al ${this.dateCalendar[1]}`, codigoTienda: this.keyStore }).subscribe((response: any) => {
+
+      if (response?.length > 0) {
+        this.isLoading = false;
+        this.messageNotification = 'Esta tratando de generar un horario ya existente.';
+        this.abrirNotificacion('danger');
+        return;
+      }
+
+      this.onInitHorario();
+
+    });
+  }
+
   onSearch() {
     if (this.dateCalendar.length > 0) {
       this.isLoading = true;
 
-      this.storeService.postoneSearchHorarios({ rango_fecha: `${this.dateCalendar[0]} al ${this.dateCalendar[1]}`, codigoTienda: 'OF' }).subscribe((response: any) => {
+      this.storeService.postoneSearchHorarios({ rango_fecha: `${this.dateCalendar[0]} al ${this.dateCalendar[1]}`, codigoTienda: this.keyStore }).subscribe((response: any) => {
         this.isLoading = false;
         this.hayCambios = false;
         this.isEditing = true;
         localStorage.setItem('hayCambios', 'false');
-        this.horariosProcesados = response;
+        const data = response;
+        const hoy = new Date();
+        hoy.setHours(0, 0, 0, 0);
+        this.horariosProcesados = data.map((cargo: any) => {
+          return {
+            ...cargo,
+            // Mapeamos los días para inyectar dayBlock
+            dias: cargo.dias.map((itemDia: any) => {
+              const [anio, mes, dia] = itemDia.fecha.split('-').map(Number);
+              const fechaCalendario = new Date(anio, mes - 1, dia);
+
+              return {
+                ...itemDia,
+                // Si la fecha es menor a hoy, dayBlock es true
+                dayBlock: fechaCalendario.getTime() < hoy.getTime()
+              };
+            })
+          };
+        });
+
+
       });
+
+
     } else {
       this.messageNotification = 'Seleccione un rango de fechas.';
       this.abrirNotificacion('danger');
@@ -478,7 +599,7 @@ export class MtRwHorario implements CanComponentDeactivate {
     const ahora = new Date();
     const fechaHoyPC = ahora.toLocaleDateString('en-CA'); // 'en-CA' genera YYYY-MM-DD
 
-    const payload = { codigoTienda: 'OF', fechaCabecera: fechaHoyPC, rangoDias: `${this.horariosProcesados[0].dias[0].fecha} al ${this.horariosProcesados[0].dias[6].fecha}`, datos: this.horariosProcesados };
+    const payload = { codigoTienda: this.keyStore, fechaCabecera: fechaHoyPC, rangoDias: `${this.horariosProcesados[0].dias[0].fecha} al ${this.horariosProcesados[0].dias[6].fecha}`, datos: this.horariosProcesados };
 
     this.isLoading = false;
     this.hayCambios = false;

@@ -26,7 +26,7 @@ export class SocketResourcesHumanService {
         });
 
         this.socket.on('connect', () => {
-            console.log('Conectado al servicio de inventario');
+            console.log('Conectado al servicio de Resources Human');
             //this.socket?.emit('registrar_dashboard');
             //this.socketID = this.socket?.id;
         });
@@ -42,5 +42,10 @@ export class SocketResourcesHumanService {
     onRefreshEmployesAsistence(callback: (data: any) => void) {
         this.socket?.on('dashboard_refresh_empleados', callback);
     }
+
+    onRefreshEmployesEJB(callback: (data: any) => void) {
+        this.socket?.on('dashboard_empleados_horario', callback);
+    }
+
 
 }

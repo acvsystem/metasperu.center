@@ -26,7 +26,7 @@ export class MtMdlAsignarPersonal implements OnInit {
 
   // Alternar selección (Check/Uncheck)
   toggleSeleccion(trabajador: any) {
-    const index = this.seleccionados.findIndex(t => t.id_trabajador === trabajador.id_trabajador);
+    const index = this.seleccionados.findIndex(t => t.nro_documento === trabajador.nro_documento);
     if (index > -1) {
       this.seleccionados.splice(index, 1); // Quitar si ya estaba
     } else {
@@ -35,7 +35,7 @@ export class MtMdlAsignarPersonal implements OnInit {
   }
 
   estaSeleccionado(trabajador: any): boolean {
-    return this.seleccionados.some(t => t.id_trabajador === trabajador.id_trabajador);
+    return this.seleccionados.some(t => t.nro_documento === trabajador.nro_documento);
   }
 
   // Botón Final de Guardar

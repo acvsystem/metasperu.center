@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { NavController } from '@ionic/angular';
 import { tap, catchError, of, Observable, map } from 'rxjs';
 import { SocketService } from '@metasperu/services/socket.service';
+import { StoreService } from '@metasperu/services/store.service';
 
 // Definimos la interfaz del usuario para tipado fuerte
 export interface User {
@@ -27,6 +28,7 @@ export class AuthService {
     private router = inject(Router);
     private navCtrl = inject(NavController);
     private socketService = inject(SocketService);
+    private storeService = inject(StoreService);
     private readonly API_URL = 'https://api.metasperu.net.pe/s2/auth/center'; // Ajusta a tu URL
 
 
@@ -69,6 +71,10 @@ export class AuthService {
                     localStorage.setItem('auth_token', response.token);
                     localStorage.setItem('role', response.user.role);
                     localStorage.setItem('name', response.user.username);
+
+                    const keyStore = this.storeService.encrypt(response.user.code_store);
+
+                    localStorage.setItem('keyStore', keyStore);
                     this.socketService.conectar();
                     localStorage.setItem('menu', JSON.stringify(response.menu));
                     this.#menu.set(response.menu);
@@ -77,10 +83,10 @@ export class AuthService {
 
                 // 3. Actualizamos el estado del usuario y navegamos
                 this.#user.set(response.user || response);
-                
+
                 // Navegación dinámica: Ir a la primera ruta permitida del menú
-                const initialRoute = response.menu && response.menu.length > 0 
-                    ? '/' + response.menu[0].ruta 
+                const initialRoute = response.menu && response.menu.length > 0
+                    ? '/' + response.menu[0].ruta
                     : '/login';
                 this.navCtrl.navigateRoot(initialRoute);
             })

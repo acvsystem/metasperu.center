@@ -300,44 +300,140 @@
 }
 
 .close-chip {
-    margin-left: 5px;
-    cursor: pointer;
-    font-weight: bold;
-    color: #d32f2f;
+  margin-left: 5px;
+  cursor: pointer;
+  font-weight: bold;
+  color: #d32f2f;
 }
 
 
 
 .chip-trabajador {
-    background: #a3e2ff;
-    color: #084263;
-    padding: 4px 8px;
-    border-radius: 4px;
-    font-size: 14px;
-    font-weight: 500;
-    border: 1px solid #5bcbff;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+  background: #a3e2ff;
+  color: #084263;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: 500;
+  border: 1px solid #5bcbff;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .chip-libre {
- 
-    padding: 4px 8px;
-    border-radius: 4px;
-    font-size: 14px;
-    font-weight: 500;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: 500;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .alert-warning {
-    animation: pulse-border 2s infinite;
+  animation: pulse-border 2s infinite;
 }
 
 @keyframes pulse-border {
-    0% { box-shadow: 0 0 0 0 rgba(255, 193, 7, 0.4); }
-    70% { box-shadow: 0 0 0 10px rgba(255, 193, 7, 0); }
-    100% { box-shadow: 0 0 0 0 rgba(255, 193, 7, 0); }
+  0% {
+    box-shadow: 0 0 0 0 rgba(255, 193, 7, 0.4);
+  }
+
+  70% {
+    box-shadow: 0 0 0 10px rgba(255, 193, 7, 0);
+  }
+
+  100% {
+    box-shadow: 0 0 0 0 rgba(255, 193, 7, 0);
+  }
+}
+
+.cell-blocked {
+
+  pointer-events: none; // Deshabilita todos los clicks en la celda
+
+  .btn-add-mini,
+  .close-chip {
+    display: none !important; // Desaparece los botones de acción
+  }
+}
+
+
+
+.toolbar-container {
+  display: flex;
+  align-items: center;
+  gap: 8px; // Espaciado uniforme
+  width: 100%;
+  padding: 5px;
+  overflow-x: none; // Permite scroll horizontal si el celular es muy pequeño
+  white-space: nowrap;
+  margin-left: 20px;
+
+  @media (max-width: 576px) {
+    justify-content: space-between;
+    margin-left: 0px;
+
+    .content-button-save {
+      width: 100%;
+    }
+
+    .calendar-wrapper {
+      flex: 1; // Hace que el calendario crezca para llenar el espacio
+      min-width: 150px;
+    }
+  }
+}
+
+
+
+.btn-action {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0.4rem 0.8rem;
+  border-radius: 6px;
+  background-color: #195ea7;
+
+  mat-icon {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+  }
+
+  .btn-text {
+    margin-left: 5px;
+    font-weight: 500;
+
+    // Ocultar texto en móviles muy pequeños para ahorrar espacio
+    @media (max-width: 480px) {
+      display: none;
+    }
+  }
+}
+
+.btn-icon-only {
+  min-width: 36px;
+  height: 36px;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50%; // Estilo circular para el botón buscar en mobile
+}
+
+// Estilos específicos para Ionic si es necesario
+.mobil-margin-button {
+  @media (max-width: 768px) {
+    margin: 0 !important;
+  }
+}
+
+// Estilos específicos para Ionic si es necesario
+.mobil-margin-button {
+  @media (max-width: 768px) {
+    margin: 0 !important;
+  }
 }

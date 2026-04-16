@@ -14,7 +14,7 @@ export class MtMdlRangoHora {
 
   constructor(
     public dialogRef: MatDialogRef<MtMdlRangoHora>,
-    @Inject(MAT_DIALOG_DATA) public data: { rangosExistentes: any[], edicion?: any }
+    @Inject(MAT_DIALOG_DATA) public data: { rangosExistentes: any[], edicion?: any, cargo: any }
   ) { }
 
   onNgOnInit() {
@@ -26,12 +26,23 @@ export class MtMdlRangoHora {
     }
   }
 
+
+  esMayorADocePM(hora: string) {
+    const [hh, mm] = hora.split(":").map(Number);
+    return hh > 12 || (hh === 12 && mm >= 0);
+  }
+
   validarYGuardar() {
     this.error = null;
 
     // 1. Validación: Selección obligatoria
     if (!this.horaInicio || !this.horaFin) {
       this.error = 'Seleccione rango horario completo.';
+      return;
+    }
+
+    if (!this.esMayorADocePM(this.horaFin) && this.data.cargo != 'Asesores PartTime') {
+      this.error = 'Rango horario tiene que ser en formato de 24 horas.';
       return;
     }
 
@@ -46,10 +57,10 @@ export class MtMdlRangoHora {
     if (minFin < minInicio) minFin += 1440;
 
     const duracionHoras = (minFin - minInicio) / 60;
-    console.log(duracionHoras);
+
     // 2. Validación: Máximo 9 horas
-    if (duracionHoras < 9) {
-      this.error = 'Rango de hora debe ser menor o igual a 9 horas.';
+    if (duracionHoras < 9 && this.data.cargo != 'Asesores PartTime') {
+      this.error = 'Rango de hora no debe ser menor a 9 horas.';
       return;
     }
 

@@ -20,7 +20,7 @@
                         class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
                         <div>
                             <div style="font-weight: 500;">{{ t.nombre_completo }}</div>
-                            <small class="text-muted" style="font-size: 11px;">DNI: {{ t.dni || '---' }}</small>
+                            <small class="text-muted" style="font-size: 11px;">DNI: {{ t.nro_documento || '---' }}</small>
                         </div>
                         @if(estaSeleccionado(t)){
                         <mat-icon>check_small</mat-icon>

@@ -19,45 +19,54 @@
     </ion-col>
 </ion-row>
 <ion-row>
-    <ion-col size="12" size-md="5" size-lg="5">
-        <div style="margin-left: 12px;width: 100%;display: flex;align-items: center">
-            <button (click)="onInitHorario()" type="button" matTooltip="Inicializar horario"
-                style="display: flex;justify-content: center;align-items: center;margin-right: 10px;"
-                class="btn btn-primary btn-sm mobil-margin-button">
-                <mat-icon style="margin-right: 5px;">calendar_month</mat-icon>
-                <span>Generar Horario</span>
+    <ion-col size="12" size-md="12" size-lg="12" style="display: flex;">
+        <div class="toolbar-container">
+            <button (click)="onVerificarHorario()" type="button" matTooltip="Inicializar horario"
+                class="btn btn-primary btn-sm btn-action">
+                <mat-icon>calendar_month</mat-icon>
+                <span class="btn-text">Generar</span>
             </button>
-            <mt-calendar [isPeriodo]="false" [isMultiSelect]="false" [isDefault]="false" [isRange]="true"
-                placeholder="Seleccione la fecha" (afterChange)="onCalendar($event)"></mt-calendar>
-            <button (click)="onSearch()" type="button" matTooltip="Buscar horario"
-                style="display: flex;justify-content: center;align-items: center;margin-left: 10px;"
-                class="btn btn-primary btn-sm mobil-margin-button">
-                <mat-icon>search</mat-icon>
-            </button>
-            <button (click)="onInitHorario()" type="button" matTooltip="Panel papeletas"
-                style="display: flex;justify-content: center;align-items: center;margin-left: 10px;"
-                class="btn btn-primary btn-sm mobil-margin-button">
-                <mat-icon style="margin-right: 5px;">ballot</mat-icon>
-                <span>Papeletas</span>
-            </button>
-        </div>
-    </ion-col>
-    <ion-col size="7">
-        <div style="width: 100%;display: flex;align-items: center;justify-content: end;height: 100%;">
-            @if(!isEditing){
-            <button (click)="guardarHorarioCompleto()" type="button" matTooltip="Finalizar y guardar horario"
-                style="display: flex;justify-content: center;align-items: center;margin-right: 27px;"
-                class="btn btn-success btn-sm mobil-margin-button" [disabled]="horariosProcesados.length === 0">
-                <mat-icon style="margin-right: 5px;">save</mat-icon> <span>Registrar en Sistema</span>
-            </button>
-            }@else{
-            <button (click)="editarHorarioCompleto()" type="button" matTooltip="guardar cambios en horario"
-                style="display: flex;justify-content: center;align-items: center;margin-right: 27px;"
-                class="btn btn-success btn-sm mobil-margin-button" [disabled]="horariosProcesados.length === 0 || hayCambios === false">
-                 <mat-icon style="margin-right: 5px;">save</mat-icon> <span>Guardar cambios</span>
-            </button>
-            }
 
+            <div class="calendar-wrapper">
+                <mt-calendar [isPeriodo]="false" [isMultiSelect]="false" [isDefault]="false" [isRange]="true"
+                    placeholder="Seleccione fecha" (afterChange)="onCalendar($event)">
+                </mt-calendar>
+            </div>
+
+            <button (click)="onSearch()" type="button" matTooltip="Buscar horario"
+                class="btn btn-primary btn-sm btn-action">
+                <mat-icon>search</mat-icon>
+                <span class="btn-text">Buscar</span>
+            </button>
+
+            <button type="button" matTooltip="Panel papeletas" class="btn btn-primary btn-sm btn-action">
+                <mat-icon>ballot</mat-icon>
+                <span class="btn-text">Papeletas</span>
+            </button>
+
+            <div class="content-button-save">
+                @if(!isEditing){
+                <button (click)="guardarHorarioCompleto()" type="button" matTooltip="Finalizar y guardar horario"
+                    style="display: flex;justify-content: center;align-items: center;margin-right: 27px;"
+                    class="btn btn-success btn-sm mobil-margin-button" [disabled]="horariosProcesados.length === 0">
+                    <mat-icon style="margin-right: 5px;">save</mat-icon> <span>Registrar en Sistema</span>
+                </button>
+                }@else{
+                <button (click)="editarHorarioCompleto()" type="button" matTooltip="guardar cambios en horario"
+                    style="display: flex;justify-content: center;align-items: center;margin-right: 27px;"
+                    class="btn btn-success btn-sm mobil-margin-button"
+                    [disabled]="horariosProcesados.length === 0 || hayCambios === false">
+                    <mat-icon style="margin-right: 5px;">save</mat-icon> <span>Guardar cambios</span>
+                </button>
+                }
+            </div>
+        </div>
+        <div style="display: flex;justify-content: end;align-items: center;">
+            <button (click)="openDialogInfo()" type="button" matTooltip="info"
+                style="display: flex;justify-content: center;align-items: center;margin-right: 27px;"
+                class="btn btn-Light btn-sm btn-icon-only">
+                <mat-icon style="color: #e05005;">error</mat-icon>
+            </button>
         </div>
     </ion-col>
 </ion-row>
@@ -72,18 +81,22 @@
 
                     <div class="grid-horario">
                         <div class="header-spacer">
-
-                            <button class="btn btn-primary btn-sm" (click)="openDialog(MtMdlRangoHora,item)"
-                                *ngIf="esEditable(item.dias[0].fecha)" style="background-color: #195ea7;">Agregar Rango
-                                +</button>
+                            <button class="btn btn-primary btn-sm" (click)="openDialogRango(MtMdlRangoHora,item,item.cargo)"
+                                *ngIf="item.cargo !== 'Vacaciones' && esEditable(item.dias[0].fecha)"
+                                style="background-color: #195ea7;">
+                                Agregar Rango +
+                            </button>
                         </div>
-                        <div *ngFor="let dia of item.dias" class="header-dia">
+
+                        <div *ngFor="let dia of item.dias" class="header-dia" [class.day-blocked]="dia.dayBlock">
                             <span>{{ dia.dia }} </span>
                             <small style="display: inline-flex">{{ dia.fecha }}
                                 <button matTooltip="Observaciones" class="btn-add-mini btn-danger"
                                     *ngIf="item.notasDia[dia.id]?.length > 0">
                                     <mat-icon
-                                        style="font-size: 16px;  display: flex;justify-content: center;align-items: center;">priority_high</mat-icon>
+                                        style="font-size: 16px; display: flex; justify-content: center; align-items: center;">
+                                        priority_high
+                                    </mat-icon>
                                 </button>
                             </small>
                         </div>
@@ -91,36 +104,47 @@
                         <ng-container *ngFor="let fila of item.filasTrabajo">
                             <div class="rango-label">{{ fila.rango }}
                                 <button class="btn-add-mini" (click)="openDialog(MtMdlRangoHora, item, fila)"
-                                    *ngIf="esEditable(item.dias[0].fecha)" matTooltip="Editar Rango"><mat-icon
-                                        style="height: 13px;width: 13px;font-size: 13px;">edit</mat-icon></button>
+                                    *ngIf="esEditable(item.dias[0].fecha)" matTooltip="Editar Rango">
+                                    <mat-icon style="height: 13px; width: 13px; font-size: 13px;">edit</mat-icon>
+                                </button>
                             </div>
-                            <div *ngFor="let celda of fila.celdas" class="celda-trabajo">
+
+                            <div *ngFor="let celda of fila.celdas; let i = index" class="celda-trabajo"
+                                [class.cell-blocked]="item.dias[i].dayBlock && !puedeEditarPasado">
                                 <div *ngFor="let trab of celda.trabajadores" class="chip-trabajador">
                                     {{ trab.nombre_completo }}
-                                    <span class="close-chip" (click)="quitarTrabajador(celda, trab)">×</span>
+                                    <span class="close-chip" *ngIf="!item.dias[i].dayBlock || puedeEditarPasado"
+                                        (click)="quitarTrabajador(celda, trab)">×</span>
                                 </div>
+
                                 <button class="btn-add-mini" (click)="abrirModalAsignar(celda, celda.id_dia)"
-                                    *ngIf="esEditable(item.dias[0].fecha)" matTooltip="Agregar Trabajador">+</button>
+                                    *ngIf="(!item.dias[i].dayBlock && esEditable(item.dias[0].fecha)) || puedeEditarPasado"
+                                    matTooltip="Agregar Trabajador">+</button>
                             </div>
                         </ng-container>
-                        @if(item.cargo != 'Vacaciones'){
-                        <div class="rango-label libre-label">DIAS LIBRES</div>
-                        <div *ngFor="let celda of item.filaLibres" class="celda-libre">
-                            <div *ngFor="let trab of celda.trabajadores" class="chip-libre">
-                                {{ trab.nombre_completo }}
-                                <span class="close-chip" (click)="quitarTrabajador(celda, trab)">×</span>
+
+                        <ng-container @if(item.cargo !='Vacaciones' ){}>
+                            <div class="rango-label libre-label">DIAS LIBRES</div>
+                            <div *ngFor="let celda of item.filaLibres; let i = index" class="celda-libre"
+                                [class.cell-blocked]="item.dias[i].dayBlock && !puedeEditarPasado">
+                                <div *ngFor="let trab of celda.trabajadores" class="chip-libre">
+                                    {{ trab.nombre_completo }}
+                                    <span class="close-chip" *ngIf="!item.dias[i].dayBlock || puedeEditarPasado"
+                                        (click)="quitarTrabajador(celda, trab)">×</span>
+                                </div>
+
+                                <button class="btn-add-mini" (click)="abrirModalAsignarLibre(celda, celda.id_dia)"
+                                    *ngIf="(!item.dias[i].dayBlock && esEditable(item.dias[0].fecha)) || puedeEditarPasado"
+                                    matTooltip="Agregar Trabajador">+</button>
                             </div>
-                            <button class="btn-add-mini" (click)="abrirModalAsignarLibre(celda, celda.id_dia)"
-                                *ngIf="esEditable(item.dias[0].fecha)" matTooltip="Agregar Trabajador">+</button>
-                        </div>
-                        }
+                        </ng-container>
                     </div>
                 </div>
             </div>
         </div>
     </ion-col>
 </ion-row>
-
+v
 
 
 <mt-loader *ngIf="isLoading" [title]="titleLoader"></mt-loader>
