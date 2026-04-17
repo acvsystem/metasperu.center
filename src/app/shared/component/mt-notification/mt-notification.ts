@@ -13,9 +13,7 @@ export class MtNotification {
   @Output() onClose = new EventEmitter<void>(); // Canal de comunicación
   isHiding = false;
 
-
   constructor() {
-
   }
 
   ngOnInit() {
