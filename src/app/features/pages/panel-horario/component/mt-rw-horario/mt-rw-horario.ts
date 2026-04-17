@@ -30,7 +30,7 @@ export class MtRwHorario implements CanComponentDeactivate {
   titleLoader: string = `Procesando Horario...`;
   dataHorario: Array<any> = [];
   //VARIABLE DE PERMISO PARA EDITAR HORARIOS PASADOS
-  puedeEditarPasado: boolean = true;
+  puedeEditarPasado: boolean = false;
   horariosProcesados: any[] = [];
   messageNotification: string = '';
   typeNotification: NotificationType = 'success';
@@ -72,7 +72,7 @@ export class MtRwHorario implements CanComponentDeactivate {
 
       const serieDecrypted = this.storeService.decrypt(codeStoreEncrypted);
       const store = this.storeList.find(s => s.serie === serieDecrypted);
-      this.keyStore = store ? store.serie : '';
+      this.keyStore = store ? store.serie : 'OF';
 
       if (!store) {
         console.warn('No se encontró la tienda con serie:', serieDecrypted);
@@ -422,7 +422,7 @@ export class MtRwHorario implements CanComponentDeactivate {
         seleccionados.forEach(trab => {
           // Evitamos duplicados en la misma celda de Día Libre
           const existe = celda.trabajadores.some((t: any) =>
-            t.id_trabajador === trab.id_trabajador
+            t.nro_documento === trab.nro_documento
           );
 
           if (!existe) {
@@ -491,7 +491,7 @@ export class MtRwHorario implements CanComponentDeactivate {
 
     const fechaCelda = new Date(fechaStr.replace(/-/g, '\/'));
     // Si la fecha de la celda es menor a hoy, está bloqueado
-    return fechaCelda >= hoy;
+    return fechaCelda > hoy;
   }
 
 
@@ -582,7 +582,7 @@ export class MtRwHorario implements CanComponentDeactivate {
           };
         });
 
-
+        this.guardarEnCache();
       });
 
 

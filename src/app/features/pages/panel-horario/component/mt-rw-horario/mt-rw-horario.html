@@ -81,9 +81,9 @@
 
                     <div class="grid-horario">
                         <div class="header-spacer">
-                            <button class="btn btn-primary btn-sm" (click)="openDialogRango(MtMdlRangoHora,item,item.cargo)"
-                                *ngIf="item.cargo !== 'Vacaciones' && esEditable(item.dias[0].fecha)"
-                                style="background-color: #195ea7;">
+                            <button class="btn btn-primary btn-sm"
+                                (click)="openDialogRango(MtMdlRangoHora,item,item.cargo)"
+                                *ngIf="item.cargo !== 'Vacaciones'" style="background-color: #195ea7;">
                                 Agregar Rango +
                             </button>
                         </div>
@@ -104,7 +104,7 @@
                         <ng-container *ngFor="let fila of item.filasTrabajo">
                             <div class="rango-label">{{ fila.rango }}
                                 <button class="btn-add-mini" (click)="openDialog(MtMdlRangoHora, item, fila)"
-                                    *ngIf="esEditable(item.dias[0].fecha)" matTooltip="Editar Rango">
+                                    matTooltip="Editar Rango">
                                     <mat-icon style="height: 13px; width: 13px; font-size: 13px;">edit</mat-icon>
                                 </button>
                             </div>
@@ -118,12 +118,12 @@
                                 </div>
 
                                 <button class="btn-add-mini" (click)="abrirModalAsignar(celda, celda.id_dia)"
-                                    *ngIf="(!item.dias[i].dayBlock && esEditable(item.dias[0].fecha)) || puedeEditarPasado"
+                                    *ngIf="!item.dias[i].dayBlock || puedeEditarPasado"
                                     matTooltip="Agregar Trabajador">+</button>
                             </div>
                         </ng-container>
 
-                        <ng-container @if(item.cargo !='Vacaciones' ){}>
+                        <ng-container *ngIf="item.cargo !='Vacaciones'">
                             <div class="rango-label libre-label">DIAS LIBRES</div>
                             <div *ngFor="let celda of item.filaLibres; let i = index" class="celda-libre"
                                 [class.cell-blocked]="item.dias[i].dayBlock && !puedeEditarPasado">
@@ -134,7 +134,7 @@
                                 </div>
 
                                 <button class="btn-add-mini" (click)="abrirModalAsignarLibre(celda, celda.id_dia)"
-                                    *ngIf="(!item.dias[i].dayBlock && esEditable(item.dias[0].fecha)) || puedeEditarPasado"
+                                    *ngIf="!item.dias[i].dayBlock || puedeEditarPasado"
                                     matTooltip="Agregar Trabajador">+</button>
                             </div>
                         </ng-container>

@@ -13,6 +13,17 @@ export class MtNotification {
   @Output() onClose = new EventEmitter<void>(); // Canal de comunicación
   isHiding = false;
 
+
+  constructor() {
+
+  }
+
+  ngOnInit() {
+    setTimeout(() => {
+      this.close(); // Le dice al padre: "Ya puedes hacerme el ngIf = false"
+    }, 3000);
+  }
+
   // Mapa de iconos para cada tipo
   get icon(): string {
     const icons = {
