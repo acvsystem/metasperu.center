@@ -1,0 +1,84 @@
+<div class="modal-wrapper">
+    <div class="modal-header-custom">
+        <mat-icon class="header-icon">description</mat-icon>
+        <div>
+            <h2 mat-dialog-title>Observaciones</h2>
+            <p class="subtitle">Gestión de incidencias</p>
+        </div>
+        <button mat-icon-button mat-dialog-close class="close-button" (click)=onCancel()>
+            <mat-icon>close</mat-icon>
+        </button>
+    </div>
+
+    <mat-dialog-content class="custom-content">
+        <div class="row g-3" style="width: 100%;">
+            <div class="col-md-5 border-end">
+                <div class="section-label">Registro</div>
+
+                <mat-form-field appearance="outline" class="custom-field" class="w-100 mb-2">
+                    <mat-label>Colaborador</mat-label>
+                    <mat-select [(ngModel)]="empleadoSeleccionado" (selectionChange)="onEmpleadoChange($event)">
+                        <mat-option *ngFor="let emp of listaTrabajadores" [value]="emp">
+                            <div class="option-emp">
+                                <mat-icon>person_outline</mat-icon>
+                                <span>{{ emp.nombre_completo }}</span>
+                            </div>
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+
+                <div *ngIf="empleadoSeleccionado" class="animate__animated animate__fadeIn">
+
+
+                    <mat-form-field appearance="outline" class="custom-textarea-field">
+                        <mat-label>Escribir observación</mat-label>
+                        <textarea matInput rows="12" [(ngModel)]="nuevaObservacion"
+                            placeholder="Describa la incidencia..."></textarea>
+                    </mat-form-field>
+
+                    <button type="button" [disabled]="!nuevaObservacion || nuevaObservacion.trim() === ''"
+                        class="btn btn-primary btn-sm btn-action" (click)="guardarNota()">
+                        <mat-icon>save</mat-icon>
+                        <span class="btn-text">Registrar Nota</span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="col-md-7">
+                <div class="section-label d-flex justify-content-between">
+                    <span>Historial de Actividad</span>
+                    <span *ngIf="empleadoSeleccionado" class="badge-count">{{ historialNotas.length }} notas</span>
+                </div>
+
+                <div class="timeline-container" *ngIf="empleadoSeleccionado || historialNotas.length > 0; else selectPlaceholder">
+                    <div class="timeline" *ngIf="historialNotas.length > 0; else emptyState">
+                        <div class="timeline-item" *ngFor="let nota of historialNotas">
+                            <div class="timeline-marker"></div>
+                            <div class="timeline-content">
+                                <div class="timeline-info">
+                                    <span class="date">{{ nota.fecha_registro | date:'dd MMM, HH:mm' }}</span>
+                                    <span class="user">{{ nota.nombre_completo }}</span>
+                                </div>
+                                <p class="text">{{ nota.observacion }}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <ng-template #emptyState>
+                        <div class="empty-state">
+                            <mat-icon>chat_bubble_outline</mat-icon>
+                            <p>Sin historial previo</p>
+                        </div>
+                    </ng-template>
+                </div>
+
+                <ng-template #selectPlaceholder>
+                    <div class="placeholder-container">
+                        <mat-icon>account_circle</mat-icon>
+                        <p>Seleccione un colaborador para ver su historial</p>
+                    </div>
+                </ng-template>
+            </div>
+        </div>
+    </mat-dialog-content>
+</div>

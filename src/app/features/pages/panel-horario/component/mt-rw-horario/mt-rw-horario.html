@@ -91,11 +91,15 @@
                         <div *ngFor="let dia of item.dias" class="header-dia" [class.day-blocked]="dia.dayBlock">
                             <span>{{ dia.dia }} </span>
                             <small style="display: inline-flex">{{ dia.fecha }}
-                                <button matTooltip="Observaciones" class="btn-add-mini btn-danger"
-                                    *ngIf="item.notasDia[dia.id]?.length > 0">
+                                <button matTooltip="Observaciones" class="btn-add-mini btn-danger btn-observacion" (click)="openDialogObservacion(dia, dia.id_dia)"
+                                    [class.cell-observacion]="dia.notasDia?.length > 0">
                                     <mat-icon
-                                        style="font-size: 16px; display: flex; justify-content: center; align-items: center;">
+                                        style="font-size: 14px; display: flex; justify-content: center; align-items: center;padding-right: 2px;">
+                                        @if(dia.notasDia?.length > 0){
                                         priority_high
+                                        }@else{
+                                        add_comment
+                                        }
                                     </mat-icon>
                                 </button>
                             </small>

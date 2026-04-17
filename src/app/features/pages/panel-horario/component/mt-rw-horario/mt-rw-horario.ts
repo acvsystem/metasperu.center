@@ -14,6 +14,8 @@ import { CanComponentDeactivate } from '@metasperu/page/core/auth/pending-change
 import { SocketResourcesHumanService } from '@metasperu/services/socketResourcesHuman';
 import { lastValueFrom } from 'rxjs';
 import { MtMdlInfoHorario } from '../mt-mdl-info-horario/mt-mdl-info-horario';
+import { MtMdlObervaciones } from '../mt-mdl-obervaciones/mt-mdl-obervaciones';
+
 @Component({
   selector: 'mt-rw-horario',
   standalone: false,
@@ -69,22 +71,23 @@ export class MtRwHorario implements CanComponentDeactivate {
       // 3. Obtener y validar tienda
       const codeStoreEncrypted = localStorage.getItem('keyStore');
       if (!codeStoreEncrypted) return;
-
+      console.log(this.storeList);
       const serieDecrypted = this.storeService.decrypt(codeStoreEncrypted);
       const store = this.storeList.find(s => s.serie === serieDecrypted);
       this.keyStore = store ? store.serie : 'OF';
 
       if (!store) {
         console.warn('No se encontró la tienda con serie:', serieDecrypted);
-        return;
+        //  return;
       }
 
       // 4. Escuchar el socket con filtrado reactivo
       this.socketService.onRefreshEmployesEJB((data: any[]) => {
         if (!data) return;
+        const codigo_unid_ejb = store ? store.codigo_ejb : '0001';
 
-        // Filtramos y asignamos
-        const filtrados = data.filter(emp => emp.code_unid_servicio === store.codigo_ejb);
+        // Filtramos y asignamo
+        const filtrados = data.filter(emp => emp.code_unid_servicio === codigo_unid_ejb);
 
         this.employeEJBList = filtrados;
         this.listaMaestraTrabajadores = [...filtrados]; // Clonamos para evitar problemas de referencia
@@ -270,6 +273,29 @@ export class MtRwHorario implements CanComponentDeactivate {
     });
   }
 
+  openDialogObservacion(celda: any, diaId: number) {
+    const dialogRef = this.dialog.open(MtMdlObervaciones, {
+      panelClass: 'modal-grande',
+      data: { trabajadores: this.employeEJBList, diaNombre: this.obtenerNombreDia(diaId), notasDia: celda?.notasDia || [] }
+    });
+
+    dialogRef.afterClosed().subscribe(seleccionados => {
+      if (seleccionados) {
+        console.log(seleccionados);
+
+        if (seleccionados && seleccionados.length > 0) {
+          celda.notasDia = [];
+          // Insertamos todos los trabajadores seleccionados de una vez
+          seleccionados.forEach((trab: any) => {
+            celda.notasDia.push(trab);
+
+          });
+          console.log(celda);
+          this.registrarCambio();
+        }
+      }
+    });
+  }
 
   openDialogRango(component: any, item: any, cargo?: any) {
     const dialogRef = this.dialog.open(component, {
