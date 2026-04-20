@@ -132,6 +132,15 @@ export class RrhhAsistencia {
     XLSX.writeFile(workbook, `Reporte_Feriados_${new Date().getTime()}.xlsx`);
   }
 
+  exportData() {
+    const worksheet = XLSX.utils.json_to_sheet(this.dataTable);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Reporte Asistencia');
+
+    // Generar el archivo y descargarlo
+    XLSX.writeFile(workbook, `Reporte_Asistencia_${new Date().getTime()}.xlsx`);
+  }
+
   obtenerFeriado(dataAsistence: any) {
     const data = dataAsistence; // Tu array de objetos
     const feriadosObjetivo = this.dateCalendar;

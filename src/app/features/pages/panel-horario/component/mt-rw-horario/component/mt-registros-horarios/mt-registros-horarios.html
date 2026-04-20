@@ -16,7 +16,7 @@
     height: 41px;" (click)="toggleHorarios({})">
             <mat-icon>keyboard_arrow_left</mat-icon>
         </button>
-        <mt-rw-horario [dataSearch]="horarioSelected" *ngIf="isVisibleHorario"></mt-rw-horario>
+        <mt-rw-horario [isReadOnly]="true" [dataSearch]="horarioSelected" *ngIf="isVisibleHorario"></mt-rw-horario>
     </ion-col>
     }
 </ion-row>

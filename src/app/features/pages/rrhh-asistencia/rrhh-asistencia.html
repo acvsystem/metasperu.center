@@ -39,8 +39,12 @@
             </button>
         </ion-col>
 
-        <hr style="background-color: black;width: 1px;margin-right: 10px;">
-
+        <ion-col size="12" size-md="4" size-lg="12" style="display: flex;justify-content: flex-end;">
+            <button mat-raised-button class=" btn-excel" (click)="exportData()">
+                <mat-icon>file_download</mat-icon>
+                <span>Exportar Datos</span>
+            </button>
+        </ion-col>
 
         <ion-col size="12" size-md="4" size-lg="12" style="display: flex;justify-content: flex-end;"
             *ngIf="isViewFeriados">
@@ -54,9 +58,7 @@
     <ion-row>
         <ion-col size="12">
             <div class="table-card">
-                <mt-datatable 
-                    [isFeriado]="isViewFeriados"
-                    [dataIn]="isViewFeriados ? dataTableFeriado : dataTable"
+                <mt-datatable [isFeriado]="isViewFeriados" [dataIn]="isViewFeriados ? dataTableFeriado : dataTable"
                     [dataColumnsIn]="isViewFeriados ? columnsFeriado : columnsInventory"
                     [extraColumns]="isViewFeriados ? displayedColumnsFeriado : displayedColumnsInventory">
                 </mt-datatable>

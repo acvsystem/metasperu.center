@@ -16,7 +16,7 @@ export class MtMdlObervaciones {
   listaTrabajadores: any[] = [];
   diaBloqueado: boolean = false;
   puedeEditarPasado: boolean = false;
-
+  
 
   constructor(
     public dialogRef: MatDialogRef<MtMdlObervaciones>,
@@ -24,7 +24,6 @@ export class MtMdlObervaciones {
     // private apiService: HorarioService // Tu servicio de backend
   ) {
     this.listaTrabajadores = data.trabajadores;
-    console.log(this.listaTrabajadores);
     this.diaBloqueado = data.bloqueado;
     this.puedeEditarPasado = data.puedeEditarPasado;
     this.historialNotas = data.notasDia;

@@ -6,15 +6,15 @@ import {
   MatDialogTitle,
   MatDialogContent,
 } from '@angular/material/dialog';
-import { MtMdlRangoHora } from '../mt-mdl-rango-hora/mt-mdl-rango-hora'
-import { MtMdlAsignarPersonal } from '../mt-mdl-asignar-personal/mt-mdl-asignar-personal';
+import { MtMdlRangoHora } from './component/mt-mdl-rango-hora/mt-mdl-rango-hora'
+import { MtMdlAsignarPersonal } from './component/mt-mdl-asignar-personal/mt-mdl-asignar-personal';
 export type NotificationType = 'success' | 'warning' | 'danger';
 import { HostListener } from '@angular/core';
 import { CanComponentDeactivate } from '@metasperu/page/core/auth/pending-changes.guard';
 import { SocketResourcesHumanService } from '@metasperu/services/socketResourcesHuman';
 import { lastValueFrom } from 'rxjs';
-import { MtMdlInfoHorario } from '../mt-mdl-info-horario/mt-mdl-info-horario';
-import { MtMdlObervaciones } from '../mt-mdl-obervaciones/mt-mdl-obervaciones';
+import { MtMdlInfoHorario } from './component/mt-mdl-info-horario/mt-mdl-info-horario';
+import { MtMdlObervaciones } from './component/mt-mdl-obervaciones/mt-mdl-obervaciones';
 
 @Component({
   selector: 'mt-rw-horario',
@@ -26,6 +26,7 @@ export class MtRwHorario implements CanComponentDeactivate {
 
   @Input() dataSearch: any = {};
   @Input() isCreateHorario: boolean = false;
+  @Input() isReadOnly: boolean = false;
   public readonly MtMdlRangoHora = MtMdlRangoHora;
   public readonly MtMdlAsignarPersonal = MtMdlAsignarPersonal;
   isLoading: boolean = false;
@@ -286,10 +287,7 @@ export class MtRwHorario implements CanComponentDeactivate {
         if (seleccionados && seleccionados.length > 0) {
           celda.notasDia = [];
           // Insertamos todos los trabajadores seleccionados de una vez
-          seleccionados.forEach((trab: any) => {
-            celda.notasDia.push(trab);
-
-          });
+          celda.notasDia = seleccionados;
           console.log(celda);
           this.registrarCambio();
         }

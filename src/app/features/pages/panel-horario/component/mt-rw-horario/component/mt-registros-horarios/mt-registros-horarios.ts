@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { StoreService } from '@metasperu/services/store.service';
-import { tableColumns } from '../../../rrhh-asistencia/rrhh-asistencia';
+import { tableColumns } from '../../../../../rrhh-asistencia/rrhh-asistencia';
 
 @Component({
   selector: 'mt-registros-horarios',
