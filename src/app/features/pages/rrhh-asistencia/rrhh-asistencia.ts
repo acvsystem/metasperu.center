@@ -29,6 +29,7 @@ export class RrhhAsistencia {
   dataEJBFeriado: Array<any> = [];
   typeNotification: NotificationType = 'success';
   isNotification: boolean = false;
+ 
   cboStoreList: Array<any> = [{ key: 'isDefault', value: 'General' }, { key: 'isDetallado', value: 'Detallado' }, { key: 'isFeriados', value: 'Feriados' }]
 
   columnsInventory: tableColumns[] = [
@@ -298,6 +299,8 @@ export class RrhhAsistencia {
       }
     }
   }
+
+
 
 }
 

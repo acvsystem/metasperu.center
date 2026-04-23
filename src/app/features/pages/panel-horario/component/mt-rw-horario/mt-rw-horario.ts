@@ -44,7 +44,7 @@ export class MtRwHorario implements CanComponentDeactivate {
   keyStore: string = "";
   storeList: Array<any> = [];
   employeEJBList: Array<any> = [];
-
+  isCreatePapeleta: boolean = false;
   listaMaestraTrabajadores: Array<any> = [];
   dialog = inject(MatDialog);
   @HostListener('window:beforeunload', ['$event'])
@@ -72,7 +72,7 @@ export class MtRwHorario implements CanComponentDeactivate {
       // 3. Obtener y validar tienda
       const codeStoreEncrypted = localStorage.getItem('keyStore');
       if (!codeStoreEncrypted) return;
-      console.log(this.storeList);
+
       const serieDecrypted = this.storeService.decrypt(codeStoreEncrypted);
       const store = this.storeList.find(s => s.serie === serieDecrypted);
       this.keyStore = store ? store.serie : 'OF';
@@ -643,5 +643,9 @@ export class MtRwHorario implements CanComponentDeactivate {
     });
   }
 
+
+  onCreateBallot() {
+    this.isCreatePapeleta = !this.isCreatePapeleta;
+  }
 
 }

@@ -1,127 +1,118 @@
-<div class="papeleta-container">
-  <!-- Cabecera con el Código de la Papeleta -->
-  <div class="code-header" *ngIf="horasExtras.length > 0">
-    <mat-icon>vpn_key</mat-icon>
-    <span>Código de Papeleta Hora Extra: <strong>{{ horasExtras[0]?.codigo_papeleta }}</strong></span>
-  </div>
-
-  <mat-card class="form-card">
-
-    <mat-card-content>
-      <div class="form-grid">
-        <!-- Selector de Empleado -->
-        <mat-form-field appearance="outline">
-          <mat-label>Seleccione Empleado</mat-label>
-          <mat-select [(ngModel)]="empleadoSeleccionado">
-            <mat-option *ngFor="let emp of listaEmpleados" [value]="emp">
-              {{ emp.nombre_completo }}
-            </mat-option>
-          </mat-select>
-        </mat-form-field>
-
-        <!-- Tipo de Reporte -->
-        <mat-form-field appearance="outline">
-          <mat-label>Tipo de Reporte</mat-label>
-          <mat-select [(ngModel)]="tipoReporte" (selectionChange)="onTipoReporteChange()">
-            <mat-option *ngFor="let rep of listaReportes" [value]="rep.key">
-              {{ rep.value }}
-            </mat-option>
-          </mat-select>
-        </mat-form-field>
-
-        <!-- Cargo -->
-        <mat-form-field appearance="outline">
-          <mat-label>Cargo del Empleado</mat-label>
-          <mat-select [(ngModel)]="cargoSeleccionado">
-            <mat-option *ngFor="let cargo of listaCargos" [value]="cargo">
-              {{ cargo }}
-            </mat-option>
-          </mat-select>
-        </mat-form-field>
-
-        <!-- Fechas -->
-        <mat-form-field appearance="outline">
-          <mat-label>Fecha de Salida</mat-label>
-          <input matInput [matDatepicker]="pickerSalida" [(ngModel)]="fechaSalida">
-          <mat-datepicker-toggle matIconSuffix [for]="pickerSalida"></mat-datepicker-toggle>
-          <mat-datepicker #pickerSalida></mat-datepicker>
-        </mat-form-field>
-
-        <mat-form-field appearance="outline">
-          <mat-label>Fecha de Ingreso</mat-label>
-          <input matInput [matDatepicker]="pickerIngreso" [(ngModel)]="fechaIngreso">
-          <mat-datepicker-toggle matIconSuffix [for]="pickerIngreso"></mat-datepicker-toggle>
-          <mat-datepicker #pickerIngreso></mat-datepicker>
-        </mat-form-field>
-
-        <!-- Horas de Entrada/Salida -->
-        <mat-form-field appearance="outline">
-          <mat-label>Hora de Salida</mat-label>
-          <input matInput type="time" [(ngModel)]="horaSalida" (change)="calcularDiferencia()">
-        </mat-form-field>
-
-        <mat-form-field appearance="outline">
-          <mat-label>Hora de Retorno</mat-label>
-          <input matInput type="time" [(ngModel)]="horaRetorno" (change)="calcularDiferencia()">
-        </mat-form-field>
-
-        <!-- Horas Solicitadas (Lectura) -->
-        <mat-form-field appearance="outline" class="readonly-field">
-          <mat-label>Horas Solicitadas</mat-label>
-          <input matInput [value]="horasSolicitadas" readonly>
-          <mat-icon matSuffix>timer</mat-icon>
-        </mat-form-field>
+<div class="page-container">
+  <mat-card class="papeleta-card">
+    <header class="header">
+      <div class="brand">
+        <div class="logo">
+          <span class="m-logo">M</span>
+          <div class="brand-text">
+            <strong>METAS</strong>
+            <span>PERÚ SAC</span>
+          </div>
+        </div>
       </div>
-    </mat-card-content>
+      <div style="display: flex;justify-content: end;padding-bottom: 12px;">
+        <button matTooltip="Registrar Papeleta" (click)="onSaveBallot()" id="searchProducto" type="button"
+          class="btn btn-primary btn-sm" style="padding-bottom: 0px;padding-left: 2px;padding-right: 2px;padding-top: 0;margin-right: 3px;display: flex;
+          justify-content: center;
+          align-items: center;
+          height: 34px;
+          width: 100px;">
+          <mat-icon style="margin-right: 5px;">save</mat-icon> <span>Registrar</span>
+        </button>
+      </div>
+    </header>
+
+    <form>
+      <div class="row g-3 mb-4">
+        <div class="col-12">
+          <mt-select [data]="employeEJBList" (selectdOption)="onChangeSelect($event,'selectEmploye')"
+            [isMultiselect]=false label="Seleccione un empleado" title="Empleado">
+          </mt-select>
+        </div>
+        <div class="col-md-6">
+          <mt-select [data]="typeBallotList" (selectdOption)="onChangeSelect($event,'selectTypeBallot')"
+            [isMultiselect]=false label="Tipo papeleta" title="Tipo">
+          </mt-select>
+        </div>
+        <div class="col-md-6">
+          <mt-select [data]="cargoEmployes" (selectdOption)="onChangeSelect($event,'selectCargoEmploye')"
+            [isMultiselect]=false label="Seleccione cargo" title="Cargo">
+          </mt-select>
+        </div>
+      </div>
+
+      <section class="section-details">
+        <div class="detail-grid">
+          <div class="detail-group">
+            <div class="item">
+              <mt-calendar (afterChange)="onCalendarDesde($event)" [isDefault]="true" placeholder="Desde"></mt-calendar>
+            </div>
+            <div class="item">
+              <mt-calendar (afterChange)="onCalendarHasta($event)" [isDefault]="true" placeholder="Hasta"></mt-calendar>
+            </div>
+          </div>
+          <div class="detail-group">
+            <div class="item">
+              <mt-calendar [isTime]="true" (keyup)="onChangeInput($event,'timeDesde')"
+                placeholder="Inicio"></mt-calendar>
+            </div>
+            <div class="item">
+              <mt-calendar [isTime]="true" (keyup)="onChangeInput($event,'timeHasta')" placeholder="Fin"></mt-calendar>
+            </div>
+          </div>
+          <div class="hours-badge-disponible" [ngClass]="{'border-danger': horasDisponibles == '00:00'}">
+            <span class="label" [class.text-danger]="horasDisponibles == '00:00'">Horas Disponibles</span>
+            <span class="value" [class.text-danger]="horasDisponibles == '00:00'">{{horasDisponibles}}</span>
+          </div>
+          <div class="hours-badge" [ngClass]="{'border-danger': excesoPermitido}">
+            <span class="label" [class.text-danger]="excesoPermitido">Horas Solicitadas</span>
+            <span class="value" [class.text-danger]="excesoPermitido">{{horasSolicitadas}}</span>
+          </div>
+        </div>
+      </section>
+
+      <div class="scroll-container">
+        <table class="table table-sm table-bordered table-hover">
+          <thead class="table-dark">
+            <tr>
+              <th>Fecha</th>
+              <th>Extra</th>
+              <th>Solicitada</th>
+              <th>Sobrante</th>
+              <th>Estado</th>
+              <th>Acción</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (column of horasExtras; track column) {
+            <tr>
+              <td>{{column.FECHA}}</td>
+              <td>{{column.HR_EXTRA_ACUMULADO}}</td>
+              <td>{{column.HR_EXTRA_SOLICITADO}}</td>
+              <td>{{column.HR_EXTRA_SOBRANTE}}</td>
+              <td>
+                <span class="badge badge-text" [ngClass]="getClaseEstado(column.ESTADO)">
+                  {{column.ESTADO}}
+                </span>
+              </td>
+              <td>
+                <button matTooltip="Solicitar Aprobacion" id="searchProducto" type="button"
+                  class="btn btn-primary btn-sm"
+                  style="padding-bottom: 0px;padding-left: 2px;padding-right: 2px;padding-top: 0;margin-right: 3px;height: 30px;">
+                  <mat-icon style="margin-top: 6px;font-size: 17px;">task_alt</mat-icon>
+                </button>
+              </td>
+            </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </form>
   </mat-card>
 
-  <!-- Tabla de Horas Extras -->
-  <div class="table-container" *ngIf="tipoReporte === 'compensacion'">
-    <table mat-table [dataSource]="horasExtras" class="mat-elevation-z1">
+  @if (isNotification) {
+  <mt-notification [type]="typeNotification" [message]="messageNotification"
+    (onClose)="cerrarNotificacion()"></mt-notification>
+  }
 
-      <ng-container matColumnDef="fecha">
-        <th mat-header-cell *matHeaderCellDef> Fecha </th>
-        <td mat-cell *matCellDef="let item"> {{ item.fecha }} </td>
-      </ng-container>
-
-      <ng-container matColumnDef="hr_trabajadas">
-        <th mat-header-cell *matHeaderCellDef> Hrs Trabajadas </th>
-        <td mat-cell *matCellDef="let item"> {{ item.hr_trabajadas }} </td>
-      </ng-container>
-
-      <ng-container matColumnDef="hrx_acumulado">
-        <th mat-header-cell *matHeaderCellDef> H.E. Acumulado </th>
-        <td mat-cell *matCellDef="let item"> {{ item.hrx_acumulado }} </td>
-      </ng-container>
-
-      <ng-container matColumnDef="estado">
-        <th mat-header-cell *matHeaderCellDef> Estado </th>
-        <td mat-cell *matCellDef="let item">
-          <span class="status-badge" [ngClass]="item.estado">
-            {{ item.estado === 'aprobar' ? 'solicitar aprobacion' : item.estado }}
-          </span>
-        </td>
-      </ng-container>
-
-      <ng-container matColumnDef="accion">
-        <th mat-header-cell *matHeaderCellDef> Acción </th>
-        <td mat-cell *matCellDef="let item">
-          <button mat-flat-button color="primary" *ngIf="item.estado === 'aprobar'" (click)="solicitarAprobacion(item)">
-            Solicitar Aprobación
-          </button>
-        </td>
-      </ng-container>
-
-      <tr mat-header-row *matHeaderRowDef="['fecha', 'hr_trabajadas', 'hrx_acumulado', 'estado', 'accion']"></tr>
-      <tr mat-row *matRowDef="let row; columns: ['fecha', 'hr_trabajadas', 'hrx_acumulado', 'estado', 'accion'];"></tr>
-    </table>
-
-    <!-- Pie de Tabla con Suma Acumulada -->
-    <div class="footer-summary">
-      <div class="total-box">
-        <span>Suma hrx_acumulado (Correcto): </span>
-        <strong>{{ acumuladoTotalCorrecto }}</strong>
-      </div>
-    </div>
-  </div>
-</div>
+  <mt-loader *ngIf="isLoading" [title]="titleLoader"></mt-loader>

@@ -77,7 +77,7 @@
         }
 
         @if(isTime){
-        <mat-form-field appearance="outline">
+        <mat-form-field appearance="outline" subscriptSizing="dynamic">
             <mat-label>{{placeholder}}</mat-label>
             <input type="time" matInput [name]="id" [(ngModel)]="vTimer" (keyup)="onChangeInput($event)"
                 value="value" />

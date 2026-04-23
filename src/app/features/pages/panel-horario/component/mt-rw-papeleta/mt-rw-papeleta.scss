@@ -1,134 +1,305 @@
-@use 'sass:color';
+$primary: #004a87;
+$dark: #333;
+$gray-light: #f8f9fa;
+$border: #dee2e6;
+$success: #008738;
 
-// Variables de color (basadas en la línea gráfica de Metas Perú)
-$primary-color: #195ea7;
-$secondary-color: #0d4077;
-$success-color: #28a745;
-$warning-color: #ffc107;
-$bg-light: #f4f7f9;
-$border-color: #e0e6ed;
+.page-container {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  overflow-y: scroll;
+  max-height: 800px;
+  background-color: #f0f2f5;
+  padding: 40px 20px;
 
-.papeleta-container {
-  padding: 24px;
-  max-width: 1200px;
-  margin: 0 auto;
-  background-color: transparent;
+  /* ESTAS LÍNEAS ACTIVAN EL SCROLL */
+  overflow-y: auto;
+  height: 100vh;
+  
+}
 
-  .code-header {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 12px 20px;
-    background: white;
-    border-radius: 8px;
-    border-left: 5px solid $primary-color;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-    margin-bottom: 20px;
-    color: #444;
+.papeleta-card {
+  width: 100%;
+  max-width: 800px;
+  background: white;
+  padding: 50px !important;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  border-radius: 4px;
 
-    mat-icon {
-      color: $primary-color;
-    }
+  /* Asegura que el card no se corte */
+  margin-bottom: 50px;
+}
 
-    strong {
-      color: $secondary-color;
-      font-size: 1.1rem;
-    }
-  }
+/* Ajuste para que los campos de Material se vean compactos */
+.mat-mdc-form-field {
+  width: 100%;
+  margin-bottom: 8px;
+}
 
-  .form-card {
-    margin-bottom: 30px;
-    border-radius: 12px;
-    overflow: hidden;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+/* Estilo del contenedor de horas (el recuadro con borde punteado) */
+.horas-solicitadas-box {
+  border: 2px dashed #0056b3;
+  /* Borde punteado como en la imagen */
+  border-radius: 8px;
+  background-color: #fcfdfe;
+  padding: 15px;
+  text-align: center;
+}
 
-    mat-card-header {
-      background: linear-gradient(135deg, $primary-color 0%, $secondary-color 100%);
-      color: white;
-      padding: 16px 24px;
+.horas-valor {
+  font-size: 14px;
+  font-weight: 800;
+  color: #003366;
+  margin: 0;
+}
 
-      mat-card-title {
-        font-size: 1.2rem;
+/* Estilo corporativo de la tabla */
+.table-papeleta {
+  width: 100%;
+  margin-top: 20px;
+  border-collapse: collapse;
+}
+
+.table-papeleta thead {
+  background-color: #333333;
+  /* Color oscuro sólido */
+  color: #ffffff;
+}
+
+.table-papeleta th {
+  padding: 12px;
+  text-align: center;
+  font-weight: 500;
+  font-size: 0.9rem;
+
+}
+
+.table-papeleta td {
+  padding: 15px;
+  text-align: center;
+  border: 1px solid #dee2e6;
+  font-size: 14px;
+}
+
+.header {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  align-items: center;
+  border-bottom: 3px solid $primary;
+  padding-bottom: 1rem;
+  margin-bottom: 1.5rem;
+
+  .brand {
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+
+      .m-logo {
+        background: $primary;
+        color: white;
         font-weight: 500;
-        margin: 0;
-      }
-    }
-
-    .form-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-      gap: 16px;
-      padding: 24px;
-
-      mat-form-field {
-        width: 100%;
+        padding: 4px 8px;
+        border-radius: 4px;
       }
 
-      .readonly-field {
-        input {
-          font-weight: 600;
-          color: $primary-color;
+      .brand-text {
+        line-height: 1;
+
+        strong {
+          font-size: 18px;
+          color: $primary;
+          font-weight: 500;
+        }
+
+        span {
+          font-size: 10px;
+          display: block;
+          color: #666;
         }
       }
     }
   }
 
-  .table-container {
-    background: white;
-    border-radius: 12px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-    overflow: hidden;
-    margin-bottom: 20px;
+  .doc-type h1 {
+    font-size: 16px;
+    text-align: center;
+    margin: 0;
+    letter-spacing: 1px;
+  }
 
-    table {
-      width: 100%;
+  .doc-code {
+    text-align: right;
+
+    .label {
+      font-size: 12px;
+      display: block;
+      color: #363636;
     }
 
-    .status-badge {
-      padding: 6px 12px;
-      border-radius: 20px;
-      font-size: 0.85rem;
+    .value {
+      font-size: 14px;
       font-weight: 500;
-      text-transform: capitalize;
-
-      &.correcto {
-        background-color: rgba($success-color, 0.1);
-        color: $success-color;
-      }
-
-      &.aprobar {
-        background-color: rgba($warning-color, 0.1);
-        color: color.adjust($warning-color, $lightness: -15%);
-      }
-    }
-
-    .footer-summary {
-      padding: 20px 24px;
-      background-color: $bg-light;
-      display: flex;
-      justify-content: flex-end;
-      border-top: 1px solid $border-color;
-
-      .total-box {
-        font-size: 1.1rem;
-        span { color: #666; }
-        strong { color: $primary-color; font-size: 1.3rem; margin-left: 10px; }
-      }
+      color: $primary;
     }
   }
 }
 
-@media (max-width: 768px) {
-  .papeleta-container {
-    padding: 12px;
-    
-    .form-grid {
-      grid-template-columns: 1fr !important;
-      padding: 16px !important;
-    }
+.section-details {
+  background: $gray-light;
+  padding: 1.2rem;
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
 
-    .table-container {
-      overflow-x: auto; // Permite scroll lateral en tablas móviles
+  .detail-grid {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .detail-group {
+    width: 166px;
+
+    .item {
+      font-size: 13px;
+      margin-bottom: 4px;
+
+      span {
+        color: #666;
+        width: 30px;
+        display: inline-block;
+      }
     }
   }
+
+  .hours-badge-disponible {
+    text-align: right;
+    background: white;
+    padding: 10px 20px;
+    border-radius: 6px;
+    border: 1px dashed $success;
+
+    .label {
+      font-size: 10px;
+      display: block;
+      color: $success;
+      font-weight: 500;
+    }
+
+    .value {
+      font-size: 24px;
+      font-weight: 500;
+      color: $success;
+    }
+  }
+
+  .hours-badge {
+    text-align: right;
+    background: white;
+    padding: 10px 20px;
+    border-radius: 6px;
+    border: 1px dashed $primary;
+
+    .label {
+      font-size: 10px;
+      display: block;
+      color: $primary;
+      font-weight: 500;
+    }
+
+    .value {
+      font-size: 24px;
+      font-weight: 500;
+      color: $primary;
+    }
+  }
+}
+
+/* Contenedor del scroll */
+.scroll-container {
+  max-height: 400px;
+
+  overflow-y: auto;
+  text-align: center;
+  //border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+
+  th {
+    font-weight: 500;
+  }
+}
+
+.table-papeleta {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+
+.table-papeleta td {
+  padding: 10px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+/* Diseño de los Chips */
+.chip {
+  padding: 4px 12px;
+  border-radius: 16px;
+  font-size: 12px;
+  font-weight: 500;
+  display: inline-block;
+}
+
+.chip-correcto {
+  background: #d4edda;
+  color: #155724;
+}
+
+.chip-utilizado {
+  background: #cce5ff;
+  color: #004085;
+}
+
+.chip-pendiente {
+  background: #fff3cd;
+  color: #856404;
+}
+
+/* Para solicitar aprobación */
+
+/* 1. El contenedor debe tener una altura limitada */
+.scroll-container {
+  max-height: 400px;
+  /* O la altura que prefieras */
+  overflow-y: auto;
+  position: relative;
+  /* Importante para el cálculo del sticky */
+}
+
+/* 2. El sticky se aplica directamente al th */
+.table-papeleta thead th {
+  position: sticky;
+  top: 0;
+  background-color: #333333;
+  z-index: 10;
+
+  /* Asegura que el head pase por encima del contenido al hacer scroll */
+  box-shadow: 0 1px 0 #e0e0e0;
+  /* Opcional: añade una pequeña sombra para separarlo del cuerpo */
+}
+
+.badge-text {
+  font-weight: 500;
+}
+
+.text-bg-warning {
+  color: #ffffff !important;
+  background-color: rgb(253 159 13) !important;
+}
+
+.col {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 40px;
 }

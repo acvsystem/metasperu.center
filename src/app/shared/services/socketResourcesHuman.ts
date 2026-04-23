@@ -28,7 +28,8 @@ export class SocketResourcesHumanService {
         this.socket.on('connect', () => {
             console.log('Conectado al servicio de Resources Human');
             //this.socket?.emit('registrar_dashboard');
-            //this.socketID = this.socket?.id;
+            this.socketID = this.socket?.id;
+            console.log(this.socketID);
         });
 
     }
@@ -47,5 +48,10 @@ export class SocketResourcesHumanService {
         this.socket?.on('dashboard_empleados_horario', callback);
     }
 
+    onHoursWorksEmployes(callback: (data: any) => void) {
+        this.socket?.on('py_works_hours_employes_response', callback);
+    }
+
+    
 
 }

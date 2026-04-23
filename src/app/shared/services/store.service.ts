@@ -387,4 +387,57 @@ export class StoreService {
         const bytes = CryptoJS.AES.decrypt(cipherText, this.secretKey);
         return bytes.toString(CryptoJS.enc.Utf8);
     }
+
+    getTypeBallot(): Observable<any> {
+        return this.http.get(
+            `${this.API_URL_RESOURCES_HUMAN}/api/type/ballot`
+        ).pipe(
+            catchError(this.handleError)
+        );
+    }
+
+    postHoursWorksEmployes(body: any): Observable<any> {
+        return this.http.post(
+            `${this.API_URL_RESOURCES_HUMAN}/api/hours/works/employes`, body
+        ).pipe(
+            catchError(this.handleError)
+        );
+    }
+
+    postSaveBallot(body: Ballot): Observable<any> {
+        console.log(body);
+        return this.http.post(
+            `${this.API_URL_RESOURCES_HUMAN}/api/create/ballot/employes`, body
+        ).pipe(
+            catchError(this.handleError)
+        );
+    }
+}
+
+export interface Ballot {
+    empleado: {
+        codigoTienda: string,
+        nroDocumento: string,
+        nombre: string,
+        idTipoPapeleta: string,
+        cargo: string
+    },
+    papeleta: {
+        fechaDesde: string,
+        fechaHasta: string,
+        horaSalida: string,
+        horaLlegada: string,
+        horaAcumulada: string,
+        horaSolicitada: string,
+        descripcion: string
+    },
+    detalles: BallotDetail[]
+}
+
+export interface BallotDetail {
+    idHrExtra: string,
+    hrExtraAcumulado: string,
+    hrExtraSolicitado: string,
+    hrExtraSobrante: string,
+    fecha: string
 }
