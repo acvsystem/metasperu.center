@@ -1,5 +1,6 @@
 <section class="example-container mat-elevation-z8" style="overflow: auto;padding-bottom: 200px;">
-    <div class="mat-elevation-z8">
+
+    <div class="mat-elevation-z8" [ngClass]="{'desktop-only':isTableMobile}">
         <table mat-table [dataSource]="dataSource">
 
             @for(col of dataColumns; track col.matColumnDef) {
@@ -93,6 +94,26 @@
                     <span class="badge text-bg-success">{{element[col.propertyValue]}}</span>
                     } @else if(col.propertyValue == 'cCotiSunat' && element.cCotiSunat != element.cCotizacion){
                     <span class="badge text-bg-danger">{{element[col.propertyValue]}}</span>
+                    } @else if(col.propertyValue == 'estado_auth'){
+                    @if(element[col.propertyValue] == 'APROBADO'){
+                    <span class="badge text-bg-success">{{element[col.propertyValue]}}</span>
+                    }@else if(element[col.propertyValue] == 'RECHAZADO'){
+                    <span class="badge text-bg-danger">{{element[col.propertyValue]}}</span>
+                    }@else if(element[col.propertyValue] == 'ESPERA APROBACION'){
+                    <span class="badge text-bg-warning">{{element[col.propertyValue]}}</span>
+                    }
+
+                    }@else if(col.propertyValue == 'accion_autorizar'){
+                    <button matTooltip="Aprobar" id="searchProducto" type="button" class="btn btn-success btn-sm"
+                        (click)="onCallback(element,'aprobado')"
+                        style="padding-bottom: 0px;padding-top: 0;margin-right: 3px;">
+                        <mat-icon style="margin-top: 6px;">check_circle</mat-icon>
+                    </button>
+                    <button matTooltip="Aprobar" id="searchProducto" type="button" class="btn btn-danger btn-sm"
+                        (click)="onCallback(element,'rechazar')"
+                        style="padding-bottom: 0px;padding-top: 0;margin-right: 3px;">
+                        <mat-icon style="margin-top: 6px;">cancel</mat-icon>
+                    </button>
                     }@else if(col.propertyValue == 'cAccion'){
                     <button matTooltip="Eliminar" id="searchProducto" type="button" class="btn btn-danger btn-sm"
                         (click)="onDeleteRow(element)"
@@ -135,5 +156,34 @@
 
         <mat-paginator [pageSizeOptions]="[10, 20, 50, 100]" showFirstLastButtons class="mat-mdc-paginator-sticky">
         </mat-paginator>
+    </div>
+
+    <div class="mobile-only" *ngIf="isTableMobile">
+        @for (item of dataSource.data; track item) {
+        <div class="papeleta-card">
+            <div class="card-header">
+                <span class="nombre">{{item.nombre_completo}}</span>
+                <span class="status-badge-success" *ngIf="item.estado_auth == 'APROBADO'">{{item.estado_auth}}</span>
+                <span class="status-badge-warning" *ngIf="item.estado_auth == 'ESPERA'">{{item.estado_auth}}</span>
+                <span class="status-badge-danger" *ngIf="item.estado_auth == 'RECHAZADO'">{{item.estado_auth}}</span>
+            </div>
+
+            <div class="card-body">
+                <div class="info-grid">
+                    <div class="info-item"><small>USUARIO</small><span>{{item.usuario_modf}}</span></div>
+                    <div class="info-item"><small>FECHA</small><span>{{item.fecha}}</span></div>
+                    <div class="info-item"><small>HR. EXTRA</small><span>{{item.hr_extra}}</span></div>
+                </div>
+                <div style="padding-left: 20px;padding-bottom: 15px;padding-right: 20px;">
+                    <div class="info-item"><small>COMENTARIO</small><span style="word-wrap: break-word;">{{item.comentario}}</span></div>
+                </div>
+            </div>
+
+            <div class="card-footer">
+                <button class="btn-action deny" (click)="onCallback(item,'rechazar')">NEGAR</button>
+                <button class="btn-action approve" (click)="onCallback(item,'aprobado')">ACEPTAR</button>
+            </div>
+        </div>
+        }
     </div>
 </section>

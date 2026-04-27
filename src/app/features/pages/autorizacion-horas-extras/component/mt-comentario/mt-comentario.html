@@ -1,0 +1,32 @@
+<h2 mat-dialog-title>Ingresar comentario</h2>
+
+<mat-dialog-content>
+    <p class="helper-text">Seleccione un comentario o escribalo.</p>
+
+    <mat-form-field appearance="outline" class="w-100 mb-3">
+        <mat-label>Mensajes</mat-label>
+        <mat-select (selectionChange)="onChangeSelect($event)">
+            <mat-option *ngFor="let emp of dataComentarios" [value]="emp">
+                <div class="option-emp">
+                    <span>{{ emp.value }}</span>
+                </div>
+            </mat-option>
+        </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="custom-textarea-field">
+        <mat-label>Comentario</mat-label>
+        <textarea matInput rows="3" [value]="vComentario" (keyup)="onChangeTextArea($event)"
+            placeholder="Escriba su comentario aquí...">
+        </textarea>
+    </mat-form-field>
+
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+    <button mat-button (click)="onNoClick()">Cancelar</button>
+    <button mat-raised-button color="primary" (click)="onOk()" [disabled]="!vComentario || vComentario.length === 0"
+        cdkFocusInitial>
+        Aceptar
+    </button>
+</mat-dialog-actions>

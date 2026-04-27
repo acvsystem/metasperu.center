@@ -614,6 +614,29 @@ body>ion-alert {
 }
 
 
+@media (max-width: 600px) {
+  .cdk-overlay-pane {
+    width: 100vw !important;
+    max-width: 100vw !important;
+    margin: 0 !important;
+  }
+
+  .modal-mediano {
+    .mat-mdc-dialog-container .mdc-dialog__surface {
+      width: 300px !important;
+      /* Casi toda la pantalla */
+      min-width: 300px !important;
+      /* Pero con un tope para monitores grandes */
+      height: 370px !important;
+      padding: 20px;
+      overflow: hidden;
+    }
+
+    max-width: none !important;
+    min-width: auto !important;
+  }
+}
+
 /* Print Rules */
 /* REGLAS PARA EL PDF / IMPRESIÓN */
 @media print {
@@ -665,4 +688,3 @@ body>ion-alert {
   }
 
 }
-

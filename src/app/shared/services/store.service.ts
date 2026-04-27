@@ -405,9 +405,32 @@ export class StoreService {
     }
 
     postSaveBallot(body: Ballot): Observable<any> {
-        console.log(body);
         return this.http.post(
             `${this.API_URL_RESOURCES_HUMAN}/api/create/ballot/employes`, body
+        ).pipe(
+            catchError(this.handleError)
+        );
+    }
+
+    postSolicitarAprobacionHextra(body: SolicitudHrx): Observable<any> {
+        return this.http.post(
+            `${this.API_URL_RESOURCES_HUMAN}/api/solicitude/approval/hours/works/employes`, body
+        ).pipe(
+            catchError(this.handleError)
+        );
+    }
+
+    getAllHorasExtrasEmployes(): Observable<any> {
+        return this.http.get(
+            `${this.API_URL_RESOURCES_HUMAN}/api/all/solicitude/hours/works/employes`
+        ).pipe(
+            catchError(this.handleError)
+        );
+    }
+
+    postRespuestaAprobacionHextra(body: any): Observable<any> {
+        return this.http.post(
+            `${this.API_URL_RESOURCES_HUMAN}/api/approval/hours/works/employes`, body
         ).pipe(
             catchError(this.handleError)
         );
@@ -440,4 +463,13 @@ export interface BallotDetail {
     hrExtraSolicitado: string,
     hrExtraSobrante: string,
     fecha: string
+}
+
+export interface SolicitudHrx {
+    nroDocumento: string,
+    nombreCompleto: string,
+    horasAcumuladas: string,
+    fecha: string,
+    codigoTienda: string,
+    comentario: string
 }

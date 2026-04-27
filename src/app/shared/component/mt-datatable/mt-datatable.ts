@@ -22,8 +22,11 @@ export class MtDatatable implements OnInit, OnChanges, AfterViewInit {
   @Input() dataColumnsIn: columnsTable[] = [];
   @Input() extraColumns: string[] = [];
   @Input() isFeriado: boolean = false;
+  @Input() isTableMobile: boolean = false;
   @Output() currentDataFilter = new EventEmitter<any[]>();
   @Output() rowSelected = new EventEmitter<any[]>();
+  @Output() callback = new EventEmitter<any[]>();
+
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
@@ -47,6 +50,7 @@ export class MtDatatable implements OnInit, OnChanges, AfterViewInit {
   ngOnChanges(changes: SimpleChanges) {
     // 1. Cambio en los datos de las filas
     if (changes['dataIn'] && this.dataIn) {
+      console.log(this.dataIn);
       this.dataSource = new MatTableDataSource(this.dataIn);
 
       this.dataSource.paginator = this.paginator;
@@ -177,6 +181,11 @@ export class MtDatatable implements OnInit, OnChanges, AfterViewInit {
 
   onSelectedRow(row: any) {
     this.rowSelected.emit(row);
+  }
+
+  onCallback(row: any, event: string) {
+    row['accion'] = event;
+    this.callback.emit(row);
   }
 }
 

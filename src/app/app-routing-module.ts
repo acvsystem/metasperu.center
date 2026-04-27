@@ -10,7 +10,7 @@ import { Kardex } from '@metasperu/page/features/pages/kardex/kardex';
 import { Traspasos } from '@metasperu/page/features/pages/traspasos/traspasos';
 import { PanelHorario } from './features/pages/panel-horario/panel-horario';
 import { ExchangeRateStore } from './features/pages/exchange-rate-store/exchange-rate-store';
-
+import { AutorizacionHorasExtras } from '@metasperu/page/features/pages/autorizacion-horas-extras/autorizacion-horas-extras';
 const routes: Routes = [
   { path: '', component: Login },
   { path: 'login', component: Login },
@@ -61,6 +61,12 @@ const routes: Routes = [
     component: ExchangeRateStore,
     canActivate: [authGuard],
     data: { roles: ['SISTEMAS', 'CONTABILIDAD'] }
+  },
+  {
+    path: 'auth-hora-extra',
+    component: AutorizacionHorasExtras,
+    canActivate: [authGuard],
+    data: { roles: ['SISTEMAS', 'RRHH', 'OPERACIONES'] }
   }
 ];
 

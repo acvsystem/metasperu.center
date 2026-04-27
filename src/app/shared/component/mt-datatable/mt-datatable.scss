@@ -368,3 +368,143 @@ tr.example-element-row:not(.example-expanded-row):active {
   height: 800px;
   overflow: auto;
 }
+
+.mobile-only {
+  display: none;
+}
+
+.estado-espera {
+  background: #fff3cd;
+  color: #856404;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-weight: 600;
+}
+
+// Estilos para la vista móvil
+.mobile-only {
+  display: none; // Oculto por defecto en escritorio
+}
+
+@media (max-width: 768px) {
+
+  // Ocultamos la tabla en móvil
+  .desktop-only {
+    display: none;
+  }
+
+  // Mostramos el contenedor de tarjetas
+  .mobile-only {
+    display: block;
+    padding: 10px;
+    background-color: #f4f7f9;
+  }
+
+  .papeleta-card {
+    background: #ffffff;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08);
+    margin-bottom: 20px;
+    border: 1px solid #f0f0f0;
+  }
+
+  .card-header {
+    background: #2d3748;
+    /* Color oscuro profesional */
+    color: white;
+    padding: 15px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .status-badge-success {
+    background: #5dad7c;
+    color: #ffffff;
+    font-size: 0.7rem;
+    padding: 4px 10px;
+    border-radius: 8px;
+    font-weight: 500;
+  }
+
+  .status-badge-warning {
+    background: #e2c24e;
+    color: #2b2727;
+    font-size: 0.7rem;
+    padding: 4px 10px;
+    border-radius: 8px;
+    font-weight: 500;
+  }
+
+  .status-badge-danger {
+    background: #d36868;
+    color: #ffffff;
+    font-size: 0.7rem;
+    padding: 4px 10px;
+    border-radius: 8px;
+    font-weight: 500;
+  }
+
+  .info-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    padding: 20px;
+  }
+
+  .info-item {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .info-item small {
+    color: #424242;
+    font-size: 0.65rem;
+    letter-spacing: 1px;
+  }
+
+  .alert-box {
+    padding: 0 20px 15px;
+    color: #e53e3e;
+    font-weight: 600;
+  }
+
+  .card-footer {
+    display: flex;
+    border-top: 1px solid #f0f0f0;
+  }
+
+  .btn-action {
+    flex: 1;
+    padding: 15px;
+    border: none;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+
+  .deny {
+    background: #fff5f5;
+    color: #c53030;
+  }
+
+  .approve {
+    background: #f0fff4;
+    color: #2f855a;
+  }
+
+  .btn-action:active {
+    opacity: 0.8;
+  }
+}
+
+.badge-estado {
+  padding: 4px 8px;
+  border-radius: 16px;
+  font-size: 11px;
+  background: #fff3cd; // Amarillo tipo alerta
+  color: #856404;
+  font-weight: bold;
+}
+

@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, ViewChild } from '@angular/core';
 import { StoreService } from '@metasperu/services/store.service';
 import { SocketResourcesHumanService } from '@metasperu/services/socketResourcesHuman';
 import { provideMomentDateAdapter } from '@angular/material-moment-adapter';
@@ -21,6 +21,15 @@ import {
   providers: [provideMomentDateAdapter()],
 })
 export class MtRwPapeleta implements OnInit {
+
+  // Referencias a componentes hijos para reseteo manual
+  @ViewChild('selEmploye') selEmploye!: any;
+  @ViewChild('selType') selType!: any;
+  @ViewChild('selCargo') selCargo!: any;
+  @ViewChild('calDesde') calDesde!: any;
+  @ViewChild('calHasta') calHasta!: any;
+  @ViewChild('timeDesdeComp') timeDesdeComp!: any;
+  @ViewChild('timeHastaComp') timeHastaComp!: any;
 
   // Listas de configuración para los selectores
   listaEmpleados: any[] = [];
@@ -88,6 +97,7 @@ export class MtRwPapeleta implements OnInit {
       this.totalHorasDisponiblesOriginal = hours.data.totalHorasFormato;
 
       this.horasExtras = hours.data.horasExtras;
+      console.log(this.horasExtras);
       this.horasExtrasOriginal = [...hours.data.horasExtras];
       this.isLoading = false;
     });
@@ -221,11 +231,16 @@ export class MtRwPapeleta implements OnInit {
       if (!row.SELECCIONADO) {
         row.HR_EXTRA_SOLICITADO = row.HR_EXTRA_SOLICITADO;
         row.HR_EXTRA_SOBRANTE = row.HR_EXTRA_SOBRANTE;
-        row.ESTADO = 'DISPONIBLE'; // Estado por defecto
+        row.ESTADO = row.ESTADO; // Estado por defecto
       }
     });
 
     for (let row of this.horasExtras) {
+
+      if (row.SELECCIONADO || row.ISAPROBACION == 1) {
+        continue;
+      }
+
       if (minutosPorCubrir <= 0) break;
 
       const minutosDisponibles = this.convertirAMinutos(row.HR_EXTRA_SOBRANTE || row.HR_EXTRA_ACUMULADO);
@@ -239,7 +254,7 @@ export class MtRwPapeleta implements OnInit {
         // Asignar valores
         row.HR_EXTRA_SOLICITADO = this.convertirAFormato(nuevoTotalSolicitado);
         row.HR_EXTRA_SOBRANTE = this.convertirAFormato(minutosDisponibles - aDescontar);
-        row.ESTADO = row.HR_EXTRA_SOBRANTE === '00:00' ? 'UTILIZADO' : 'DISPONIBLE';
+        row.ESTADO = row.HR_EXTRA_SOBRANTE === '00:00' ? 'UTILIZADO' : row.ESTADO;
 
         // AGREGAR AL ARRAY DE AFECTADOS
         this.detallesAfectados.push({
@@ -342,7 +357,8 @@ export class MtRwPapeleta implements OnInit {
     switch (estado) {
       case 'DISPONIBLE': return 'text-bg-primary';
       case 'UTILIZADO': return 'text-bg-warning';
-      case 'Solicitar Aprobacion': return 'text-bg-danger';
+      case 'ESPERA APROBACION': return 'text-bg-warning';
+      case 'APROBACION': return 'text-bg-danger';
       default: return '';
     }
   }
@@ -369,13 +385,7 @@ export class MtRwPapeleta implements OnInit {
       return;
     }
 
-    if (this.validarSiEsHoy(this.dateCalendarDesde, this.dateCalendarHasta)) {
-      this.messageNotification = 'No puede crear papeleta con fecha de hoy.';
-      this.abrirNotificacion('danger');
-      return;
-    }
-
-    if (this.validarSiEsHoy(this.dateCalendarDesde, this.dateCalendarHasta)) {
+    if (this.validarSiEsHoy(this.dateCalendarDesde || '', this.dateCalendarHasta || '')) {
       this.messageNotification = 'No puede crear papeleta con fecha de hoy.';
       this.abrirNotificacion('danger');
       return;
@@ -393,6 +403,8 @@ export class MtRwPapeleta implements OnInit {
       return;
     }
 
+    this.isLoading = true;
+    this.titleLoader = 'Generando Papeleta...';
     const body = {
       empleado: {
         codigoTienda: this.keyStore,
@@ -413,25 +425,72 @@ export class MtRwPapeleta implements OnInit {
       detalles: this.detallesAfectados
     };
 
-    /* this.storeService.postSaveBallot(body).subscribe((data) => {
-       console.log(data);
-       if ((data?.error || "").length) {
-         this.messageNotification = data.error || 'Error al guardar el Papeleta.';
-         this.abrirNotificacion('danger');
-       }
- 
-       if (data?.success) {
-         //this.messageNotification = 'Papeleta se registro con exito.';
-         // this.abrirNotificacion('success');
-         this.openDialogBallot(data?.codigo);
-       }
-     });*/
+    this.storeService.postSaveBallot(body).subscribe((data) => {
+
+      if ((data?.error || "").length) {
+        this.messageNotification = data.error || 'Error al guardar el Papeleta.';
+        this.abrirNotificacion('danger');
+      }
+
+      if (data?.success) {
+        this.isLoading = false;
+        this.openDialogBallot(data?.codigo);
+        this.resetForm();
+      }
+    });
+  }
+
+  resetForm() {
+    // 1. Limpiar variables de estado
+    this.selectEmploye = {};
+    this.selectTypeBallot = {};
+    this.selectCargoEmploye = {};
+    this.dateCalendarDesde = '';
+    this.dateCalendarHasta = '';
+    this.timeDesde = '';
+    this.timeHasta = '';
+    this.horasSolicitadas = '00:00';
+    this.horasDisponibles = '00:00';
+    this.totalHorasDisponiblesOriginal = '00:00';
+    this.horasExtras = [];
+    this.horasExtrasOriginal = [];
+    this.detallesAfectados = [];
+    this.excesoPermitido = false;
+
+    // 2. Limpiar componentes visualmente
+    if (this.selEmploye) this.selEmploye.selectedText = '';
+    if (this.selType) this.selType.selectedText = '';
+    if (this.selCargo) this.selCargo.selectedText = '';
+    if (this.calDesde) this.calDesde.date.setValue(null);
+    if (this.calHasta) this.calHasta.date.setValue(null);
+    if (this.timeDesdeComp) this.timeDesdeComp.vTimer = '';
+    if (this.timeHastaComp) this.timeHastaComp.vTimer = '';
   }
 
   openDialogBallot(codeBallot: string) {
     this.dialog.open(MtViewPapeleta, {
       panelClass: 'modal-grande',
       data: { codeBallot: codeBallot },
+    });
+  }
+
+  onSolicitarAprobacionHrx(element: any) {
+
+    const body = {
+      id_hora_extra: element.ID_HR_EXTRA,
+      nroDocumento: element.NRO_DOCUMENTO_EMPLEADO,
+      nombreCompleto: this.selectEmploye.value,
+      horasAcumuladas: element.HR_EXTRA_ACUMULADO,
+      fecha: element.FECHA,
+      codigoTienda: this.keyStore,
+      comentario: element.OBSERVACION
+    }
+
+    this.storeService.postSolicitarAprobacionHextra(body).subscribe((data) => {
+      const index = this.horasExtras.findIndex(hr => hr.ID_HR_EXTRA === data.id_hora_extra);
+      this.horasExtras[index].ESTADO = data.estado;
+      this.messageNotification = data.message;
+      this.abrirNotificacion('success');
     });
   }
 }
