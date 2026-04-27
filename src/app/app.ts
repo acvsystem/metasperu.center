@@ -2,6 +2,8 @@ import { Component, inject, signal } from '@angular/core';
 import { AuthService } from './core/auth/auth.service';
 import { Router } from '@angular/router';
 import { MenuController, NavController } from '@ionic/angular';
+import { SwUpdate } from '@angular/service-worker';
+
 @Component({
   selector: 'app-root',
   templateUrl: './app.html',
@@ -16,7 +18,19 @@ export class App {
   name: string = "";
   authService = inject(AuthService);
 
-  constructor(private router: Router, private nav: NavController, private menu: MenuController) { }
+  constructor(private swUpdate: SwUpdate, private nav: NavController, private menu: MenuController) {
+    if (this.swUpdate.isEnabled) {
+      this.swUpdate.versionUpdates.subscribe(event => {
+        if (event.type === 'VERSION_READY') {
+          // Aquí muestras un snackbar o toast al usuario:
+          // "Hay una nueva versión, ¿quieres actualizar?"
+          if (confirm("Nueva actualización disponible. ¿Reiniciar ahora?")) {
+            window.location.reload();
+          }
+        }
+      });
+    }
+  }
 
   ngOnInit(): void {
     this.roleUser = localStorage.getItem('role') || "";
