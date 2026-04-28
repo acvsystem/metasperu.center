@@ -44,6 +44,7 @@ export class AutorizacionHorasExtras {
   }
 
   async onAuth(row: any) {
+    console.log(row);
     this.comentarioModal = "";
     const usuario = localStorage.getItem('name') || "";
 
@@ -56,7 +57,12 @@ export class AutorizacionHorasExtras {
       id_hrx: row.id_hora_extra,
       aprobado: row.accion == 'aprobado' ? true : false,
       comentario: this.comentarioModal,
-      usuario: usuario
+      usuario: usuario,
+      tienda: row.descripcion,
+      fecha: row.fecha,
+      hr_extra: row.hr_extra,
+      nombre_empleado: row.nombre_completo,
+      email: row.email
     }
 
     this.storeService.postRespuestaAprobacionHextra(body).subscribe((res: any) => {

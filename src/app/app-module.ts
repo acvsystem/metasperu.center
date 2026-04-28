@@ -58,6 +58,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MtRwPapeleta } from './features/pages/panel-horario/component/mt-rw-papeleta/mt-rw-papeleta';
 import { AutorizacionHorasExtras } from './features/pages/autorizacion-horas-extras/autorizacion-horas-extras';
 import { MtComentario } from './features/pages/autorizacion-horas-extras/component/mt-comentario/mt-comentario';
+import { MtRPapeletas } from './features/pages/panel-horario/component/mt-r-papeletas/mt-r-papeletas';
 
 registerLocaleData(localeEsPe);
 @NgModule({
@@ -93,7 +94,8 @@ registerLocaleData(localeEsPe);
     MtMdlObervaciones,
     MtRwPapeleta,
     AutorizacionHorasExtras,
-    MtComentario
+    MtComentario,
+    MtRPapeletas
   ],
   imports: [
     IonicModule.forRoot(),

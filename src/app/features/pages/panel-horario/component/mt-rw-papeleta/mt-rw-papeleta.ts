@@ -358,7 +358,7 @@ export class MtRwPapeleta implements OnInit {
       case 'DISPONIBLE': return 'text-bg-primary';
       case 'UTILIZADO': return 'text-bg-warning';
       case 'ESPERA APROBACION': return 'text-bg-warning';
-      case 'APROBACION': return 'text-bg-danger';
+      case 'RECHAZADO': return 'text-bg-danger';
       default: return '';
     }
   }
