@@ -94,18 +94,23 @@
                     <span class="badge text-bg-success">{{element[col.propertyValue]}}</span>
                     } @else if(col.propertyValue == 'cCotiSunat' && element.cCotiSunat != element.cCotizacion){
                     <span class="badge text-bg-danger">{{element[col.propertyValue]}}</span>
-                    } @else if(col.propertyValue == 'estado_auth'){
+                    } @else if(col.propertyValue == 'hora_acumulada'){
+                    @if(!element[col.propertyValue].length){
+                    <mat-spinner></mat-spinner>
+                    }@else{
+                    {{element[col.propertyValue]}}
+                    }
+                    }@else if(col.propertyValue == 'estado_auth'){
                     @if(element[col.propertyValue] == 'APROBADO'){
                     <span class="badge text-bg-success">{{element[col.propertyValue]}}</span>
                     }@else if(element[col.propertyValue] == 'RECHAZADO'){
                     <span class="badge text-bg-danger">{{element[col.propertyValue]}}</span>
                     }@else if(element[col.propertyValue] == 'ESPERA APROBACION'){
                     <span class="badge text-bg-warning">{{element[col.propertyValue]}}</span>
-                    }
+                    }                   
 
                     }@else if(col.propertyValue == 'view_papeleta'){
-                    <button  matTooltip="Ver papeleta"
-                        id="searchProducto" type="button" class="btn btn-primary btn-sm"
+                    <button matTooltip="Ver papeleta" id="searchProducto" type="button" class="btn btn-primary btn-sm"
                         (click)="openDialogBallot(element['codigo_papeleta'])"
                         style="padding-bottom: 0px;padding-left: 2px;padding-right: 2px;padding-top: 0;margin-right: 3px;">
                         <mat-icon style="margin-top: 6px;">article_person</mat-icon>

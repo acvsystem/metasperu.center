@@ -66,12 +66,6 @@ export class MtRPapeletas {
     }
   }
 
-  viewPapeleta(row: any) {
-    
-    /*this.storeService.getOneBallot(row.codigo_papeleta).subscribe((res: any) => {
-      console.log(res);
-    }); */
-  }
 }
 
 export interface tableColumns {

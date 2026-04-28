@@ -50,7 +50,7 @@ export class MtDatatable implements OnInit, OnChanges, AfterViewInit {
   ngOnChanges(changes: SimpleChanges) {
     // 1. Cambio en los datos de las filas
     if (changes['dataIn'] && this.dataIn) {
-      console.log(this.dataIn);
+
       this.dataSource = new MatTableDataSource(this.dataIn);
 
       this.dataSource.paginator = this.paginator;

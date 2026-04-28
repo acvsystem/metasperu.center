@@ -8,11 +8,16 @@ import { Component } from '@angular/core';
 })
 export class PanelHorario {
 
-
+  tabIndex = 0;
+  
   constructor() { }
 
   ngOnInit() {
 
+  }
+
+  onTabChange(index: number) {
+    this.tabIndex = index;
   }
 
 }

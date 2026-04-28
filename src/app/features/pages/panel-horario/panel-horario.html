@@ -1,17 +1,14 @@
-<ion-grid>
-
-    <mat-tab-group dynamicHeight>
-        <mat-tab label="Horarios Creados">
-            <mt-registros-horarios></mt-registros-horarios>
-        </mat-tab>
-        <mat-tab label="Papeletas Creadas">
-            <mt-r-papeletas></mt-r-papeletas>
-        </mat-tab>
-        <mat-tab label="Horas Extras Detallado">
-            <mt-rw-papeleta></mt-rw-papeleta>
-        </mat-tab>
-        <mat-tab label="Horas Extras Consolidado">
-
-        </mat-tab>
-    </mat-tab-group>
-</ion-grid>
+<mat-tab-group (selectedIndexChange)="onTabChange($event)">
+    <mat-tab label="Horarios Creados">
+        <mt-registros-horarios *ngIf="tabIndex === 0"></mt-registros-horarios>
+    </mat-tab>
+    <mat-tab label="Papeletas Creadas">
+        <mt-r-papeletas *ngIf="tabIndex === 1"></mt-r-papeletas>
+    </mat-tab>
+    <mat-tab label="Horas Extras Detallado">
+        <mt-rw-papeleta *ngIf="tabIndex === 2"></mt-rw-papeleta>
+    </mat-tab>
+    <mat-tab label="Horas Extras Consolidado">
+        <mt-r-hrx-consolidado *ngIf="tabIndex === 3"></mt-r-hrx-consolidado>
+    </mat-tab>
+</mat-tab-group>

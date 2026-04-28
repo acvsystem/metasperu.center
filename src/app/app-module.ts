@@ -59,6 +59,7 @@ import { MtRwPapeleta } from './features/pages/panel-horario/component/mt-rw-pap
 import { AutorizacionHorasExtras } from './features/pages/autorizacion-horas-extras/autorizacion-horas-extras';
 import { MtComentario } from './features/pages/autorizacion-horas-extras/component/mt-comentario/mt-comentario';
 import { MtRPapeletas } from './features/pages/panel-horario/component/mt-r-papeletas/mt-r-papeletas';
+import { MtRHrxConsolidado } from './features/pages/panel-horario/component/mt-r-hrx-consolidado/mt-r-hrx-consolidado';
 
 registerLocaleData(localeEsPe);
 @NgModule({
@@ -95,7 +96,8 @@ registerLocaleData(localeEsPe);
     MtRwPapeleta,
     AutorizacionHorasExtras,
     MtComentario,
-    MtRPapeletas
+    MtRPapeletas,
+    MtRHrxConsolidado
   ],
   imports: [
     IonicModule.forRoot(),

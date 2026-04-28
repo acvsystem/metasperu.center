@@ -9,6 +9,8 @@ import { BehaviorSubject } from 'rxjs';
 export class SocketResourcesHumanService {
     private socket: Socket | undefined;
     public socketID: any = "";
+    private socketSubject = new BehaviorSubject<any[]>([]);
+    public socket$ = this.socketSubject.asObservable();
 
     constructor() {
         this.conectar();
@@ -29,7 +31,7 @@ export class SocketResourcesHumanService {
             console.log('Conectado al servicio de Resources Human');
             //this.socket?.emit('registrar_dashboard');
             this.socketID = this.socket?.id;
-            console.log(this.socketID);
+            this.socketSubject.next(this.socketID);
         });
 
     }
@@ -48,10 +50,17 @@ export class SocketResourcesHumanService {
         this.socket?.on('dashboard_empleados_horario', callback);
     }
 
+    offRefreshEmployesEJB(callback: (data: any) => void) {
+        this.socket?.off('dashboard_empleados_horario', callback);
+    }
+
     onHoursWorksEmployes(callback: (data: any) => void) {
         this.socket?.on('py_works_hours_employes_response', callback);
     }
 
-    
+    offHoursWorksEmployes(callback: (data: any) => void) {
+        this.socket?.off('py_works_hours_employes_response', callback);
+    }
+
 
 }
