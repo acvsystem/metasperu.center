@@ -16,9 +16,9 @@ import {
 export class MtViewPapeleta {
   data = inject(MAT_DIALOG_DATA);
   dataBallot: any = {};
-  titleLoader:string = "Cargando..."
+  titleLoader: string = "Cargando..."
   isLoading: boolean = false;
-
+  idTipoPap: number = 0;
   constructor(private service: StoreService) {
 
   }
@@ -26,6 +26,7 @@ export class MtViewPapeleta {
   ngOnInit() {
     this.isLoading = true;
     this.service.getOneBallot(this.data?.codeBallot).subscribe((ballot) => {
+      this.idTipoPap = ballot.head_ballot.ID_PAP_TIPO_PAPELETA;
       this.dataBallot = {
         head_ballot: ballot.head_ballot,
         detail_ballot: ballot.detail_ballot

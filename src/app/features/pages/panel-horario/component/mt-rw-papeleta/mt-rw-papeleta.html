@@ -11,8 +11,8 @@
         </div>
       </div>
       <div style="display: flex;justify-content: end;padding-bottom: 12px;">
-        <button matTooltip="Registrar Papeleta" (click)="onSaveBallot()" id="searchProducto" type="button"
-          class="btn btn-primary btn-sm" style="padding-bottom: 0px;padding-left: 2px;padding-right: 2px;padding-top: 0;margin-right: 3px;display: flex;
+        <button *ngIf="keyStore != 'OF'" matTooltip="Registrar Papeleta" (click)="onSaveBallot()" id="searchProducto"
+          type="button" class="btn btn-primary btn-sm" style="padding-bottom: 0px;padding-left: 2px;padding-right: 2px;padding-top: 0;margin-right: 3px;display: flex;
           justify-content: center;
           align-items: center;
           height: 34px;
@@ -25,6 +25,11 @@
     <form>
       <div class="row g-3 mb-4">
         <div class="col-12">
+          <mt-select #selStore *ngIf="keyStore == 'OF'" [data]="cboStore" (selectdOption)="onChangeSelect($event,'selectStore')"
+            [isMultiselect]=false label="Seleccione una tienda" title="Tienda">
+          </mt-select>
+        </div>
+        <div class="col-12">
           <mt-select #selEmploye [data]="employeEJBList" (selectdOption)="onChangeSelect($event,'selectEmploye')"
             [isMultiselect]=false label="Seleccione un empleado" title="Empleado">
           </mt-select>
@@ -35,43 +40,49 @@
           </mt-select>
         </div>
         <div class="col-md-6">
-          <mt-select #selCargo [data]="cargoEmployes" (selectdOption)="onChangeSelect($event,'selectCargoEmploye')"
-            [isMultiselect]=false label="Seleccione cargo" title="Cargo">
+          <mt-select *ngIf="keyStore != 'OF'" #selCargo [data]="cargoEmployes"
+            (selectdOption)="onChangeSelect($event,'selectCargoEmploye')" [isMultiselect]=false label="Seleccione cargo"
+            title="Cargo">
           </mt-select>
         </div>
       </div>
 
       <section class="section-details">
         <div class="detail-grid">
-          <div class="detail-group">
+          <div class="detail-group" *ngIf="keyStore != 'OF'">
             <div class="item">
-              <mt-calendar #calDesde (afterChange)="onCalendarDesde($event)" [isDefault]="true" placeholder="Desde"></mt-calendar>
+              <mt-calendar #calDesde (afterChange)="onCalendarDesde($event)" [isDefault]="true"
+                placeholder="Desde"></mt-calendar>
             </div>
             <div class="item">
-              <mt-calendar #calHasta (afterChange)="onCalendarHasta($event)" [isDefault]="true" placeholder="Hasta"></mt-calendar>
+              <mt-calendar #calHasta (afterChange)="onCalendarHasta($event)" [isDefault]="true"
+                placeholder="Hasta"></mt-calendar>
             </div>
           </div>
-          <div class="detail-group">
-            <div class="item">
+          <div class="detail-group" *ngIf="isCompensacion || isOtros">
+            <div class="item" *ngIf="keyStore != 'OF'">
               <mt-calendar #timeDesdeComp [isTime]="true" (keyup)="onChangeInput($event,'timeDesde')"
                 placeholder="Inicio"></mt-calendar>
             </div>
-            <div class="item">
-              <mt-calendar #timeHastaComp [isTime]="true" (keyup)="onChangeInput($event,'timeHasta')" placeholder="Fin"></mt-calendar>
+            <div class="item" *ngIf="keyStore != 'OF'">
+              <mt-calendar #timeHastaComp [isTime]="true" (keyup)="onChangeInput($event,'timeHasta')"
+                placeholder="Fin"></mt-calendar>
             </div>
           </div>
-          <div class="hours-badge-disponible" [ngClass]="{'border-danger': horasDisponibles == '00:00'}">
+          <div class="hours-badge-disponible" [ngClass]="{'border-danger': horasDisponibles == '00:00'}"
+            *ngIf="isCompensacion">
             <span class="label" [class.text-danger]="horasDisponibles == '00:00'">Horas Disponibles</span>
             <span class="value" [class.text-danger]="horasDisponibles == '00:00'">{{horasDisponibles}}</span>
           </div>
-          <div class="hours-badge" [ngClass]="{'border-danger': excesoPermitido}">
+          <div class="hours-badge" [ngClass]="{'border-danger': excesoPermitido}"
+            *ngIf="isCompensacion && keyStore != 'OF'">
             <span class="label" [class.text-danger]="excesoPermitido">Horas Solicitadas</span>
             <span class="value" [class.text-danger]="excesoPermitido">{{horasSolicitadas}}</span>
           </div>
         </div>
       </section>
 
-      <div class="scroll-container">
+      <div class="scroll-container" *ngIf="isCompensacion">
         <table class="table table-sm table-bordered table-hover">
           <thead class="table-dark">
             <tr>
@@ -96,8 +107,9 @@
                 </span>
               </td>
               <td>
-                <button matTooltip="Solicitar Aprobacion" id="searchProducto" type="button" *ngIf="column.ESTADO == 'APROBACION'"
-                  class="btn btn-primary btn-sm" (click)="onSolicitarAprobacionHrx(column)"
+                <button matTooltip="Solicitar Aprobacion" id="searchProducto" type="button"
+                  *ngIf="column.ESTADO == 'aprobar'" class="btn btn-primary btn-sm"
+                  (click)="onSolicitarAprobacionHrx(column)"
                   style="padding-bottom: 0px;padding-left: 2px;padding-right: 2px;padding-top: 0;margin-right: 3px;height: 30px;">
                   <mat-icon style="margin-top: 6px;font-size: 17px;">task_alt</mat-icon>
                 </button>
@@ -107,6 +119,12 @@
           </tbody>
         </table>
       </div>
+
+      <mat-form-field appearance="outline" class="custom-textarea-field" *ngIf="!isCompensacion">
+        <mat-label>Razon del permiso</mat-label>
+        <textarea matInput rows="4" (keyup)="onChangeInputComentario($event)"
+          placeholder="Escriba razon del permiso..."></textarea>
+      </mat-form-field>
     </form>
   </mat-card>
 

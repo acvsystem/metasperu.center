@@ -303,3 +303,37 @@ $success: #008738;
   align-items: center;
   height: 40px;
 }
+
+::ng-deep {
+    .custom-textarea-field {
+        width: 100%;
+
+        // 1. Forzar la altura del contenedor del marco
+        .mat-mdc-text-field-wrapper {
+            height: auto !important;
+            min-height: 117px !important; // Esto garantiza que el marco sea alto
+        }
+
+        // 2. Ajustar el "infix" (donde vive el textarea)
+        .mat-mdc-form-field-infix {
+            padding-top: 16px !important;
+            padding-bottom: 16px !important;
+            min-height: 120px !important;
+        }
+
+        // 3. Quitar restricciones al textarea para que llene el marco
+        textarea.mat-mdc-input-element {
+            height: auto !important;
+            margin: 0 !important;
+            vertical-align: top;
+            resize: none; // O 'vertical' si quieres que el usuario lo estire
+        }
+
+        // 4. Asegurar que el borde se vea gris suave como en tu imagen anterior
+        .mdc-notched-outline__leading,
+        .mdc-notched-outline__notch,
+        .mdc-notched-outline__trailing {
+            border-color: #ced4da !important;
+        }
+    }
+}

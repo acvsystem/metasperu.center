@@ -59,17 +59,17 @@
                             }}</strong></div>
                 </div>
                 <div class="detail-group">
-                    <div class="item"><span>Salida:</span> <strong>{{ dataBallot.head_ballot.HORA_SALIDA }}</strong></div>
-                    <div class="item"><span>Llegada:</span> <strong>{{ dataBallot.head_ballot.HORA_LLEGADA }}</strong></div>
+                    <div class="item"><span>Salida:</span> <strong>{{ dataBallot.head_ballot.HORA_SALIDA || '00:00' }}</strong></div>
+                    <div class="item"><span>Llegada:</span> <strong>{{ dataBallot.head_ballot.HORA_LLEGADA || '00:00' }}</strong></div>
                 </div>
-                <div class="hours-badge">
+                <div class="hours-badge" *ngIf="idTipoPap == 7">
                     <span class="label">Horas Solicitadas</span>
                     <span class="value">{{ dataBallot.head_ballot.HORA_SOLICITADA }}</span>
                 </div>
             </div>
         </section>
 
-        <section class="section-table">
+        <section class="section-table" *ngIf="idTipoPap == 7">
             <table>
                 <thead>
                     <tr>
@@ -88,6 +88,12 @@
                     </tr>
                 </tbody>
             </table>
+        </section>
+
+        <section *ngIf="idTipoPap != 7" >
+            <div class="content-comentario">
+                <span>{{dataBallot.head_ballot.DESCRIPCION}}</span>
+            </div>
         </section>
 
         <footer class="footer-signatures">

@@ -24,6 +24,7 @@ export class MtRwPapeleta implements OnInit {
 
   // Referencias a componentes hijos para reseteo manual
   @ViewChild('selEmploye') selEmploye!: any;
+  @ViewChild('selStore') selStore!: any;
   @ViewChild('selType') selType!: any;
   @ViewChild('selCargo') selCargo!: any;
   @ViewChild('calDesde') calDesde!: any;
@@ -50,6 +51,7 @@ export class MtRwPapeleta implements OnInit {
   horaSalida: string = '';
   horaRetorno: string = '';
   keyStore: string = '';
+  comentarioPapeleta: string = '';
   fechaHoy: string = '';
   dateCalendarHasta: string = '';
   dateCalendarDesde: string = '';
@@ -66,7 +68,9 @@ export class MtRwPapeleta implements OnInit {
   storeList: any[] = [];
   typeBallotList: any[] = [];
   detallesAfectados: any[] = [];
+  cboStore: any[] = [];
   listaMaestraTrabajadores: any[] = [];
+  allEmplotes: any[] = [];
   acumuladoTotalCorrecto: string = '00:00';
   timeDesde: string = '';
   timeHasta: string = '';
@@ -74,6 +78,9 @@ export class MtRwPapeleta implements OnInit {
   totalHorasDisponiblesOriginal: string = "00:00";
   excesoPermitido: boolean = false;
   isLoading: boolean = false;
+  isVacacionesProgramadas: boolean = false;
+  isOtros: boolean = false;
+  isCompensacion: boolean = true;
   titleLoader: string = 'Buscando Horas Extras...';
   horasCalculadas: string = "00:00";
   isNotification: boolean = false;
@@ -93,11 +100,12 @@ export class MtRwPapeleta implements OnInit {
     });
 
     this.socketService.onHoursWorksEmployes((hours) => {
+      console.log(hours);
       this.horasDisponibles = hours.data.totalHorasFormato;
       this.totalHorasDisponiblesOriginal = hours.data.totalHorasFormato;
 
       this.horasExtras = hours.data.horasExtras;
-     
+
       this.horasExtrasOriginal = [...hours.data.horasExtras];
       this.isLoading = false;
     });
@@ -133,6 +141,8 @@ export class MtRwPapeleta implements OnInit {
       // 4. Escuchar el socket con filtrado reactivo
       this.socketService.onRefreshEmployesEJB((data: any[]) => {
         if (!data) return;
+        this.allEmplotes = data;
+
         const codigo_unid_ejb = store ? store.codigo_ejb : '0001';
 
         // Filtramos y asignamo
@@ -154,6 +164,7 @@ export class MtRwPapeleta implements OnInit {
       // Convertimos el observable en promesa para poder usar 'await'
       const stores = await lastValueFrom(this.storeService.getStores());
       this.storeList = stores;
+      this.cboStore = stores.map(store => ({ key: store.serie, value: store.nombre }));
       return stores; // Ahora sí devuelve los datos
     } catch (error) {
       console.error('Error obteniendo tiendas:', error);
@@ -174,31 +185,41 @@ export class MtRwPapeleta implements OnInit {
     // Convertimos 'this' a any para permitir la asignación dinámica
     (this as any)[key] = value;
 
-    if (this.timeDesde && this.timeHasta) {
-      this.calcularHoras(this.timeDesde, this.timeHasta);
-    }
+    setTimeout(() => {
+      if (this.timeDesde && this.timeHasta) {
+        this.calcularHoras(this.timeDesde, this.timeHasta);
+      }
+    }, 1000);
   }
 
   calcularHoras(salida: string, llegada: string) {
-
     if (!salida || !llegada) {
       this.horasSolicitadas = "00:00";
       return;
     }
 
-    // Convertir HH:mm a minutos totales
     const [hSalida, mSalida] = salida.split(':').map(Number);
     const [hLlegada, mLlegada] = llegada.split(':').map(Number);
 
     const totalMinutosSalida = (hSalida * 60) + mSalida;
     const totalMinutosLlegada = (hLlegada * 60) + mLlegada;
 
-    // Calcular diferencia
     let diffMinutos = totalMinutosLlegada - totalMinutosSalida;
 
-    // Manejo de casos donde la salida es, por ejemplo, 23:00 y la llegada 01:00 (día siguiente)
     if (diffMinutos < 0) {
       diffMinutos += (24 * 60);
+    }
+
+    // --- NUEVA CONDICIÓN DE LÍMITE (8 horas = 480 minutos) ---
+    if (diffMinutos > 480) {
+      this.horasSolicitadas = "00:00"; // Opcional: podrías resetear a "00:00"
+      this.messageNotification = 'Maximo permitido por papeleta 8:00 horas.';
+      this.abrirNotificacion('danger');
+      this.horasExtras = this.horasExtrasOriginal;
+      this.horasDisponibles = this.totalHorasDisponiblesOriginal;
+      this.detallesAfectados = [];
+      // Aquí podrías disparar un mensaje de error tipo Toast o Snackbar
+      return;
     }
 
     // Convertir de nuevo a formato HH:mm
@@ -208,14 +229,13 @@ export class MtRwPapeleta implements OnInit {
     this.horasSolicitadas =
       `${String(horas).padStart(2, '0')}:${String(minutos).padStart(2, '0')}`;
 
-    // 2. Actualizar saldo disponible visual (Resta dinámica)
+    // --- Lógica restante ---
     const totalOriginal = this.convertirAMinutos(this.totalHorasDisponiblesOriginal);
     const totalSolicitado = diffMinutos;
     this.horasDisponibles = this.convertirAFormato(Math.max(0, totalOriginal - totalSolicitado));
 
     this.excesoPermitido = this.esMayorQueDisponible(this.horasSolicitadas, this.horasDisponibles);
 
-    // NUEVO: Distribuir en la tabla si no hay exceso
     if (!this.excesoPermitido) {
       this.distribuirHorasSolicitadas();
     }
@@ -347,19 +367,84 @@ export class MtRwPapeleta implements OnInit {
     (this as any)[key] = value;
 
     if (property == 'selectTypeBallot' || property == 'selectEmploye') {
+
       if (this.selectTypeBallot.value == 'Compensacion de horas trabajadas') {
-        this.onHoursWorksEmployes();
+
+        if (property != 'selectEmploye') {
+          this.isVacacionesProgramadas = false;
+          this.isOtros = false;
+          this.isCompensacion = true;
+        }
+
+        if (Object.keys(this.selectEmploye).length) {
+          this.onHoursWorksEmployes();
+        }
+      } else if (this.selectTypeBallot.value == 'Vacaciones programadas') {
+        if (property != 'selectEmploye') {
+          this.isVacacionesProgramadas = true;
+          this.isOtros = false;
+          this.isCompensacion = false;
+
+          this.resetChangeType();
+        }
+      } else {
+        if (property != 'selectEmploye') {
+          this.isVacacionesProgramadas = false;
+          this.isOtros = true;
+          this.isCompensacion = false;
+
+          this.resetChangeType();
+        }
       }
     }
+
+    if (property == 'selectStore') {
+      const store = this.storeList.find(s => s.serie === data.key);
+      const codigo_unid_ejb = store ? store.codigo_ejb : '0001';
+
+      const original = [...this.allEmplotes];
+
+      const filtrados = original.filter(emp => {
+        // Si el código seleccionado es 0016, permitimos 0016 Y 0019
+        if (codigo_unid_ejb === '0016') {
+          return emp.code_unid_servicio === '0016' || emp.code_unid_servicio === '0019';
+        }
+
+        // Para cualquier otro código, mantenemos la comparación normal
+        return emp.code_unid_servicio === codigo_unid_ejb;
+      });
+
+      this.employeEJBList = filtrados.map(ejb => ({
+        key: ejb.nro_documento,
+        value: ejb.nombre_completo
+      }));
+    }
+  }
+  onChangeInputComentario(ev: any) {
+    const value = ev.target.value;
+    console.log(value);
+    this.comentarioPapeleta = value;
+  }
+
+  resetChangeType() {
+    this.timeDesde = '';
+    this.timeHasta = '';
+    this.horasSolicitadas = '00:00';
+    this.horasDisponibles = '00:00';
+    this.totalHorasDisponiblesOriginal = '00:00';
+    this.horasExtras = [];
+    this.horasExtrasOriginal = [];
+    this.detallesAfectados = [];
+    this.excesoPermitido = false;
   }
 
   getClaseEstado(estado: string): string {
     switch (estado) {
-      case 'DISPONIBLE': return 'text-bg-primary';
-      case 'UTILIZADO': return 'text-bg-warning';
-      case 'ESPERA APROBACION': return 'text-bg-warning';
-      case 'APROBACION': return 'text-bg-danger';
-      case 'RECHAZADO': return 'text-bg-danger';
+      case 'espera aprobacion': return 'text-bg-warning';
+      case 'utilizado': return 'text-bg-warning';
+      case 'aprobar': return 'text-bg-danger';
+      case 'correcto': return 'text-bg-primary';
+      case 'rechazado': return 'text-bg-danger';
       default: return '';
     }
   }
@@ -379,33 +464,60 @@ export class MtRwPapeleta implements OnInit {
   }
 
   onSaveBallot() {
-
-    if (Object.keys(this.selectEmploye).length == 0 || Object.keys(this.selectTypeBallot).length == 0 || Object.keys(this.selectCargoEmploye).length == 0) {
+    // 1. Validación de campos obligatorios
+    if (Object.keys(this.selectEmploye).length === 0 ||
+      Object.keys(this.selectTypeBallot).length === 0 ||
+      Object.keys(this.selectCargoEmploye).length === 0) {
       this.messageNotification = 'Llene todos los campos.';
       this.abrirNotificacion('danger');
       return;
     }
 
+    // 2. Validación: No puede ser hoy
     if (this.validarSiEsHoy(this.dateCalendarDesde || '', this.dateCalendarHasta || '')) {
       this.messageNotification = 'No puede crear papeleta con fecha de hoy.';
       this.abrirNotificacion('danger');
       return;
     }
 
-    if (this.timeDesde.length == 0 || this.timeHasta.length == 0) {
+    // 3. Validación: Límite de 7 días a futuro
+    const fechaSeleccionada = new Date(this.dateCalendarDesde.split('/').reverse().join('-'));
+    const hoy = new Date();
+    hoy.setHours(0, 0, 0, 0); // Normalizar a medianoche
+
+    const diffTime = fechaSeleccionada.getTime() - hoy.getTime();
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+    if (diffDays > 7) {
+      this.messageNotification = 'No puede registrar papeletas con más de 7 días de anticipación.';
+      this.abrirNotificacion('danger');
+      return;
+    }
+
+    // 4. Validación: Horas solicitadas presentes
+    if ((this.timeDesde.length === 0 || this.timeHasta.length === 0) && this.isCompensacion) {
       this.messageNotification = 'No tiene horas solicitadas.';
       this.abrirNotificacion('danger');
       return;
     }
 
-    if (this.detallesAfectados.length == 0) {
+    // 5. Validación: Detalles asignados
+    if (this.detallesAfectados.length === 0 && this.isCompensacion) {
       this.messageNotification = 'No tiene horas extras asignadas.';
       this.abrirNotificacion('danger');
       return;
     }
 
+    if (this.comentarioPapeleta.length === 0 && (this.isOtros || this.isVacacionesProgramadas)) {
+      this.messageNotification = 'Llene el campo razon del permiso.';
+      this.abrirNotificacion('danger');
+      return;
+    }
+
+    // --- Ejecución ---
     this.isLoading = true;
     this.titleLoader = 'Generando Papeleta...';
+
     const body = {
       empleado: {
         codigoTienda: this.keyStore,
@@ -421,15 +533,15 @@ export class MtRwPapeleta implements OnInit {
         horaLlegada: this.timeHasta,
         horaAcumulada: this.horasDisponibles,
         horaSolicitada: this.horasSolicitadas,
-        descripcion: ""
+        descripcion: this.comentarioPapeleta || ""
       },
       detalles: this.detallesAfectados
     };
 
     this.storeService.postSaveBallot(body).subscribe((data) => {
 
-      if ((data?.error || "").length) {
-        this.messageNotification = data.error || 'Error al guardar el Papeleta.';
+      if ((data?.error || "").length > 0) {
+        this.messageNotification = data.error || 'Error al guardar la papeleta.';
         this.abrirNotificacion('danger');
       }
 
@@ -438,6 +550,7 @@ export class MtRwPapeleta implements OnInit {
         this.openDialogBallot(data?.codigo);
         this.resetForm();
       }
+      this.isLoading = false;
     });
   }
 
@@ -460,6 +573,7 @@ export class MtRwPapeleta implements OnInit {
 
     // 2. Limpiar componentes visualmente
     if (this.selEmploye) this.selEmploye.selectedText = '';
+    if (this.selStore) this.selStore.selectedText = '';
     if (this.selType) this.selType.selectedText = '';
     if (this.selCargo) this.selCargo.selectedText = '';
     if (this.calDesde) this.calDesde.date.setValue(null);
