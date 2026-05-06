@@ -35,7 +35,7 @@
           </mt-select>
         </div>
         <div class="col-md-6">
-          <mt-select #selType [data]="typeBallotList" (selectdOption)="onChangeSelect($event,'selectTypeBallot')"
+          <mt-select *ngIf="keyStore != 'OF'" #selType [data]="typeBallotList" (selectdOption)="onChangeSelect($event,'selectTypeBallot')"
             [isMultiselect]=false label="Tipo papeleta" title="Tipo">
           </mt-select>
         </div>
@@ -103,7 +103,11 @@
               <td>{{column.HR_EXTRA_SOBRANTE}}</td>
               <td>
                 <span class="badge badge-text" [ngClass]="getClaseEstado(column.ESTADO)">
-                  {{column.ESTADO}}
+                  @if(column.ESTADO == 'aprobar'){
+                    solicitar aprobacion
+                  }@else{
+                    {{column.ESTADO}}
+                  }
                 </span>
               </td>
               <td>

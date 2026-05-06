@@ -368,8 +368,12 @@ export class MtRwPapeleta implements OnInit {
 
     if (property == 'selectTypeBallot' || property == 'selectEmploye') {
 
+      if (this.keyStore == 'OF') {
+        this.selectTypeBallot = { key: 'compensacion', value: 'Compensacion de horas trabajadas' };
+      }
+ 
       if (this.selectTypeBallot.value == 'Compensacion de horas trabajadas') {
-
+        
         if (property != 'selectEmploye') {
           this.isVacacionesProgramadas = false;
           this.isOtros = false;
