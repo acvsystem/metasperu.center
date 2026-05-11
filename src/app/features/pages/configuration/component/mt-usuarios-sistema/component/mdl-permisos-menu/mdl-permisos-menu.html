@@ -1,0 +1,46 @@
+<div class="modal-header-custom p-3 bg-accent text-white d-flex align-items-center">
+    <mat-icon class="me-2">settings_suggest</mat-icon>
+    <h2 mat-dialog-title class="m-0 text-white">Permisos del Perfil: {{data.nivel}}</h2>
+</div>
+
+<mat-dialog-content class="pt-3">
+    <div class="alert alert-info py-2 mb-3 d-flex align-items-center" style="font-size: 16px;">
+        <mat-icon class="me-2" style="font-size: 18px; width: 18px; height: 18px;">info</mat-icon>
+        Los cambios realizados aquí afectarán a todos los usuarios con nivel <strong style="margin-left: 5px;">{{data.nivel}}</strong>.
+    </div>
+
+    <div *ngIf="loading" class="text-center my-4">
+        <mat-spinner diameter="40" class="mx-auto"></mat-spinner>
+        <p class="text-muted mt-2">Sincronizando permisos...</p>
+    </div>
+
+    <div class="row" *ngIf="!loading">
+        <div class="col-12 mb-2" *ngFor="let menu of listaMenus">
+            <div
+                class="menu-item-card p-3 border rounded d-flex justify-content-between align-items-center shadow-sm hover-effect">
+                <div class="d-flex align-items-center">
+                    <div class="icon-container me-3 d-flex align-items-center justify-content-center">
+                        <mat-icon class="text-accent">{{ menu.ICONO || 'label' }}</mat-icon>
+                    </div>
+                    <div>
+                        <h6 class="m-0 fw-bold">{{ menu.menu }}</h6>
+                    </div>
+                </div>
+
+                <mat-slide-toggle color="primary" [checked]="menuActivo(menu.id)" (change)="toggleMenu(menu.id)">
+                </mat-slide-toggle>
+            </div>
+        </div>
+    </div>
+</mat-dialog-content>
+
+<!--
+<mat-dialog-actions align="end" class="p-3 bg-light border-top">
+  <button mat-button mat-dialog-close [disabled]="loading">
+    <mat-icon>close</mat-icon> Cancelar
+  </button>
+  <button mat-raised-button color="accent" (click)="guardarPermisos()" [disabled]="loading">
+    <mat-icon>save</mat-icon> Actualizar Perfil
+  </button>
+</mat-dialog-actions>
+-->

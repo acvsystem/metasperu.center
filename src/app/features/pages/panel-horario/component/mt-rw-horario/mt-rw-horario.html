@@ -1,24 +1,4 @@
 @if(isCreatePapeleta){
-<ion-row class="ion-align-items-center" style="border-bottom: 2px solid #f4f4f4;margin-top: 20px;margin-left: 10px;"
-    *ngIf="!isReadOnly">
-    <ion-col size="12" size-md="12">
-        <div style="display: flex;width: 100%;">
-            <div>
-                <h3 class="title-page" style="margin: 0; font-weight: 700; color: #2c3e50;">Gestión de Horario</h3>
-                <p style="color: #7f8c8d; margin: 4px 0 15px 0;">Gestion de horarios, papeletas y horas extras</p>
-            </div>
-            <div style="width: 78%;">
-                <div *ngIf="hayCambios" class="alert alert-warning d-flex align-items-center justify-content-between"
-                    style="margin: 0 10px 15px 10px; border-left: 5px solid #ffc107;height: 50px !important;">
-                    <span style="display: flex;align-items: center;">
-                        <mat-icon style="margin: 0 5px;">info</mat-icon>
-                        Tienes cambios sin guardar.
-                    </span>
-                </div>
-            </div>
-        </div>
-    </ion-col>
-</ion-row>
 <ion-row class="ion-align-items-center" style="margin-left: 10px;">
     <ion-col size="12" size-md="12">
         <div style="display: flex;width: 100%;">
@@ -28,7 +8,19 @@
         </div>
     </ion-col>
 </ion-row>
-<mt-rw-papeleta></mt-rw-papeleta>
+
+<mat-tab-group (selectedIndexChange)="onTabChange($event)">
+    <mat-tab label="Papeletas Creadas">
+        <mt-r-papeletas *ngIf="tabIndex === 0"></mt-r-papeletas>
+    </mat-tab>
+    <mat-tab label="Horas Extras Detallado">
+        <mt-rw-papeleta *ngIf="tabIndex === 1"></mt-rw-papeleta>
+    </mat-tab>
+    <mat-tab label="Horas Extras Consolidado">
+        <mt-r-hrx-consolidado *ngIf="tabIndex === 2"></mt-r-hrx-consolidado>
+    </mat-tab>
+</mat-tab-group>
+
 }@else{
 <ion-row class="ion-align-items-center"
     style="border-bottom: 2px solid #f4f4f4; margin-bottom: 20px;margin-top: 20px;margin-left: 10px;"

@@ -443,6 +443,26 @@ export class StoreService {
             catchError(this.handleError)
         );
     }
+
+    getPermissionStore(): Observable<[]> {
+        return this.http.get<[]>(`${this.API_URL}/api/configuration/permissions/store`);
+    }
+
+    postPermissionStore(body: any): Observable<any> {
+        return this.http.post(
+            `${this.API_URL}/api/configuration/permissions/store`, body
+        ).pipe(
+            catchError(this.handleError)
+        );
+    }
+
+    getMenu(): Observable<[]> {
+        return this.http.get<[]>(`${this.API_URL}/api/configuration/menu`);
+    }
+
+    getPermissionMenu(nivel: string): Observable<[]> {
+        return this.http.get<[]>(`${this.API_URL}/api/configuration/permissions/menu/${nivel}`);
+    }
 }
 
 export interface Ballot {

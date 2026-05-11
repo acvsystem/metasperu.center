@@ -46,6 +46,7 @@ export class MtRwHorario implements CanComponentDeactivate {
   employeEJBList: Array<any> = [];
   isCreatePapeleta: boolean = false;
   listaMaestraTrabajadores: Array<any> = [];
+  tabIndex = 0;
   dialog = inject(MatDialog);
   @HostListener('window:beforeunload', ['$event'])
   unloadNotification($event: any) {
@@ -563,7 +564,7 @@ export class MtRwHorario implements CanComponentDeactivate {
 
   onVerificarHorario() {
     this.isLoading = true;
-    this.storeService.postoneSearchHorarios({ rango_fecha: `${this.dateCalendar[0]} al ${this.dateCalendar[1]}`, codigoTienda: this.keyStore }).subscribe((response: any) => {
+    this.storeService.postoneSearchHorarios({ rango_fecha: `${this.dateCalendar[0]} ${this.dateCalendar[1]}`, codigoTienda: this.keyStore }).subscribe((response: any) => {
 
       if (response?.length > 0) {
         this.isLoading = false;
@@ -581,7 +582,7 @@ export class MtRwHorario implements CanComponentDeactivate {
     if (this.dateCalendar.length > 0) {
       this.isLoading = true;
 
-      this.storeService.postoneSearchHorarios({ rango_fecha: `${this.dateCalendar[0]} al ${this.dateCalendar[1]}`, codigoTienda: this.keyStore }).subscribe((response: any) => {
+      this.storeService.postoneSearchHorarios({ rango_fecha: `${this.dateCalendar[0]} ${this.dateCalendar[1]}`, codigoTienda: this.keyStore }).subscribe((response: any) => {
         this.isLoading = false;
         this.hayCambios = false;
         this.isEditing = true;
@@ -617,13 +618,23 @@ export class MtRwHorario implements CanComponentDeactivate {
 
   }
 
+  onTabChange(index: number) {
+    this.tabIndex = index;
+  }
+
   async editarHorarioCompleto() {
     this.isLoading = true;
     this.titleLoader = "Cargando registros...";
     const ahora = new Date();
     const fechaHoyPC = ahora.toLocaleDateString('en-CA'); // 'en-CA' genera YYYY-MM-DD
 
-    const payload = { codigoTienda: this.keyStore, fechaCabecera: fechaHoyPC, rangoDias: `${this.horariosProcesados[0].dias[0].fecha} al ${this.horariosProcesados[0].dias[6].fecha}`, datos: this.horariosProcesados };
+    const payload = {
+      codigoTienda: this.keyStore,
+      fechaCabecera: fechaHoyPC,
+      rangoDias: `${this.horariosProcesados[0].dias[0].fecha} al ${this.horariosProcesados[0].dias[6].fecha}`,
+      datos: this.horariosProcesados,
+      rango: `${this.dateCalendar[0]} ${this.dateCalendar[1]}`
+    };
 
     this.isLoading = false;
     this.hayCambios = false;

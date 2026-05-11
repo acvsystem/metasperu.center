@@ -1,0 +1,53 @@
+<ion-row>
+    <ion-col class="col-12">
+        <div style="display: flex; justify-content: end; padding-bottom: 12px; padding-top: 10px;">
+            <button matTooltip="Guardar permisos" (click)="guardarCambios()" id="searchProducto" type="button"
+                class="btn btn-primary btn-sm" style="padding: 0 2px; margin-right: 3px; display: flex;
+        justify-content: center; align-items: center; height: 34px; width: 164px;">
+                <mat-icon style="margin-right: 5px;">save</mat-icon>
+                <span>Guardar permisos</span>
+            </button>
+        </div>
+    </ion-col>
+
+    <ion-col class="col-12">
+        <div class="dynamic-table-container shadow-sm border rounded">
+            <table mat-table [dataSource]="dataSource" class="w-100">
+
+                <ng-container matColumnDef="tienda">
+                    <th mat-header-cell *matHeaderCellDef> Tienda </th>
+                    <td mat-cell *matCellDef="let element"> {{element.nombre}} </td>
+                </ng-container>
+
+                <ng-container matColumnDef="horario">
+                    <th mat-header-cell *matHeaderCellDef class="text-center"> Horario Permiso </th>
+                    <td mat-cell *matCellDef="let element" class="text-center">
+                        <mat-checkbox [(ngModel)]="element.horarioPermiso" color="primary"></mat-checkbox>
+                    </td>
+                </ng-container>
+
+                <ng-container matColumnDef="papeleta">
+                    <th mat-header-cell *matHeaderCellDef class="text-center"> Papeleta Permiso </th>
+                    <td mat-cell *matCellDef="let element" class="text-center">
+                        <mat-checkbox [(ngModel)]="element.papeletaPermiso" color="primary"></mat-checkbox>
+                    </td>
+                </ng-container>
+
+                <ng-container matColumnDef="avisos">
+                    <th mat-header-cell *matHeaderCellDef class="text-center"> Avisos Traffic </th>
+                    <td mat-cell *matCellDef="let element" class="text-center">
+                        <mat-checkbox [(ngModel)]="element.avisosTraffic" color="primary"></mat-checkbox>
+                    </td>
+                </ng-container>
+
+                <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+                <tr mat-row *matRowDef="let row; columns: displayedColumns;" class="element-row"></tr>
+            </table>
+        </div>
+    </ion-col>
+</ion-row>
+
+@if (isNotification) {
+<mt-notification [type]="typeNotification" [message]="messageNotification"
+    (onClose)="cerrarNotificacion()"></mt-notification>
+}

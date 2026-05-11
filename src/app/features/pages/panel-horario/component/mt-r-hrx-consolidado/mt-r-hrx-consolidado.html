@@ -6,9 +6,15 @@
         </ion-col>
     </ion-row>
     <ion-row>
+        <div class="col-12">
+            <mt-select #selStore *ngIf="keyStore == 'OF'" [data]="cboStore"
+                (selectdOption)="onChangeSelect($event)" [isMultiselect]=false
+                label="Seleccione una tienda" title="Tienda">
+            </mt-select>
+        </div>
         <ion-col size="12">
             <div class="table-card">
-                 <mt-datatable [dataIn]="dataTable" [dataColumnsIn]="columnsTable" [isTableMobile]="false"
+                <mt-datatable [dataIn]="dataTable" [dataColumnsIn]="columnsTable" [isTableMobile]="false"
                     [extraColumns]=" displayedColumnsTable">
                 </mt-datatable>
             </div>

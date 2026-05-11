@@ -13,10 +13,12 @@ export class MtRHrxConsolidado implements OnInit, OnDestroy {
   storeList: Array<any> = [];
   keyStore: string = '';
   selectEmploye: any = {};
+  cboStore: Array<any> = [];
   employeEJBList: any[] = [];
+  dataEJB: any[] = [];
   listaMaestraTrabajadores: any[] = [];
   dataTable: Array<any> = [];
-
+  selectedStore: any = {};
   columnsData: tableColumns[] = [
     { isSticky: true, matColumnDef: 'nombre_completo', titleColumn: 'Nombre Completo', propertyValue: 'nombre_completo', filterActive: false, isCboFilter: false, cboFilter: [] },
     { isSticky: false, matColumnDef: 'documento', titleColumn: 'Documento', propertyValue: 'documento', filterActive: false, isCboFilter: false, cboFilter: [] },
@@ -30,15 +32,13 @@ export class MtRHrxConsolidado implements OnInit, OnDestroy {
   private dataReady = { employes: false, socket: false, store: false };
   private subscriptions: Subscription = new Subscription();
   private refreshCallbackEmployes = (data: any) => {
-    const codeStoreEncrypted = localStorage.getItem('keyStore');
-    if (!codeStoreEncrypted) return;
 
-    const serieDecrypted = this.storeService.decrypt(codeStoreEncrypted);
-    const store = this.storeList.find(s => s.serie === serieDecrypted);
-    this.keyStore = store ? store.serie : 'OF';
+    const serieStore = Object.keys(this.selectedStore).length ? this.selectedStore.key : this.keyStore;
+    const store = this.storeList.find(s => s.serie === serieStore);
 
     this.procesarDataEJB(data, store);
   };
+
 
   constructor(
     private storeService: StoreService,
@@ -49,7 +49,21 @@ export class MtRHrxConsolidado implements OnInit, OnDestroy {
     // 1. Cargar lista base de empleados
     await Promise.all([this.onStoreList(), this.onEmpleadosList()])
 
-    this.socketService.onRefreshEmployesEJB(this.refreshCallbackEmployes);
+    const codeStoreEncrypted = localStorage.getItem('keyStore') || "";
+    const serieDecrypted = this.storeService.decrypt(codeStoreEncrypted);
+    const store = this.storeList.find(s => s.serie === serieDecrypted);
+    this.keyStore = store ? store.serie : 'OF';
+
+    this.socketService.onRefreshEmployesEJB((data: any) => {
+      this.dataEJB = data || [];
+
+      if (!Object.keys(this.selectedStore).length && this.keyStore != 'OF') {
+        this.refreshCallbackEmployes(this.dataEJB);
+      }
+
+    });
+
+
 
     // 3. Validar estado del Socket ID
     // Si el socket ya tiene ID, marcamos como listo
@@ -82,6 +96,7 @@ export class MtRHrxConsolidado implements OnInit, OnDestroy {
     if (!dataEmployes) return;
 
     const codigo_unid_ejb = store ? store.codigo_ejb : '0001';
+
     const filtrados = dataEmployes.filter((emp: any) => emp.code_unid_servicio === codigo_unid_ejb);
 
     this.employeEJBList = filtrados.map((ejb: any) => ({
@@ -112,7 +127,7 @@ export class MtRHrxConsolidado implements OnInit, OnDestroy {
 
       // 2. Validación de seguridad: aseguramos que siempre sea un array
       this.storeList = Array.isArray(stores) ? stores : [];
-
+      this.cboStore = stores.map(store => ({ key: store.serie, value: store.nombre }));
       this.dataReady.store = true;
       this.checkAndExecute();
 
@@ -175,6 +190,13 @@ export class MtRHrxConsolidado implements OnInit, OnDestroy {
     // Limpiamos suscripciones para evitar memory leaks
     this.subscriptions.unsubscribe();
     this.socketService.offRefreshEmployesEJB(this.refreshCallbackEmployes);
+  }
+
+  async onChangeSelect(event: any) {
+
+    this.selectedStore = { key: event.key, value: event.value };
+
+    this.refreshCallbackEmployes(this.dataEJB);
   }
 }
 

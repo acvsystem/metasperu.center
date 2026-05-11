@@ -60,6 +60,13 @@ import { AutorizacionHorasExtras } from './features/pages/autorizacion-horas-ext
 import { MtComentario } from './features/pages/autorizacion-horas-extras/component/mt-comentario/mt-comentario';
 import { MtRPapeletas } from './features/pages/panel-horario/component/mt-r-papeletas/mt-r-papeletas';
 import { MtRHrxConsolidado } from './features/pages/panel-horario/component/mt-r-hrx-consolidado/mt-r-hrx-consolidado';
+import { Configuration } from './features/pages/configuration/configuration';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MtPermisosTiendas } from './features/pages/configuration/component/mt-permisos-tiendas/mt-permisos-tiendas';
+import { MtUsuariosSistema } from './features/pages/configuration/component/mt-usuarios-sistema/mt-usuarios-sistema';
+import { MdlUsuarioTienda } from './features/pages/configuration/component/mt-usuarios-sistema/component/mdl-usuario-tienda/mdl-usuario-tienda';
+import { MdlPermisosMenu } from './features/pages/configuration/component/mt-usuarios-sistema/component/mdl-permisos-menu/mdl-permisos-menu';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 
 registerLocaleData(localeEsPe);
 @NgModule({
@@ -97,7 +104,12 @@ registerLocaleData(localeEsPe);
     AutorizacionHorasExtras,
     MtComentario,
     MtRPapeletas,
-    MtRHrxConsolidado
+    MtRHrxConsolidado,
+    Configuration,
+    MtPermisosTiendas,
+    MtUsuariosSistema,
+    MdlUsuarioTienda,
+    MdlPermisosMenu
   ],
   imports: [
     IonicModule.forRoot(),
@@ -105,6 +117,7 @@ registerLocaleData(localeEsPe);
     MatSelectModule,
     MatMenu,
     MatMenuModule,
+    MatCheckboxModule,
     MatFormFieldModule,
     MatTabsModule,
     MatPaginatorModule,
@@ -123,6 +136,7 @@ registerLocaleData(localeEsPe);
     MatDatepickerModule,
     MatChipsModule,
     MatListModule,
+    MatSlideToggleModule,
     ServiceWorkerModule.register('ngsw-worker.js', {
       enabled: !isDevMode(),
       registrationStrategy: 'registerWhenStable:30000'

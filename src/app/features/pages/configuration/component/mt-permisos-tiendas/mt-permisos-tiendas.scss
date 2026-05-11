@@ -1,0 +1,37 @@
+.header-actions {
+  display: flex; 
+  justify-content: end; 
+  padding-bottom: 12px; 
+  padding-top: 10px;
+  height: 56px; // Definimos un alto fijo para el área del botón
+}
+
+.dynamic-table-container {
+  overflow-y: auto;
+  overflow-x: auto;
+  background: white;
+
+  /* CALCULO DINÁMICO:
+     100vh = Altura total de la pantalla.
+     Le restamos lo que ocupan los otros elementos (aprox):
+     - Navbar de Ionic: 56px
+     - Padding del contenedor: 20px
+     - Área del botón: 56px
+     - Footer (si tienes): 50px
+  */
+  max-height: calc(100vh - 320px); 
+
+  // Opcional: En pantallas muy pequeñas (celulares), 
+  // podemos darle un poco más de espacio
+  @media (max-width: 768px) {
+    max-height: calc(100vh - 150px);
+  }
+
+  table {
+    width: 100%;
+  }
+
+  .mat-mdc-header-row {
+    background-color: #f8f9fa;
+  }
+}
