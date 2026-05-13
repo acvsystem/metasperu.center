@@ -1,6 +1,6 @@
 <section class="example-container mat-elevation-z8" style="overflow: auto;padding-bottom: 200px;">
 
-    <div class="mat-elevation-z8" [ngClass]="{'desktop-only':isTableMobile}">
+    <div class="dynamic-table-container shadow-sm border rounded" [ngClass]="{'desktop-only':isTableMobile}">
         <table mat-table [dataSource]="dataSource">
 
             @for(col of dataColumns; track col.matColumnDef) {
