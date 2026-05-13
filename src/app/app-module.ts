@@ -71,6 +71,7 @@ import { MdlUpdateUsuario } from './features/pages/configuration/component/mt-us
 import { MdlCreateUsuario } from './features/pages/configuration/component/mt-usuarios-sistema/component/mdl-create-usuario/mdl-create-usuario';
 import { MtParametrosTienda } from './features/pages/configuration/component/mt-parametros-tienda/mt-parametros-tienda';
 import { MdlInUpdParametroStore } from './features/pages/configuration/component/mt-parametros-tienda/component/mdl-in-upd-parametro-store/mdl-in-upd-parametro-store';
+import { MdlExtraParametros } from './features/pages/configuration/component/mt-parametros-tienda/component/mdl-extra-parametros/mdl-extra-parametros';
 
 registerLocaleData(localeEsPe);
 @NgModule({
@@ -117,7 +118,8 @@ registerLocaleData(localeEsPe);
     MdlUpdateUsuario,
     MdlCreateUsuario,
     MtParametrosTienda,
-    MdlInUpdParametroStore
+    MdlInUpdParametroStore,
+    MdlExtraParametros
   ],
   imports: [
     IonicModule.forRoot(),

@@ -4,7 +4,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { StoreService } from '@metasperu/services/store.service';
 import { MdlInUpdParametroStore } from './component/mdl-in-upd-parametro-store/mdl-in-upd-parametro-store';
-
+import { MdlExtraParametros } from './component/mdl-extra-parametros/mdl-extra-parametros';
 @Component({
   selector: 'mt-parametros-tienda',
   standalone: false,
@@ -46,6 +46,13 @@ export class MtParametrosTienda {
     });
   }
 
+  extraParametro() {
+    const dialogRef = this.dialog.open(MdlExtraParametros, {
+      width: '800px',
+      panelClass: 'modal-grande'
+    });
+  }
+
   eliminar(id: number) {
     if (confirm('¿Está seguro de eliminar esta configuración?')) {
       this.storeService.deleteTiendaParametro(id).subscribe({
@@ -56,6 +63,8 @@ export class MtParametrosTienda {
       });
     }
   }
+
+
 
   mostrarNotificacion(msg: string) {
     this.snackBar.open(msg, 'Cerrar', { duration: 3000 });

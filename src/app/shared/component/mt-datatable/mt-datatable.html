@@ -101,11 +101,11 @@
                     {{element[col.propertyValue]}}
                     }
                     }@else if(col.propertyValue == 'estado_auth'){
-                    @if(element[col.propertyValue] == 'APROBADO'){
+                    @if(element[col.propertyValue] == 'aprobado'){
                     <span class="badge text-bg-success">{{element[col.propertyValue]}}</span>
-                    }@else if(element[col.propertyValue] == 'RECHAZADO'){
+                    }@else if(element[col.propertyValue] == 'rechazado'){
                     <span class="badge text-bg-danger">{{element[col.propertyValue]}}</span>
-                    }@else if(element[col.propertyValue] == 'ESPERA APROBACION'){
+                    }@else if(element[col.propertyValue] == 'espera aprobacion' || element[col.propertyValue] == 'pendiente'){
                     <span class="badge text-bg-warning">{{element[col.propertyValue]}}</span>
                     }                   
 

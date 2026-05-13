@@ -510,6 +510,26 @@ export class StoreService {
     putUpdateParametrosTienda(id: number, body: any): Observable<any> {
         return this.http.put<any>(`${this.API_URL}/api/parameters/store/actualizar/${id}`, body);
     }
+
+    getClientesDelete(): Observable<[]> {
+        return this.http.get<[]>(`${this.API_URL}/api/parameters/clientes/blanco`);
+    }
+
+    postClientesDelete(body: any): Observable<any> {
+        return this.http.post<any>(`${this.API_URL}/api/parameters/clientes/blanco/update`, body);
+    }
+
+    getTolerancia(): Observable<[]> {
+        return this.http.get<[]>(`${this.API_URL}/api/parameters/tiempo/tolerancia`);
+    }
+
+    postTolerancia(body: any): Observable<any> {
+        return this.http.post<any>(`${this.API_URL}/api/parameters/tiempo/tolerancia/create`, body);
+    }
+
+    putTolerancia(body: any): Observable<any> {
+        return this.http.put<any>(`${this.API_URL}/api/parameters/tiempo/tolerancia/update/${body.id}`, body);
+    }
 }
 
 export interface Ballot {

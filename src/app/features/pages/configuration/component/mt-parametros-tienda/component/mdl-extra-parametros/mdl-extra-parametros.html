@@ -1,0 +1,74 @@
+<h2 mat-dialog-title class="bg-light border-bottom p-3 text-secondary" style="font-size: 1.1rem;">
+    Configuraciones de Sistema
+</h2>
+
+<mat-dialog-content class="p-3">
+    <!-- SECCIÓN 1: Clientes a eliminar -->
+    <div class="config-card mb-4">
+        <label class="card-label">Clientes a eliminar o descatalogar</label>
+        <div class="card-body">
+
+            <div style="display: flex; justify-content: end; padding-bottom: 12px; padding-top: 10px;">
+                <button (click)="guardarClientes()" type="button" class="btn btn-primary btn-sm" style="padding: 0 2px; margin-right: 3px; display: flex;
+        justify-content: center; align-items: center; height: 34px; width: 164px;">
+                    <mat-icon style="margin-right: 5px;">save</mat-icon>
+                    <span>Guardar</span>
+                </button>
+            </div>
+
+            <mat-form-field appearance="outline" class="custom-textarea-field">
+                <mat-label>Escribir clientes</mat-label>
+                <textarea matInput rows="12" [(ngModel)]="clientesTexto"
+                    placeholder="Ingrese códigos separados por comas..."></textarea>
+            </mat-form-field>
+        </div>
+    </div>
+
+    <!-- SECCIÓN 2: Tiempo de tolerancia -->
+    <div class="config-card">
+        <label class="card-label">Tiempo de tolerancia</label>
+        <div class="card-body">
+            <div class="row align-items-center mb-3">
+                <div class="col-md-5">
+                    <mat-form-field appearance="fill" class="custom-filter-internal">
+                        <mat-label>Referencia</mat-label>
+                        <input matInput placeholder="tardanza" [(ngModel)]="vReferencia">
+                    </mat-form-field>
+                </div>
+                <div class="col-md-5">
+                    <mat-form-field appearance="fill" class="custom-filter-internal">
+                        <mat-label>Tiempo de tolerancia</mat-label>
+                        <input matInput type="time" [(ngModel)]="vTimeTolerance">
+                    </mat-form-field>
+                </div>
+                <div class="col-md-2">
+               <div style="display: flex; justify-content: end; padding-bottom: 12px;">
+                <button matTooltip="Guardar" (click)="guardarTolerancia()" type="button" class="btn btn-primary btn-sm" style="padding: 0 2px; margin-right: 3px; display: flex;
+        justify-content: center; align-items: center; height: 34px; width: 164px;">
+                    <mat-icon style="margin-right: 5px;">alarm_on</mat-icon>
+                </button>
+            </div>
+                </div>
+            </div>
+
+            <!-- Listado de Tolerancias -->
+            <div class="tolerance-list border rounded">
+                @for (column of arTolerancia; track column) {
+                <div class="tolerance-item d-flex justify-content-between p-2 border-bottom" (click)="onSelectTolerancia(column)">
+                    <span>{{ column.REFERENCIA }}</span>
+                    <span class="fw-bold">{{ column.TIEMPO_TOLERANCIA }}</span>
+                </div>
+                }
+            </div>
+        </div>
+    </div>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+    <div style="display: flex; justify-content: end; padding-bottom: 12px; padding-top: 10px;">
+        <button (click)="close()" id="searchProducto" type="button" class="btn btn-primary btn-sm" style="padding: 0 2px 0px 0px;margin-left: 5px ;margin-right: 3px; display: flex;
+        justify-content: center; align-items: center; height: 34px; width: 164px;">
+            <span>Cerrar</span>
+        </button>
+    </div>
+</mat-dialog-actions>
