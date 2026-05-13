@@ -463,6 +463,53 @@ export class StoreService {
     getPermissionMenu(nivel: string): Observable<[]> {
         return this.http.get<[]>(`${this.API_URL}/api/configuration/permissions/menu/${nivel}`);
     }
+
+    getUsuarios(): Observable<[]> {
+        return this.http.get<[]>(`${this.API_URL}/api/configuration/usuarios`);
+    }
+
+    deleteUsuario(body: any): Observable<any> {
+        return this.http.post<[]>(`${this.API_URL}/api/configuration/usuario/delete`, body);
+    }
+
+    updateUsuario(body: any): Observable<any> {
+        return this.http.post<[]>(`${this.API_URL}/api/configuration/usuario/update`, body);
+    }
+
+    createUsuario(body: any): Observable<any> {
+        return this.http.post<[]>(`${this.API_URL}/api/configuration/usuario/create`, body);
+    }
+
+    postPermissionUserStore(body: any): Observable<[]> {
+        return this.http.post<[]>(`${this.API_URL}/api/configuration/usuarios/permissions/store`, body);
+    }
+
+    postAsingPermissionUserStore(body: any): Observable<[]> {
+        return this.http.post<[]>(`${this.API_URL}/api/configuration/usuarios/asing/permissions/store`, body);
+    }
+
+    postAsingPermissionMenuUser(body: any): Observable<[]> {
+        return this.http.post<[]>(`${this.API_URL}/api/configuration/usuarios/asing/menu`, body);
+    }
+
+    getTiendaParametros(): Observable<[]> {
+        return this.http.get<[]>(`${this.API_URL}/api/parameters/store`);
+    }
+
+    deleteTiendaParametro(id: any): Observable<any> {
+        return this.http.delete<[]>(`${this.API_URL}/api/parameters/store/eliminar/${id}`);
+    }
+
+    // Insertar nuevos parámetros
+    postInsertParametrosTienda(body: any): Observable<any> {
+        return this.http.post<any>(`${this.API_URL}/api/parameters/store/create`, body);
+    }
+
+    // Actualizar parámetros existentes
+    // Nota: Usamos PUT y pasamos el ID en la URL para seguir las buenas prácticas de REST
+    putUpdateParametrosTienda(id: number, body: any): Observable<any> {
+        return this.http.put<any>(`${this.API_URL}/api/parameters/store/actualizar/${id}`, body);
+    }
 }
 
 export interface Ballot {

@@ -1,3 +1,30 @@
+.mat-mdc-table {
+  width: 100%;
+}
+
+.mat-mdc-header-row {
+  background-color: #f5f5f5;
+}
+
+.badge {
+  font-weight: 500;
+  padding: 5px 10px;
+  border-radius: 4px;
+}
+
+// Estilo para que el scroll sea suave
+.table-responsive {
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 10px;
+  }
+}
+
+
+
 // Estilos para los badges de nivel (Bootstrap + Custom)
 .badge {
   font-weight: 500;

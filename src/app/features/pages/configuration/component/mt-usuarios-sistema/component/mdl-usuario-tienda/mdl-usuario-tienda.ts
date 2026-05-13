@@ -17,7 +17,7 @@ export class MdlUsuarioTienda {
   todasLasTiendas: any[] = [];
   tiendasFiltradas: any[] = [];
   tiendasSeleccionadas: number[] = []; // Array de IDs (ID_TIENDA)
-
+  tiendasBody: any[] = []; // Array para enviar al backend
   loading: boolean = false;
 
   constructor(
@@ -36,16 +36,18 @@ export class MdlUsuarioTienda {
     try {
       // 1. Obtener todas las tiendas activas del sistema
       // Supongamos que tu API devuelve: [{ID_TIENDA: 1, NOMBRE_TIENDA: 'Jockey'}, ...]
-      this.storeService.getStores().subscribe((data) => {
-        this.todasLasTiendas = data || [];
+      this.storeService.getStores().subscribe((response) => {
+        this.todasLasTiendas = response || [];
         this.tiendasFiltradas = [...this.todasLasTiendas];
       });
 
-
-      // 2. Obtener las tiendas que ya tiene este usuario (tb_login_tienda)
-      // La API debería devolver solo los IDs: [1, 5, 10]
-      const asignadas = await this.http.get<number[]>(`/api/usuarios/${this.data.usuario.ID_LOGIN}/tiendas`).toPromise();
-      this.tiendasSeleccionadas = asignadas || [];
+      this.storeService.postPermissionUserStore({ id: this.data.usuario.ID_LOGIN }).subscribe((response) => {
+        this.tiendasSeleccionadas = response.map((item: any) => item.ID_TIENDA_TASG) || [];
+        this.tiendasBody = response.map((item: any) => ({
+          id: item.ID_TIENDA_TASG,
+          nombre: item.DESCRIPCION_TIENDA
+        })) || [];
+      });
 
     } catch (error) {
       console.error('Error al cargar datos de tiendas', error);
@@ -66,20 +68,28 @@ export class MdlUsuarioTienda {
   guardar() {
     this.loading = true;
 
+    const newSelections = this.tiendasFiltradas.filter(t => this.tiendasSeleccionadas.includes(t.id));
+
+    this.tiendasBody = newSelections.map((item: any) => ({
+      id: item.id,
+      nombre: item.nombre
+    })) || [];
+
     // Preparamos el payload para la tabla tb_login_tienda
     const payload = {
-      ID_LOGIN_ASSIGN: this.data.usuario.ID_LOGIN,
-      TIENDAS_IDS: this.tiendasSeleccionadas // El array que maneja el mat-selection-list
+      ID_USUARIO: this.data.usuario.ID_LOGIN,
+      TIENDAS: this.tiendasBody // El array que maneja el mat-selection-list
     };
 
-    this.http.post('/api/usuarios/asignar-tiendas', payload).subscribe({
-      next: () => {
-        this.dialogRef.close(true); // Cerramos y avisamos que hubo éxito
+    this.storeService.postAsingPermissionUserStore(payload).subscribe(
+      (response) => {
+        console.log('Permisos de tienda actualizados:', response);
+        this.dialogRef.close(true);
       },
-      error: (err) => {
-        console.error('Error al guardar asignación', err);
+      (error) => {
+        console.error('Error al guardar asignación', error);
         this.loading = false;
       }
-    });
+    );
   }
 }

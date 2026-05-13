@@ -14,7 +14,7 @@
 
     <div class="border rounded" style="max-height: 600px; overflow-y: auto;">
         <mat-selection-list #listaTiendas [(ngModel)]="tiendasSeleccionadas" color="primary">
-            <mat-list-option *ngFor="let tienda of tiendasFiltradas" [value]="tienda.ID_TIENDA">
+            <mat-list-option *ngFor="let tienda of tiendasFiltradas" [value]="tienda.id">
                 <div class="d-flex justify-content-between w-100">
                     <span>{{tienda.nombre}}</span>
                 </div>
@@ -24,11 +24,6 @@
 </mat-dialog-content>
 
 <div style="padding: 10px;display: inline-flex;align-items: center;justify-content: end;">
-    <button mat-dialog-close type="button" class="btn btn-danger btn-sm" style="padding: 0 2px; margin-right: 3px; display: flex;
-        justify-content: center; align-items: center; height: 34px; width: 164px;">
-        <span>Cancelar</span>
-    </button>
-
     <button matTooltip="Guardar permisos" (click)="guardar()" id="searchProducto" type="button"
         class="btn btn-primary btn-sm" style="padding: 0 2px; margin-right: 3px; display: flex;
         justify-content: center; align-items: center; height: 34px; width: 164px;">

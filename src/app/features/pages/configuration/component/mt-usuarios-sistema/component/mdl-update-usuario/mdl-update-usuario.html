@@ -1,0 +1,63 @@
+<h2 mat-dialog-title class="bg-light p-3 border-bottom">
+    <mat-icon class="align-middle me-2">edit_note</mat-icon> Editar Usuario
+</h2>
+
+<mat-dialog-content class="pt-4">
+    <form [formGroup]="form" class="row">
+        <mat-form-field class="col-md-6" appearance="outline">
+            <mat-label>Usuario</mat-label>
+            <input matInput formControlName="USUARIO" placeholder="Ej. jramirez">
+            <mat-icon matSuffix>person</mat-icon>
+        </mat-form-field>
+
+        <mat-form-field class="col-md-6" appearance="outline">
+            <mat-label>Email</mat-label>
+            <input matInput formControlName="EMAIL" placeholder="correo@metasperu.net.pe">
+            <mat-icon matSuffix>email</mat-icon>
+        </mat-form-field>
+
+        <mat-form-field class="col-md-6" appearance="outline">
+            <mat-label>Nivel / Perfil</mat-label>
+            <mat-select formControlName="NIVEL">
+                <mat-option value="SISTEMAS">SISTEMAS</mat-option>
+                <mat-option value="MARKETING">MARKETING</mat-option>
+                <mat-option value="OPERACIONES">OPERACIONES</mat-option>
+                <mat-option value="FIELDLEADER">FIELDLEADER</mat-option>
+                <mat-option value="RRHH">RRHH</mat-option>
+                <mat-option value="CONTABILIDAD">CONTABILIDAD</mat-option>
+                <mat-option value="TIENDA">TIENDA</mat-option>
+                <mat-option value="INVENTARIO">INVENTARIO</mat-option>
+            </mat-select>
+        </mat-form-field>
+
+        <mat-form-field class="col-md-6" appearance="outline">
+            <mat-label>Código de Tienda</mat-label>
+            <input matInput formControlName="CODE_STORE" placeholder="Ej. T001">
+            <mat-icon matSuffix>store</mat-icon>
+        </mat-form-field>
+
+        <mat-form-field class="col-md-6" appearance="outline">
+            <mat-label>Página de Inicio</mat-label>
+            <input matInput formControlName="DEFAULT_PAGE">
+            <mat-icon matSuffix>home</mat-icon>
+        </mat-form-field>
+
+        <mat-form-field class="col-md-6" appearance="outline">
+            <mat-label>Nueva Contraseña</mat-label>
+            <input matInput [type]="hidePassword ? 'password' : 'text'" formControlName="PASSWORD">
+            <button mat-icon-button matSuffix (click)="hidePassword = !hidePassword">
+                <mat-icon>{{hidePassword ? 'visibility_off' : 'visibility'}}</mat-icon>
+            </button>
+            <mat-hint>Dejar en blanco para no cambiar</mat-hint>
+        </mat-form-field>
+    </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end" class="p-3 border-top bg-light">
+    <div style="display: flex; justify-content: end; padding-bottom: 12px; padding-top: 10px;">
+        <button [disabled]="form.invalid" (click)="guardar()" type="button" class="btn btn-primary btn-sm" style="padding: 0 2px; margin-right: 3px; display: flex;
+        justify-content: center; align-items: center; height: 34px; width: 164px;">
+            <span>Actualizar Usuario</span>
+        </button>
+    </div>
+</mat-dialog-actions>

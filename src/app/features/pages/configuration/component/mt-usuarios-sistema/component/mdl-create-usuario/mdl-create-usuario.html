@@ -1,0 +1,71 @@
+<div class="modal-custom">
+    <header mat-dialog-title class="modal-header">
+        <mat-icon>person_add</mat-icon>
+        <span>Registrar Nuevo Usuario</span>
+    </header>
+
+    <mat-dialog-content class="modal-body">
+        <div [formGroup]="form" class="form-grid">
+
+            <!-- Fila 1 -->
+            <mat-form-field appearance="outline">
+                <mat-label>Nombre de Usuario</mat-label>
+                <input matInput formControlName="USUARIO">
+                <mat-icon matSuffix>account_circle</mat-icon>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+                <mat-label>Contraseña</mat-label>
+                <input matInput [type]="hidePassword ? 'text' : 'text'" formControlName="PASSWORD">
+            </mat-form-field>
+
+            <!-- Fila 2 (Email ocupa todo el ancho) -->
+            <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Correo Electrónico</mat-label>
+                <input matInput formControlName="EMAIL" placeholder="usuario@metasperu.net.pe">
+                <mat-icon matSuffix>email</mat-icon>
+            </mat-form-field>
+
+            <!-- Fila 3 -->
+            <mat-form-field appearance="outline">
+                <mat-label>Nivel de Acceso</mat-label>
+                <mat-select formControlName="NIVEL">
+                    <mat-option value="SISTEMAS">SISTEMAS</mat-option>
+                    <mat-option value="MARKETING">MARKETING</mat-option>
+                    <mat-option value="OPERACIONES">OPERACIONES</mat-option>
+                    <mat-option value="FIELDLEADER">FIELDLEADER</mat-option>
+                    <mat-option value="RRHH">RRHH</mat-option>
+                    <mat-option value="CONTABILIDAD">CONTABILIDAD</mat-option>
+                    <mat-option value="TIENDA">TIENDA</mat-option>
+                    <mat-option value="INVENTARIO">INVENTARIO</mat-option>
+                </mat-select>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+                <mat-label>Código de Tienda</mat-label>
+                <input matInput formControlName="CODE_STORE" placeholder="Ej. PE01">
+                <mat-icon matSuffix>store</mat-icon>
+            </mat-form-field>
+
+            <!-- Fila 4 (Página ocupa todo el ancho) -->
+            <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Página de Inicio</mat-label>
+                <mat-select formControlName="DEFAULT_PAGE">
+                    <mat-option *ngFor="let page of pages" [value]="page.value">
+                        {{page.label}}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+
+        </div>
+    </mat-dialog-content>
+
+    <mat-dialog-actions align="end" class="modal-footer">
+        <div style="display: flex; justify-content: end; padding-bottom: 12px; padding-top: 10px;">
+            <button [disabled]="form.invalid" (click)="crear()" type="button" class="btn btn-primary btn-sm" style="padding: 0 2px; margin-right: 3px; display: flex;
+        justify-content: center; align-items: center; height: 34px; width: 164px;">
+                <mat-icon>save</mat-icon> <span>Guardar usuario</span>
+            </button>
+        </div>
+    </mat-dialog-actions>
+</div>

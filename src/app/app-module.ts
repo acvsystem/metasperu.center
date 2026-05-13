@@ -67,6 +67,10 @@ import { MtUsuariosSistema } from './features/pages/configuration/component/mt-u
 import { MdlUsuarioTienda } from './features/pages/configuration/component/mt-usuarios-sistema/component/mdl-usuario-tienda/mdl-usuario-tienda';
 import { MdlPermisosMenu } from './features/pages/configuration/component/mt-usuarios-sistema/component/mdl-permisos-menu/mdl-permisos-menu';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { MdlUpdateUsuario } from './features/pages/configuration/component/mt-usuarios-sistema/component/mdl-update-usuario/mdl-update-usuario';
+import { MdlCreateUsuario } from './features/pages/configuration/component/mt-usuarios-sistema/component/mdl-create-usuario/mdl-create-usuario';
+import { MtParametrosTienda } from './features/pages/configuration/component/mt-parametros-tienda/mt-parametros-tienda';
+import { MdlInUpdParametroStore } from './features/pages/configuration/component/mt-parametros-tienda/component/mdl-in-upd-parametro-store/mdl-in-upd-parametro-store';
 
 registerLocaleData(localeEsPe);
 @NgModule({
@@ -109,7 +113,11 @@ registerLocaleData(localeEsPe);
     MtPermisosTiendas,
     MtUsuariosSistema,
     MdlUsuarioTienda,
-    MdlPermisosMenu
+    MdlPermisosMenu,
+    MdlUpdateUsuario,
+    MdlCreateUsuario,
+    MtParametrosTienda,
+    MdlInUpdParametroStore
   ],
   imports: [
     IonicModule.forRoot(),

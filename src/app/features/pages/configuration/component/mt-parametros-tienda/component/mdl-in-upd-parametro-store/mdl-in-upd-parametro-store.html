@@ -1,0 +1,101 @@
+<div class="modal-custom">
+    <header mat-dialog-title class="modal-header">
+        <mat-icon class="align-middle me-2">{{ isEdit ? 'edit' : 'add_business' }}</mat-icon>
+        {{ isEdit ? 'Editar Configuración' : 'Nueva Configuración de Tienda' }}
+    </header>
+
+    <mat-dialog-content class="modal-body">
+        <form [formGroup]="form" class="container-fluid">
+
+            <!-- Sección: Identificación y Conexión -->
+            <div class="row border-bottom mb-3 pb-2">
+                <div class="col-12">
+                    <h6 class="text-primary">Conexión y Servidor</h6>
+                </div>
+                <mat-form-field class="col-md-3" appearance="fill" class="custom-filter-internal">
+                    <mat-label>Mac</mat-label>
+                    <input matInput formControlName="MAC">
+                </mat-form-field>
+                <mat-form-field class="col-md-3" appearance="fill" class="custom-filter-internal">
+                    <mat-label>Serie Tienda</mat-label>
+                    <input matInput formControlName="SERIE_TIENDA">
+                </mat-form-field>
+                <mat-form-field class="col-md-3" appearance="fill" class="custom-filter-internal">
+                    <mat-label>Num. Caja</mat-label>
+                    <input matInput type="number" formControlName="NUM_CAJA">
+                </mat-form-field>
+                <mat-form-field class="col-md-6" appearance="fill" class="custom-filter-internal">
+                    <mat-label>Dirección IP</mat-label>
+                    <input matInput formControlName="IP">
+                </mat-form-field>
+            </div>
+
+            <!-- Sección: Base de Datos -->
+            <div class="row border-bottom mb-3 pb-2">
+                <div class="col-12">
+                    <h6 class="text-primary">Base de Datos (SQL)</h6>
+                </div>
+                <mat-form-field class="col-md-6" appearance="fill" class="custom-filter-internal">
+                    <mat-label>Instancia</mat-label>
+                    <input matInput formControlName="DATABASE_INSTANCE">
+                </mat-form-field>
+                <mat-form-field class="col-md-6" appearance="fill" class="custom-filter-internal">
+                    <mat-label>Nombre BD</mat-label>
+                    <input matInput formControlName="DATABASE_NAME">
+                </mat-form-field>
+            </div>
+
+            <!-- Sección: Facturacion -->
+            <div class="row border-bottom mb-3 pb-2">
+                <div class="col-12">
+                    <h6 class="text-primary">Facturación</h6>
+                </div>
+                <mat-form-field class="col-md-6" appearance="fill" class="custom-filter-internal">
+                    <mat-label>Boleta</mat-label>
+                    <input matInput formControlName="COD_TIPO_BOL">
+                </mat-form-field>
+                <mat-form-field class="col-md-6" appearance="fill" class="custom-filter-internal">
+                    <mat-label>Factura</mat-label>
+                    <input matInput formControlName="COD_TIPO_FAC">
+                </mat-form-field>
+            </div>
+
+            <!-- Otros Campos -->
+            <div class="row">
+                <div class="col-12" style="margin-bottom: 15px;padding: 0px;">
+                    <mat-checkbox formControlName="IS_PRINCIPAL_SERVER">¿Es Servidor Principal?</mat-checkbox>
+                </div>
+                <mat-form-field class="col-12 custom-filter-internal" appearance="fill"
+                    style="margin-bottom: 10px;padding: 0px;">
+                    <mat-label>Estado</mat-label>
+                    <mat-select formControlName="ONLINE">
+                        <mat-option value="1">ACTIVO</mat-option>
+                        <mat-option value="0">INACTIVO</mat-option>
+                    </mat-select>
+                </mat-form-field>
+                <mat-form-field class="col-12" appearance="fill" class="custom-filter-internal">
+                    <mat-label>Time Clear</mat-label>
+                    <input matInput formControlName="TIME_CLEAR">
+                </mat-form-field>
+            </div>
+
+        </form>
+    </mat-dialog-content>
+
+    <mat-dialog-actions align="end" class="bg-light p-3 border-top">
+        <div style="display: flex; justify-content: end; padding-bottom: 12px; padding-top: 10px;">
+
+            <button (click)="close()" id="searchProducto" type="button" class="btn btn-danger btn-sm" style="padding: 0 2px; margin-right: 3px; display: flex;
+        justify-content: center; align-items: center; height: 34px; width: 164px;">
+                <span>CANCELAR</span>
+            </button>
+
+            <button [disabled]="form.invalid" (click)="guardar()" id="searchProducto" type="button"
+                class="btn btn-primary btn-sm" style="padding: 0 2px; margin-right: 3px; display: flex;
+        justify-content: center; align-items: center; height: 34px; width: 164px;">
+                <mat-icon style="margin-right: 5px;">save</mat-icon>
+                <span>{{ isEdit ? 'ACTUALIZAR' : 'GUARDAR' }}</span>
+            </button>
+        </div>
+    </mat-dialog-actions>
+</div>

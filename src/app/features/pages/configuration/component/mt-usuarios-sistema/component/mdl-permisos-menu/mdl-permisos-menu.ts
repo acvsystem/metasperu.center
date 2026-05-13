@@ -57,6 +57,8 @@ export class MdlPermisosMenu {
     } else {
       this.idsMenusPermitidos.add(idMenu);
     }
+
+    this.guardarPermisos();
   }
 
   guardarPermisos() {
@@ -64,18 +66,13 @@ export class MdlPermisosMenu {
 
     const payload = {
       NIVEL: this.data.nivel,
-      MENUS_IDS: Array.from(this.idsMenusPermitidos) // Convertimos el Set a Array para el JSON
+      MENUS: Array.from(this.idsMenusPermitidos) // Convertimos el Set a Array para el JSON
     };
 
-    // Llamada al endpoint que hace el DELETE y luego INSERT en tb_permiso_sistema
-    /*this.http.post('/api/permisos/sincronizar', payload).subscribe({
+    this.serviceStore.postAsingPermissionMenuUser(payload).subscribe({
       next: () => {
-        this.dialogRef.close(true);
-      },
-      error: (err) => {
-        console.error('Error al actualizar permisos', err);
         this.loading = false;
       }
-    });*/
+    });
   }
 }
