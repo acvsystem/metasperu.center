@@ -130,6 +130,14 @@
                                         }
                                     </mat-icon>
                                 </button>
+                                <button *ngIf="dia.papeletas?.length > 0" matTooltip="Papeletas"
+                                    class="btn-add-mini btn-danger btn-papeleta"
+                                    (click)="openDialogPapeletas(dia.papeletas)">
+                                    <mat-icon
+                                        style="font-size: 14px; display: flex; justify-content: center; align-items: center;padding-right: 2px;">
+                                        assignment
+                                    </mat-icon>
+                                </button>
                             </small>
                         </div>
 

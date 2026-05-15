@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, Input, input } from '@angular/core';
 import { StoreService } from '@metasperu/services/store.service';
 import {
   MatDialog,
@@ -14,6 +14,7 @@ import {
   styleUrl: './mt-view-papeleta.scss',
 })
 export class MtViewPapeleta {
+  @Input() codeBallot: string = '';
   data = inject(MAT_DIALOG_DATA);
   dataBallot: any = {};
   titleLoader: string = "Cargando..."
@@ -25,7 +26,7 @@ export class MtViewPapeleta {
 
   ngOnInit() {
     this.isLoading = true;
-    this.service.getOneBallot(this.data?.codeBallot).subscribe((ballot) => {
+    this.service.getOneBallot(this.data?.codeBallot || this.codeBallot).subscribe((ballot) => {
       this.idTipoPap = ballot.head_ballot.ID_PAP_TIPO_PAPELETA;
       this.dataBallot = {
         head_ballot: ballot.head_ballot,

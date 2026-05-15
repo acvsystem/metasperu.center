@@ -15,6 +15,7 @@ import { SocketResourcesHumanService } from '@metasperu/services/socketResources
 import { lastValueFrom } from 'rxjs';
 import { MtMdlInfoHorario } from './component/mt-mdl-info-horario/mt-mdl-info-horario';
 import { MtMdlObervaciones } from './component/mt-mdl-obervaciones/mt-mdl-obervaciones';
+import { MtMdlPapeletas } from './component/mt-mdl-papeletas/mt-mdl-papeletas';
 
 @Component({
   selector: 'mt-rw-horario',
@@ -146,6 +147,7 @@ export class MtRwHorario implements CanComponentDeactivate {
   // mt-rw-horario.component.ts
 
   prepararDataHorario(data: any[]) {
+    console.log(data);
     this.horariosProcesados = data.map(cargo => ({
       ...cargo,
       // 1. Filas para los rangos horarios
@@ -170,6 +172,8 @@ export class MtRwHorario implements CanComponentDeactivate {
         return acc;
       }, {})
     }));
+
+    console.log(this.horariosProcesados);
   }
 
 
@@ -243,6 +247,7 @@ export class MtRwHorario implements CanComponentDeactivate {
     };
 
     this.storeService.postSearchHorarios(body).subscribe(response => {
+      console.log(response);
       this.isLoading = false;
       this.prepararDataHorario(response.data);
     });
@@ -274,6 +279,17 @@ export class MtRwHorario implements CanComponentDeactivate {
       }
     });
   }
+
+
+  openDialogPapeletas(papeletas: any) {
+    this.dialog.open(MtMdlPapeletas, {
+      width: '800px',
+      data: papeletas, // Pasas el array que recibiste del API
+      panelClass: 'modal-grande'
+    });
+  }
+
+
 
   openDialogObservacion(celda: any, diaId: number) {
     const dialogRef = this.dialog.open(MtMdlObervaciones, {
@@ -606,7 +622,7 @@ export class MtRwHorario implements CanComponentDeactivate {
             })
           };
         });
-
+        console.log(this.horariosProcesados);
         this.guardarEnCache();
       });
 

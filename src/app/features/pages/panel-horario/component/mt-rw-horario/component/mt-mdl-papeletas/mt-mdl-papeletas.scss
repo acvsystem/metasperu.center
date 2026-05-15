@@ -1,0 +1,43 @@
+/* Estilo para que la tabla ocupe todo el ancho */
+.w-100 {
+  width: 100%;
+}
+
+/* Badge personalizado para el código de papeleta */
+.custom-badge {
+  background-color: #aee2fb;
+  color: #1d455b;
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-weight: 500;
+  font-family: 'Roboto Mono', monospace;
+  font-size: 12px;
+  border: 1px solid #aee2fb;
+}
+
+/* Estilo para el nombre del colaborador */
+.name-style {
+  font-size: 13px;
+  font-weight: 500;
+  color: #333;
+  text-transform: uppercase;
+}
+
+/* Ajustes de mat-table para Ionic */
+mat-dialog-content {
+  max-height: 500px;
+}
+
+.mat-mdc-header-cell {
+  background-color: #f5f5f5 !important;
+  color: #666 !important;
+  font-size: 12px;
+}
+
+.mat-mdc-row:hover {
+  background-color: #fafafa;
+}
+
+ion-content {
+  --background: #ffffff;
+}

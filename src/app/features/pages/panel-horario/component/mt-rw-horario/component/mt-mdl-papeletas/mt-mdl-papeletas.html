@@ -1,0 +1,72 @@
+<ion-header class="ion-no-border">
+    <ion-toolbar color="primary">
+        <ion-title><button *ngIf="isViewPapeleta" matTooltip="Atras" (click)="toBack()" id="searchProducto" type="button" class="btn btn-primary btn-sm" style="height: 34px;
+    margin-right: 10px;
+    background: #929292;
+    border-color: #929292;">
+            <mat-icon>arrow_circle_left</mat-icon>
+        </button>Detalle de Papeletas </ion-title>
+    </ion-toolbar>
+</ion-header>
+
+<table mat-table [dataSource]="dataSource" class="w-100 mat-elevation-z0" *ngIf="!isViewPapeleta">
+
+    <ng-container matColumnDef="codigo">
+        <th mat-header-cell *matHeaderCellDef class="fw-bold"> Código </th>
+        <td mat-cell *matCellDef="let element">
+            <span class="custom-badge">{{element.codigo}}</span>
+        </td>
+    </ng-container>
+
+    <ng-container matColumnDef="nombre_completo">
+        <th mat-header-cell *matHeaderCellDef class="fw-bold"> Colaborador </th>
+        <td mat-cell *matCellDef="let element">
+            <div class="name-style">{{element.nombre_completo}}</div>
+        </td>
+    </ng-container>
+
+    <ng-container matColumnDef="documento">
+        <th mat-header-cell *matHeaderCellDef class="fw-bold text-center"> DNI </th>
+        <td mat-cell *matCellDef="let element" class="text-center text-muted">
+            {{element.documento}}
+        </td>
+    </ng-container>
+
+    <ng-container matColumnDef="fecha_compensacion">
+        <th mat-header-cell *matHeaderCellDef class="fw-bold text-center"> Fecha </th>
+        <td mat-cell *matCellDef="let element" class="text-center">
+            <ion-note color="medium">{{element.fecha_compensacion}}</ion-note>
+        </td>
+    </ng-container>
+
+    <ng-container matColumnDef="ver_papeleta">
+        <th mat-header-cell *matHeaderCellDef class="fw-bold text-center"> Ver Papeleta </th>
+        <td mat-cell *matCellDef="let element" class="text-center">
+            <button mat-icon-button (click)="verPapeleta(element)">
+                <mat-icon>visibility</mat-icon>
+            </button>
+        </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+
+    <tr class="mat-row" *matNoDataRow>
+        <td class="mat-cell text-center py-4" colspan="4">
+            No hay papeletas registradas.
+        </td>
+    </tr>
+
+</table>
+
+<mt-view-papeleta *ngIf="isViewPapeleta" [codeBallot]="codeBallot"></mt-view-papeleta>
+
+
+<mat-dialog-actions align="end" class="p-2 border-top bg-light">
+    <div style="display: flex; justify-content: end; padding-bottom: 12px; padding-top: 10px;">
+        <button (click)="cerrar()" id="searchProducto" type="button" class="btn btn-primary btn-sm" style="padding: 0 2px 0px 0px;margin-left: 5px ;margin-right: 3px; display: flex;
+        justify-content: center; align-items: center; height: 34px; width: 164px;">
+            <span>cerrar</span>
+        </button>
+    </div>
+</mat-dialog-actions>

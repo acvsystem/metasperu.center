@@ -72,6 +72,7 @@ import { MdlCreateUsuario } from './features/pages/configuration/component/mt-us
 import { MtParametrosTienda } from './features/pages/configuration/component/mt-parametros-tienda/mt-parametros-tienda';
 import { MdlInUpdParametroStore } from './features/pages/configuration/component/mt-parametros-tienda/component/mdl-in-upd-parametro-store/mdl-in-upd-parametro-store';
 import { MdlExtraParametros } from './features/pages/configuration/component/mt-parametros-tienda/component/mdl-extra-parametros/mdl-extra-parametros';
+import { MtMdlPapeletas } from './features/pages/panel-horario/component/mt-rw-horario/component/mt-mdl-papeletas/mt-mdl-papeletas';
 
 registerLocaleData(localeEsPe);
 @NgModule({
@@ -119,7 +120,8 @@ registerLocaleData(localeEsPe);
     MdlCreateUsuario,
     MtParametrosTienda,
     MdlInUpdParametroStore,
-    MdlExtraParametros
+    MdlExtraParametros,
+    MtMdlPapeletas
   ],
   imports: [
     IonicModule.forRoot(),
