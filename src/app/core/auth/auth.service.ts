@@ -71,7 +71,8 @@ export class AuthService {
                     localStorage.setItem('auth_token', response.token);
                     localStorage.setItem('role', response.user.role);
                     localStorage.setItem('name', response.user.username);
-
+                    localStorage.setItem('marca', response.user.unid_servicio || 'OF');
+                    
                     const keyStore = this.storeService.encrypt(response.user.code_store);
 
                     localStorage.setItem('keyStore', keyStore);

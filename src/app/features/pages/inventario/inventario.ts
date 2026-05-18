@@ -43,15 +43,30 @@ export class Inventario {
   serieStore: string = '';
   countOnlienStore: number = 0;
   emailInvetorySend: string = '';
-
+  marcaSelected: string = '';
+  searchCodigoBarra: string = '';
   constructor(private socketInventoryService: SocketInventoryService, private storeService: StoreService) { }
 
   ngOnInit() {
+
+
+    this.socketInventoryService.onOneInvenrotyStore((data: any) => {
+      console.log(data);
+      //this.dataInventory = data.dataCode;
+    });
+
 
     this.storeService.getStores().subscribe(
       response => {
         this.storeList = response;
         this.cboStoreList = this.storeList.map(store => ({ key: store.serie, value: store.nombre }));
+
+        this.marcaSelected = localStorage.getItem('marca') || 'OF';
+
+        if (this.marcaSelected == 'BBW' || this.marcaSelected == 'VS' || this.marcaSelected == 'TM') {
+          this.selectedStore = this.dataSelectStore.find(store => store.key === this.marcaSelected);
+          this.onAddUpdateColumn(this.selectedStore.key);
+        }
       }
     );
 
@@ -63,8 +78,12 @@ export class Inventario {
           this.titleLoader = `Obteniendo Inventario ${this.countOnlienStore}/${this.dataStoreOnline.length}`;
 
           if (this.countOnlienStore === this.dataStoreOnline.length) {
+            if (this.searchCodigoBarra.length) {
+              this.dataInventory = response.inventory.filter((item: any) => item.cCodigoBarra === this.searchCodigoBarra);
+            } else {
+              this.dataInventory = response.inventory;
+            }
 
-            this.dataInventory = response.inventory;
             this.onAlmacenarDatosExportar();
             this.onAddUpdateColumn(this.selectedStore.key);
 
@@ -86,6 +105,25 @@ export class Inventario {
   async onChangeSelect(data: any) {
     this.selectedStore = data;
     this.onAddUpdateColumn(this.selectedStore.key);
+  }
+
+  onSearchCodigoBarra(ev: any, property?: string) {
+    const value = ev.target.value;
+
+    if (property === 'searchCodigoBarra') {
+      this.searchCodigoBarra = String(value).trim();
+    }
+
+    if (this.searchCodigoBarra.length >= 12) {
+
+      if (this.selectedStore.length === 0) {
+        this.messageNotification = 'Seleccione Unidad de Servicio.';
+        this.abrirNotificacion('danger');
+        return;
+      }
+
+      this.onSendInventory();
+    }
   }
 
   onAlmacenarDatosExportar() {
@@ -167,11 +205,12 @@ export class Inventario {
   }
 
   onSendInventory() {
+    console.log("onSendInventory");
     this.isLoading = true;
     this.titleLoader = `Obteniendo Inventario...`;
     this.countOnlienStore = 0;
 
-    this.storeService.callInventory(`${this.selectedStore.key}`).subscribe(
+    this.storeService.callInventory(`${this.selectedStore.key}`, this.socketInventoryService.socketID).subscribe(
       response => {
 
         if (!response.online.length) {

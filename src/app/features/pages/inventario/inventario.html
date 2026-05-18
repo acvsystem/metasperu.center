@@ -7,12 +7,16 @@
   </ion-row>
 
   <ion-row class="ion-align-items-end ion-margin-bottom">
-    <ion-col size="12" size-md="4" size-lg="2">
+    <ion-col size="12" size-md="4" size-lg="2" *ngIf="marcaSelected == 'OF'">
       <div class="control-container">
         <mt-select [data]="dataSelectStore" label="Seleccione Unidad Servicio" title="Tienda"
           (selectdOption)="onChangeSelect($event)">
         </mt-select>
       </div>
+    </ion-col>
+    <ion-col size="12" size-md="4" size-lg="2">
+      <mt-input (keyup)="onSearchCodigoBarra($event,'searchCodigoBarra')" label="Codigo barra"
+        placeholder="Buscar codigo barra"></mt-input>
     </ion-col>
     <ion-col size="12" size-md="4" size-lg="1" style="display: flex;align-items: center;">
       <button (click)="onSendInventory()" type="button" matTooltip="Verificar"
@@ -21,15 +25,14 @@
       </button>
     </ion-col>
 
-    <hr style="background-color: black;width: 1px;margin-right: 10px;">
+    <hr style="background-color: black;width: 1px;margin-right: 10px;" *ngIf="marcaSelected == 'OF'">
 
 
-    <ion-col size="12" size-md="4" size-lg="2">
-      <mt-input (keyup)="onChangeInput($event)"
-        label="Email" placeholder="Correo electrónico..."></mt-input>
+    <ion-col size="12" size-md="4" size-lg="2" *ngIf="marcaSelected == 'OF'">
+      <mt-input (keyup)="onChangeInput($event)" label="Email" placeholder="Correo electrónico..."></mt-input>
     </ion-col>
 
-    <ion-col size="12" size-md="4" size-lg="2">
+    <ion-col size="12" size-md="4" size-lg="2" *ngIf="marcaSelected == 'OF'">
       <div class="control-container">
         <mt-select [data]="cboStoreList" [isMultiselect]=true label="Seleccione Tiendas" title="Tienda"
           (selectdOption)="onChangeSelectMultiple($event)">
@@ -37,7 +40,7 @@
       </div>
     </ion-col>
 
-    <ion-col size="12" size-md="4" size-lg="2" style="display: flex;align-items: center;">
+    <ion-col size="12" size-md="4" size-lg="2" style="display: flex;align-items: center;" *ngIf="marcaSelected == 'OF'">
       <button (click)="onEmailInventory()" type="button" matTooltip="Verificar"
         style="display: flex;justify-content: center;align-items: center;"
         class="btn btn-primary btn-sm mobil-margin-button"><mat-icon>forward_to_inbox</mat-icon><span>Enviar

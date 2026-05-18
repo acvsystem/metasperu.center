@@ -171,9 +171,9 @@ export class StoreService {
         );
     }
 
-    callInventory(marca: any): Observable<any> {
+    callInventory(marca: any, socketId: string): Observable<any> {
         return this.http.get(
-            `${this.API_URL_INVENTORY}/api/inventory/store/${marca}`
+            `${this.API_URL_INVENTORY}/api/inventory/store/${marca}/${socketId}`
         ).pipe(
             catchError(this.handleError)
         );
@@ -529,6 +529,10 @@ export class StoreService {
 
     putTolerancia(body: any): Observable<any> {
         return this.http.put<any>(`${this.API_URL}/api/parameters/tiempo/tolerancia/update/${body.id}`, body);
+    }
+
+    postSearchCodeBar(body: any): Observable<any> {
+        return this.http.post<any>(`${this.API_URL_INVENTORY}/api/inventory/search/barcode`, body);
     }
 }
 
