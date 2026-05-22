@@ -146,7 +146,8 @@ export class MtRHrxConsolidado implements OnInit, OnDestroy {
 
   onEmpleadosList() {
     return new Promise((resolve) => {
-      const sub = this.storeService.callRegisterEmployes().subscribe({
+      const socketId = this.socketService.socketID || '';
+      const sub = this.storeService.callRegisterEmployes(socketId).subscribe({
         next: (data: any) => {
           // this.storeList = data; // Asumiendo que asignas la data a storeList
           resolve(true);

@@ -199,20 +199,21 @@ export class StoreService {
         );
     }
 
-    callRegisterEmployes(): Observable<any> {
+    callRegisterEmployes(socket: any): Observable<any> {
         return this.http.get(
-            `${this.API_URL_RESOURCES_HUMAN}/api/asistence/ejb/register/employes`
+            `${this.API_URL_RESOURCES_HUMAN}/api/asistence/ejb/register/employes/${socket}`
         ).pipe(
             catchError(this.handleError)
         );
     }
 
-    callAsistenceEmployes(fecha: any, type: string): Observable<any> {
+    callAsistenceEmployes(fecha: any, type: string, socketId: string): Observable<any> {
         return this.http.post(
             `${this.API_URL_RESOURCES_HUMAN}/api/asistence/employes/store`,
             {
                 "fecha": fecha,
-                "tipoConsulta": type
+                "tipoConsulta": type,
+                "socketId": socketId
             }
         ).pipe(
             catchError(this.handleError)

@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { SocketResourcesHumanService } from '@metasperu/services/socketResourcesHuman';
 
 @Component({
   selector: 'panel-horario',
@@ -9,8 +10,7 @@ import { Component } from '@angular/core';
 export class PanelHorario {
 
   tabIndex = 0;
-  
-  constructor() { }
+  constructor(private socketService: SocketResourcesHumanService) { }
 
   ngOnInit() {
 

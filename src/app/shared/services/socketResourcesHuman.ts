@@ -2,7 +2,7 @@
 import { Injectable } from '@angular/core';
 import { io, Socket } from 'socket.io-client';
 import { BehaviorSubject } from 'rxjs';
-
+import { StoreService } from '@metasperu/services/store.service';
 @Injectable({
     providedIn: 'root'
 })
@@ -12,7 +12,7 @@ export class SocketResourcesHumanService {
     private socketSubject = new BehaviorSubject<any[]>([]);
     public socket$ = this.socketSubject.asObservable();
 
-    constructor() {
+    constructor(private storeService: StoreService) {
         this.conectar();
     }
 
@@ -32,6 +32,9 @@ export class SocketResourcesHumanService {
             //this.socket?.emit('registrar_dashboard');
             this.socketID = this.socket?.id;
             this.socketSubject.next(this.socketID);
+
+            this.storeService.callRegisterEmployes(this.socketID).subscribe((data: any) => {
+            });
         });
 
     }

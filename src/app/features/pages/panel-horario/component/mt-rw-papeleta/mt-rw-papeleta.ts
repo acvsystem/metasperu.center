@@ -174,7 +174,8 @@ export class MtRwPapeleta implements OnInit {
   }
 
   onEmpleadosList() {
-    return this.storeService.callRegisterEmployes().subscribe((data: any) => {
+    const socketId = this.socketService.socketID || '';
+    return this.storeService.callRegisterEmployes(socketId).subscribe((data: any) => {
     });
   }
 

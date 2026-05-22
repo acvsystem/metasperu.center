@@ -29,7 +29,7 @@ export class RrhhAsistencia {
   dataEJBFeriado: Array<any> = [];
   typeNotification: NotificationType = 'success';
   isNotification: boolean = false;
- 
+
   cboStoreList: Array<any> = [{ key: 'isDefault', value: 'General' }, { key: 'isDetallado', value: 'Detallado' }, { key: 'isFeriados', value: 'Feriados' }]
 
   columnsInventory: tableColumns[] = [
@@ -66,11 +66,12 @@ export class RrhhAsistencia {
   displayedColumnsFeriado = this.columnsFeriado.map(col => col.matColumnDef);
 
   constructor(private storeService: StoreService, private socketService: SocketResourcesHumanService) {
-    this.storeService.callRegisterEmployes().subscribe((data: any) => {
-    });
+
   }
 
   ngOnInit() {
+
+
 
     this.socketService.onRefreshEmployesAsistence((data: any) => {
       this.storeService.callRefreshAsistenceEmployes(this.propertyCode).subscribe((data: any) => {
@@ -82,6 +83,7 @@ export class RrhhAsistencia {
         this.isLoading = false;
       });
     });
+
   }
 
   exportFeriados() {
@@ -227,10 +229,14 @@ export class RrhhAsistencia {
     }
 
     this.isLoading = true;
-    this.storeService.callRegisterEmployes().subscribe((data: any) => {
+    const socketId = this.socketService.socketID;
+
+    this.storeService.callRegisterEmployes(socketId).subscribe((data: any) => {
     });
-    console.log(this.typeCalendar);
-    this.storeService.callAsistenceEmployes(this.dateCalendar, this.typeCalendar).subscribe((data: any) => {
+
+
+
+    this.storeService.callAsistenceEmployes(this.dateCalendar, this.typeCalendar, socketId).subscribe((data: any) => {
       this.propertyCode = data.property;
     });
   }

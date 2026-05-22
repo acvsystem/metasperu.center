@@ -86,6 +86,7 @@ export class MtRwHorario implements CanComponentDeactivate {
 
       // 4. Escuchar el socket con filtrado reactivo
       this.socketService.onRefreshEmployesEJB((data: any[]) => {
+        console.log('Datos recibidos por socket:', data);
         if (!data) return;
         const codigo_unid_ejb = store ? store.codigo_ejb : '0001';
 
@@ -121,7 +122,9 @@ export class MtRwHorario implements CanComponentDeactivate {
   }
 
   onEmpleadosList() {
-    return this.storeService.callRegisterEmployes().subscribe((data: any) => {
+    const socketId = this.socketService.socketID || '';
+
+    return this.storeService.callRegisterEmployes(socketId).subscribe((data: any) => {
     });
   }
 
@@ -148,30 +151,22 @@ export class MtRwHorario implements CanComponentDeactivate {
 
   prepararDataHorario(data: any[]) {
     console.log(data);
-    this.horariosProcesados = data.map(cargo => ({
-      ...cargo,
-      // 1. Filas para los rangos horarios
-      filasTrabajo: cargo.rg_hora.map((rango: any) => ({
-        rango: rango.rg,
-        celdas: cargo.dias.map((dia: any) => ({
-          trabajadores: cargo.dias_trabajo.filter((dt: any) =>
-            dt.id_dia === dia.id && dt.rg === rango.id
-          )
-        }))
-      })),
-      // 2. Fila para Días Libres
-      filaLibres: cargo.dias.map((dia: any) => ({
-        trabajadores: cargo.dias_libres.filter((dl: any) => dl.id_dia === dia.id)
-      })),
-      // 3. Mapeo de observaciones por día (NUEVO)
-      // Esto crea un acceso rápido: observacionesPorDia[id_del_dia]
-      notasDia: cargo.dias.reduce((acc: any, dia: any) => {
-        acc[dia.id] = cargo.observacion.filter((obs: any) =>
-          obs.id_dia === dia.id && obs.observacion.trim() !== ''
-        );
-        return acc;
-      }, {})
-    }));
+    this.horariosProcesados = data.map((cargo: any) => {
+      return {
+        ...cargo,
+        // Mapeamos los días para inyectar dayBlock
+        dias: cargo.dias.map((itemDia: any) => {
+          const [anio, mes, dia] = itemDia.fecha.split('-').map(Number);
+          const fechaCalendario = new Date(anio, mes - 1, dia);
+
+          return {
+            ...itemDia,
+            // Si la fecha es menor a hoy, dayBlock es true
+            dayBlock: true
+          };
+        })
+      };
+    });
 
     console.log(this.horariosProcesados);
   }
@@ -249,7 +244,8 @@ export class MtRwHorario implements CanComponentDeactivate {
     this.storeService.postSearchHorarios(body).subscribe(response => {
       console.log(response);
       this.isLoading = false;
-      this.prepararDataHorario(response.data);
+
+      this.prepararDataHorario(response);
     });
   }
 
