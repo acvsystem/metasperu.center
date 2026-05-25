@@ -91,6 +91,9 @@ export class MtCalendar implements OnInit {
   verticalPosition: MatSnackBarVerticalPosition = 'top';
 
 
+  constructor(private dateAdapter: DateAdapter<Date>) {
+    this.dateAdapter.setLocale('es-ES');
+  }
 
   ngOnInit() {
     if (this.isDefault) {

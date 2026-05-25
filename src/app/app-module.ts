@@ -73,6 +73,7 @@ import { MtParametrosTienda } from './features/pages/configuration/component/mt-
 import { MdlInUpdParametroStore } from './features/pages/configuration/component/mt-parametros-tienda/component/mdl-in-upd-parametro-store/mdl-in-upd-parametro-store';
 import { MdlExtraParametros } from './features/pages/configuration/component/mt-parametros-tienda/component/mdl-extra-parametros/mdl-extra-parametros';
 import { MtMdlPapeletas } from './features/pages/panel-horario/component/mt-rw-horario/component/mt-mdl-papeletas/mt-mdl-papeletas';
+import { MAT_DATE_LOCALE } from '@angular/material/core';
 
 registerLocaleData(localeEsPe);
 @NgModule({
@@ -155,6 +156,7 @@ registerLocaleData(localeEsPe);
     })
   ],
   providers: [
+    { provide: MAT_DATE_LOCALE, useValue: 'es-ES' },
     { provide: LOCALE_ID, useValue: 'es-PE' },
     {
       provide: RouteReuseStrategy,
