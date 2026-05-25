@@ -65,5 +65,4 @@ export class SocketResourcesHumanService {
         this.socket?.off('py_works_hours_employes_response', callback);
     }
 
-
 }

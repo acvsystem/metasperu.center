@@ -535,6 +535,10 @@ export class StoreService {
     postSearchCodeBar(body: any): Observable<any> {
         return this.http.post<any>(`${this.API_URL_INVENTORY}/api/inventory/search/barcode`, body);
     }
+
+    updateDateBallot(body: any): Observable<any> {
+        return this.http.put<any>(`${this.API_URL_RESOURCES_HUMAN}/api/update/date/schedule/store`, body);
+    }
 }
 
 export interface Ballot {

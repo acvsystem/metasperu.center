@@ -1,9 +1,34 @@
 <div class="papeleta-wrapper">
-    <button class="btn-export no-print" (click)="imprimir()">
+
+    <ion-row style="width: 100%;" *ngIf="isPermisionEdit">
+        <ion-col style="display: flex;justify-self: start;align-items: center;">
+            <mt-calendar #calDesde [isDefault]="true" placeholder="Fecha" (afterChange)="onCalendarDesde($event)"
+                [isDefault]="true"></mt-calendar>
+
+            <button matTooltip="Registrar Papeleta" id="searchProducto" type="button" (click)="updateDateBallot()"
+                class="btn btn-primary btn-sm" style="padding-bottom: 0px;padding-left: 2px;padding-right: 2px;padding-top: 0;margin-right: 3px;display: flex;
+          justify-content: center;
+          align-items: center;
+          height: 34px;
+          width: 100px;">
+                <mat-icon style="margin-right: 5px;">save</mat-icon> <span>Guardar</span>
+            </button>
+
+            <button class="btn-export-auth no-print" (click)="imprimir()">
+                <i class="fas fa-file-pdf"></i> Exportar a PDF
+            </button>
+        </ion-col>
+    </ion-row>
+
+    <button class="btn-export no-print" (click)="imprimir()" *ngIf="!isPermisionEdit">
         <i class="fas fa-file-pdf"></i> Exportar a PDF
     </button>
 
     <div class="papeleta-sheet" id="papeleta" *ngIf="!isLoading">
+        <div class="content-status" *ngIf="isPermisionEdit">
+            <span class="badge actualizado" *ngIf="dataBallot.head_ballot.ISUPDATE">Actualizado</span>
+            <span class="badge bloqueado" *ngIf="dataBallot.head_ballot.ISBLOCKED">Bloqueado</span>
+        </div>
         <header class="header">
             <div class="brand">
                 <div class="logo">
@@ -53,14 +78,18 @@
         <section class="section-details">
             <div class="detail-grid">
                 <div class="detail-group">
-                    <div class="item"><span>Desde:</span> <strong>{{ dataBallot.head_ballot.FECHA_DESDE | date:'dd/MM/yyyy'
+                    <div class="item"><span>Desde:</span> <strong>{{ dataBallot.head_ballot.FECHA_DESDE |
+                            date:'dd/MM/yyyy'
                             }}</strong></div>
-                    <div class="item"><span>Hasta:</span> <strong>{{ dataBallot.head_ballot.FECHA_HASTA | date:'dd/MM/yyyy'
+                    <div class="item"><span>Hasta:</span> <strong>{{ dataBallot.head_ballot.FECHA_HASTA |
+                            date:'dd/MM/yyyy'
                             }}</strong></div>
                 </div>
                 <div class="detail-group">
-                    <div class="item"><span>Salida:</span> <strong>{{ dataBallot.head_ballot.HORA_SALIDA || '00:00' }}</strong></div>
-                    <div class="item"><span>Llegada:</span> <strong>{{ dataBallot.head_ballot.HORA_LLEGADA || '00:00' }}</strong></div>
+                    <div class="item"><span>Salida:</span> <strong>{{ dataBallot.head_ballot.HORA_SALIDA || '00:00'
+                            }}</strong></div>
+                    <div class="item"><span>Llegada:</span> <strong>{{ dataBallot.head_ballot.HORA_LLEGADA || '00:00'
+                            }}</strong></div>
                 </div>
                 <div class="hours-badge" *ngIf="idTipoPap == 7">
                     <span class="label">Horas Solicitadas</span>
@@ -90,7 +119,7 @@
             </table>
         </section>
 
-        <section *ngIf="idTipoPap != 7" >
+        <section *ngIf="idTipoPap != 7">
             <div class="content-comentario">
                 <span>{{dataBallot.head_ballot.DESCRIPCION}}</span>
             </div>
@@ -108,3 +137,8 @@
         </footer>
     </div>
 </div>
+
+  @if (isNotification) {
+  <mt-notification [type]="typeNotification" [message]="messageNotification"
+    (onClose)="cerrarNotificacion()"></mt-notification>
+  }

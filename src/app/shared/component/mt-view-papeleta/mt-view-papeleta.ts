@@ -6,6 +6,7 @@ import {
   MatDialogTitle,
   MatDialogContent,
 } from '@angular/material/dialog';
+export type NotificationType = 'success' | 'warning' | 'danger';
 
 @Component({
   selector: 'mt-view-papeleta',
@@ -20,6 +21,11 @@ export class MtViewPapeleta {
   titleLoader: string = "Cargando..."
   isLoading: boolean = false;
   idTipoPap: number = 0;
+  isPermisionEdit: boolean = false;
+  selectedDate: Date | null = null;
+  isNotification: boolean = false;
+  messageNotification: string = '';
+  typeNotification: NotificationType = 'success';
   constructor(private service: StoreService) {
 
   }
@@ -34,7 +40,13 @@ export class MtViewPapeleta {
       };
       this.isLoading = false;
       console.log(this.dataBallot);
-    })
+    });
+
+    const codeStoreEncrypted = localStorage.getItem('keyStore');
+    if (!codeStoreEncrypted) return;
+
+    const serieDecrypted = this.service.decrypt(codeStoreEncrypted);
+    this.isPermisionEdit = serieDecrypted === 'OF' ? true : false;
   }
 
   imprimir() {
@@ -42,6 +54,33 @@ export class MtViewPapeleta {
     document.title = `Papeleta_${this.dataBallot.head_ballot.CODIGO_PAPELETA}`;
     window.print();
     document.title = originalTitle;
+  }
+
+  updateDateBallot() {
+    this.service.updateDateBallot({ codeBallot: this.dataBallot.head_ballot.CODIGO_PAPELETA, id_papeleta: this.dataBallot.head_ballot.ID_HEAD_PAPELETA, nueva_fecha: this.selectedDate }).subscribe((response) => {
+      this.dataBallot = {
+        head_ballot: response.head_ballot,
+        detail_ballot: response.detail_ballot
+      };
+
+      this.messageNotification = response.message || 'Fecha de papeleta actualizada';
+      this.abrirNotificacion(response.success ? 'success' : 'danger');
+    });
+  }
+
+  abrirNotificacion(type: NotificationType) {
+    this.typeNotification = type;
+    this.isNotification = true;
+  }
+
+  cerrarNotificacion() {
+    // Aquí es donde realmente desaparece del DOM
+    this.isNotification = false;
+  }
+
+  onCalendarDesde(event: any): void {
+    const { isPeriodo, isMultiSelect, isDefault, isRange, value } = event;
+    this.selectedDate = value;
   }
 
 }

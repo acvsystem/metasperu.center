@@ -25,6 +25,22 @@ $border: #dee2e6;
             background: #218838;
         }
     }
+
+    .btn-export-auth {
+        //margin-bottom: 1rem;
+        padding: 7px;
+        background: #28a745;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        //font-weight: 600;
+        cursor: pointer;
+        transition: 0.3s;
+
+        &:hover {
+            background: #218838;
+        }
+    }
 }
 
 .papeleta-sheet {
@@ -277,4 +293,32 @@ $border: #dee2e6;
     padding: 10px;
     border-radius: 5px;
     word-break: break-word;
+}
+
+.badge {
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 15px;
+    font-weight: 500 !important;
+    text-transform: uppercase;
+
+    &.actualizado {
+        background: #e3f2fd;
+        color: #1976d2;
+        border: 1px solid #1976d2;
+        margin-right: 10px !important;
+    }
+
+    &.bloqueado {
+        background: #ffe2e0;
+        color: #f50000;
+        border: 1px solid #f50000;
+    }
+}
+
+.content-status {
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: end;
+    align-items: center;
 }

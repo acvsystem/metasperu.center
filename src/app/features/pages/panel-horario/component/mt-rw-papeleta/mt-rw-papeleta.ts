@@ -140,6 +140,7 @@ export class MtRwPapeleta implements OnInit {
 
       // 4. Escuchar el socket con filtrado reactivo
       this.socketService.onRefreshEmployesEJB((data: any[]) => {
+        console.log(data);
         if (!data) return;
         this.allEmplotes = data;
 
