@@ -146,8 +146,13 @@ export class MtRwPapeleta implements OnInit {
 
         const codigo_unid_ejb = store ? store.codigo_ejb : '0001';
 
+        let filtrados = data.filter(emp => emp.code_unid_servicio === codigo_unid_ejb);
+       
+        if (codigo_unid_ejb === '0016') {
+          filtrados = data.filter(emp => emp.code_unid_servicio === '0016' || emp.code_unid_servicio === '0019');
+        }
         // Filtramos y asignamo
-        const filtrados = data.filter(emp => emp.code_unid_servicio === codigo_unid_ejb);
+
 
         this.employeEJBList = filtrados.map(ejb => ({ key: ejb.nro_documento, value: ejb.nombre_completo }));
         this.listaMaestraTrabajadores = [...filtrados]; // Clonamos para evitar problemas de referencia
@@ -373,9 +378,9 @@ export class MtRwPapeleta implements OnInit {
       if (this.keyStore == 'OF') {
         this.selectTypeBallot = { key: 'compensacion', value: 'Compensacion de horas trabajadas' };
       }
- 
+
       if (this.selectTypeBallot.value == 'Compensacion de horas trabajadas') {
-        
+
         if (property != 'selectEmploye') {
           this.isVacacionesProgramadas = false;
           this.isOtros = false;

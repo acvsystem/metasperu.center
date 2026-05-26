@@ -74,6 +74,7 @@ import { MdlInUpdParametroStore } from './features/pages/configuration/component
 import { MdlExtraParametros } from './features/pages/configuration/component/mt-parametros-tienda/component/mdl-extra-parametros/mdl-extra-parametros';
 import { MtMdlPapeletas } from './features/pages/panel-horario/component/mt-rw-horario/component/mt-mdl-papeletas/mt-mdl-papeletas';
 import { MAT_DATE_LOCALE } from '@angular/material/core';
+import {MatButtonToggleModule} from '@angular/material/button-toggle';
 
 registerLocaleData(localeEsPe);
 @NgModule({
@@ -132,6 +133,7 @@ registerLocaleData(localeEsPe);
     MatMenuModule,
     MatCheckboxModule,
     MatFormFieldModule,
+    MatButtonToggleModule,
     MatTabsModule,
     MatPaginatorModule,
     MatToolbarModule,

@@ -29,7 +29,7 @@ export class RrhhAsistencia {
   dataEJBFeriado: Array<any> = [];
   typeNotification: NotificationType = 'success';
   isNotification: boolean = false;
-
+  databaseEmployes: string = 'tienda';
   cboStoreList: Array<any> = [{ key: 'isDefault', value: 'General' }, { key: 'isDetallado', value: 'Detallado' }, { key: 'isFeriados', value: 'Feriados' }]
 
   columnsInventory: tableColumns[] = [
@@ -234,11 +234,16 @@ export class RrhhAsistencia {
     this.storeService.callRegisterEmployes(socketId).subscribe((data: any) => {
     });
 
+    if (this.databaseEmployes == 'tienda') {
+      this.storeService.callAsistenceEmployes(this.dateCalendar, this.typeCalendar, socketId).subscribe((data: any) => {
+        this.propertyCode = data.property;
+      });
+    }
 
+    if (this.databaseEmployes == 'oficina') {
 
-    this.storeService.callAsistenceEmployes(this.dateCalendar, this.typeCalendar, socketId).subscribe((data: any) => {
-      this.propertyCode = data.property;
-    });
+    }
+
   }
 
 

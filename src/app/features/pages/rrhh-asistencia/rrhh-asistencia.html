@@ -38,6 +38,14 @@
                 class="btn btn-primary btn-sm mobil-margin-button"><mat-icon>calendar_month</mat-icon><span>Consultar</span>
             </button>
         </ion-col>
+        <ion-col size="12" size-md="6" size-lg="6" style="display: flex;justify-content: flex-end;">
+            <section>
+                <mat-button-toggle-group [(ngModel)]="databaseEmployes" aria-label="Font Style">
+                    <mat-button-toggle value="tienda" checked>Tiendas</mat-button-toggle>
+                    <mat-button-toggle value="oficina">Oficina</mat-button-toggle>
+                </mat-button-toggle-group>
+            </section>
+        </ion-col>
 
         <ion-col size="12" size-md="4" size-lg="12" style="display: flex;justify-content: flex-end;">
             <button mat-raised-button class=" btn-excel" (click)="exportData()">
@@ -73,6 +81,3 @@
 }
 
 <mt-loader *ngIf="isLoading" [title]="titleLoader"></mt-loader>
-
-
-
