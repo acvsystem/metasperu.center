@@ -136,7 +136,8 @@ export class MtRwPapeleta implements OnInit {
 
       const serieDecrypted = this.storeService.decrypt(codeStoreEncrypted);
       const store = this.storeList.find(s => s.serie === serieDecrypted);
-    
+      this.keyStore = store ? store.serie : 'OF';
+      
       if (!store) {
         console.warn('No se encontró la tienda con serie:', serieDecrypted);
         //  return;
