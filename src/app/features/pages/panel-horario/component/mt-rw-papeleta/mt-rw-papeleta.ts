@@ -86,6 +86,7 @@ export class MtRwPapeleta implements OnInit {
   isNotification: boolean = false;
   messageNotification: string = '';
   nroPapeleta: string = "---------";
+  dataPermisions: Array<any> = [];
   cargoEmployes: Array<any> = [
     { key: 'Asesor', value: 'Asesor' },
     { key: 'Gerente', value: 'Gerente' },
@@ -112,9 +113,12 @@ export class MtRwPapeleta implements OnInit {
 
   }
 
+
+
   async ngOnInit(): Promise<void> {
 
     try {
+
 
       const ahora = new Date();
       this.fechaHoy = `${ahora.getFullYear()}/${String(ahora.getMonth() + 1).padStart(2, '0')}/${String(ahora.getDate()).padStart(2, '0')}`;
@@ -122,7 +126,8 @@ export class MtRwPapeleta implements OnInit {
       // Usamos await si tus métodos son async, o convertimos a promesa.
       await Promise.all([
         this.onStoreList(),
-        this.onEmpleadosList()
+        this.onEmpleadosList(),
+        this.allAtorizacionHoraExtra()
       ]);
 
       // 3. Obtener y validar tienda
@@ -131,8 +136,7 @@ export class MtRwPapeleta implements OnInit {
 
       const serieDecrypted = this.storeService.decrypt(codeStoreEncrypted);
       const store = this.storeList.find(s => s.serie === serieDecrypted);
-      this.keyStore = store ? store.serie : 'OF';
-
+    
       if (!store) {
         console.warn('No se encontró la tienda con serie:', serieDecrypted);
         //  return;
@@ -147,7 +151,7 @@ export class MtRwPapeleta implements OnInit {
         const codigo_unid_ejb = store ? store.codigo_ejb : '0001';
 
         let filtrados = data.filter(emp => emp.code_unid_servicio === codigo_unid_ejb);
-       
+
         if (codigo_unid_ejb === '0016') {
           filtrados = data.filter(emp => emp.code_unid_servicio === '0016' || emp.code_unid_servicio === '0019');
         }
@@ -164,6 +168,12 @@ export class MtRwPapeleta implements OnInit {
     }
   }
 
+  allAtorizacionHoraExtra() {
+    this.storeService.getPermissionStore().subscribe((data) => {
+      this.dataPermisions = data;
+      console.log(this.dataPermisions);
+    });
+  };
 
   async onStoreList() {
     try {
@@ -475,6 +485,8 @@ export class MtRwPapeleta implements OnInit {
   }
 
   onSaveBallot() {
+
+    const isPermision = this.dataPermisions.find((store) => store.serie === this.keyStore);
     // 1. Validación de campos obligatorios
     if (Object.keys(this.selectEmploye).length === 0 ||
       Object.keys(this.selectTypeBallot).length === 0 ||
@@ -485,7 +497,7 @@ export class MtRwPapeleta implements OnInit {
     }
 
     // 2. Validación: No puede ser hoy
-    if (this.validarSiEsHoy(this.dateCalendarDesde || '', this.dateCalendarHasta || '')) {
+    if (this.validarSiEsHoy(this.dateCalendarDesde || '', this.dateCalendarHasta || '') && isPermision?.papeletaPermiso == 0) {
       this.messageNotification = 'No puede crear papeleta con fecha de hoy.';
       this.abrirNotificacion('danger');
       return;
