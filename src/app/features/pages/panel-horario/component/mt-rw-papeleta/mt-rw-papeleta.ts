@@ -251,10 +251,10 @@ export class MtRwPapeleta implements OnInit {
     const totalOriginal = this.convertirAMinutos(this.totalHorasDisponiblesOriginal);
     const totalSolicitado = diffMinutos;
     this.horasDisponibles = this.convertirAFormato(Math.max(0, totalOriginal - totalSolicitado));
-
+    console.log('Horas solicitadas:', this.horasSolicitadas, 'Horas disponibles:', this.totalHorasDisponiblesOriginal);
     this.excesoPermitido = this.esMayorQueDisponible(this.horasSolicitadas, this.horasDisponibles);
 
-    if (!this.excesoPermitido) {
+    if (!this.excesoPermitido || this.horasSolicitadas == this.totalHorasDisponiblesOriginal) {
       this.distribuirHorasSolicitadas();
     }
   }
@@ -279,11 +279,11 @@ export class MtRwPapeleta implements OnInit {
         continue;
       }
 
-      if (minutosPorCubrir <= 0) break;
+     // if (minutosPorCubrir <= 0) break;
 
       const minutosDisponibles = this.convertirAMinutos(row.HR_EXTRA_SOBRANTE || row.HR_EXTRA_ACUMULADO);
       const minutosYaSolicitados = this.convertirAMinutos(row.HR_EXTRA_SOLICITADO || "00:00");
-
+   
       if (minutosDisponibles > 0) {
         const aDescontar = Math.min(minutosPorCubrir, minutosDisponibles);
 
@@ -292,8 +292,8 @@ export class MtRwPapeleta implements OnInit {
         // Asignar valores
         row.HR_EXTRA_SOLICITADO = this.convertirAFormato(nuevoTotalSolicitado);
         row.HR_EXTRA_SOBRANTE = this.convertirAFormato(minutosDisponibles - aDescontar);
-        row.ESTADO = row.HR_EXTRA_SOBRANTE === '00:00' ? 'UTILIZADO' : row.ESTADO;
-
+        row.ESTADO = row.HR_EXTRA_SOBRANTE === '00:00' ? 'utilizado' : row.ESTADO;
+        
         // AGREGAR AL ARRAY DE AFECTADOS
         this.detallesAfectados.push({
           idHrExtra: row.ID_HR_EXTRA,
@@ -524,7 +524,7 @@ export class MtRwPapeleta implements OnInit {
       this.abrirNotificacion('danger');
       return;
     }
-
+    console.log(this.detallesAfectados);
     // 5. Validación: Detalles asignados
     if (this.detallesAfectados.length === 0 && this.isCompensacion) {
       this.messageNotification = 'No tiene horas extras asignadas.';
