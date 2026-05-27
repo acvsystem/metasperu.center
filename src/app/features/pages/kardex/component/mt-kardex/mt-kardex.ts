@@ -169,7 +169,7 @@ export class MtKardex {
     this.v_total_gastos = item.clTotalGasto;
     this.v_flete_acarreo = item.clFleteAcarreo;
     this.v_registro_sanitario = item.clRegistroSanitario;
-    this.v_numero_serie = item.cmpSerie;
+    this.v_numero_serie = item.clNSerieDocuento;
     this.v_observacion = item.clObservacion;
     this.v_contenedor = item.clContenedor;
 
