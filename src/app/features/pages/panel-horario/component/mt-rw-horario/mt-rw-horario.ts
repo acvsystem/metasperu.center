@@ -550,9 +550,9 @@ export class MtRwHorario implements CanComponentDeactivate {
   async guardarHorarioCompleto() {
     this.titleLoader = "Cargando registros...";
     const ahora = new Date();
-    const fechaHoyPC = ahora.toLocaleDateString('en-CA'); // 'en-CA' genera YYYY-MM-DD
+    const fechaHoyPC = ahora.toLocaleDateString('es-ES'); // 'en-CA' genera YYYY-MM-DD
 
-    const payload = { codigoTienda: this.keyStore, fechaCabecera: fechaHoyPC, rangoDias: `${this.horariosProcesados[0].dias[0].fecha} al ${this.horariosProcesados[0].dias[6].fecha}`, datos: this.horariosProcesados };
+    const payload = { codigoTienda: this.keyStore, fechaCabecera: fechaHoyPC, rangoDias: `${this.convertirFecha(this.horariosProcesados[0].dias[0].fecha)} al ${this.convertirFecha(this.horariosProcesados[0].dias[6].fecha)}`, datos: this.horariosProcesados };
 
     this.isLoading = false;
     this.hayCambios = false;
@@ -634,16 +634,21 @@ export class MtRwHorario implements CanComponentDeactivate {
     this.tabIndex = index;
   }
 
+  convertirFecha(fecha: string): string {
+  const [anio, mes, dia] = fecha.split('-');
+  return `${dia}-${mes}-${anio}`;
+}
+
   async editarHorarioCompleto() {
     this.isLoading = true;
     this.titleLoader = "Cargando registros...";
     const ahora = new Date();
-    const fechaHoyPC = ahora.toLocaleDateString('en-CA'); // 'en-CA' genera YYYY-MM-DD
+    const fechaHoyPC = ahora.toLocaleDateString('es-ES'); // 'en-CA' genera YYYY-MM-DD
 
     const payload = {
       codigoTienda: this.keyStore,
       fechaCabecera: fechaHoyPC,
-      rangoDias: `${this.horariosProcesados[0].dias[0].fecha} al ${this.horariosProcesados[0].dias[6].fecha}`,
+      rangoDias: `${this.convertirFecha(this.horariosProcesados[0].dias[0].fecha)} al ${this.convertirFecha(this.horariosProcesados[0].dias[6].fecha)}`,
       datos: this.horariosProcesados,
       rango: `${this.dateCalendar[0]} ${this.dateCalendar[1]}`
     };
