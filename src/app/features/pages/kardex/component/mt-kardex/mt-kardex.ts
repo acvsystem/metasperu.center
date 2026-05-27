@@ -155,6 +155,7 @@ export class MtKardex {
   }
 
   onSelectAlbaran(item: any) {
+    console.log(item);
     let startDayLetter = moment((item || {}).cmpFechaAlbaran).format('YYYY-MM-DD');
     const fecha = startDayLetter;
     const hora = moment((item || {}).cmpFechaAlbaran).format('hh:mm:ss');
@@ -165,7 +166,7 @@ export class MtKardex {
 
     this.v_numero_despacho = item.clDespacho;
     this.v_tasa_cambio = item.clTasaCambio;
-    this.v_total_gastos = item.clTotalGastos;
+    this.v_total_gastos = item.clTotalGasto;
     this.v_flete_acarreo = item.clFleteAcarreo;
     this.v_registro_sanitario = item.clRegistroSanitario;
     this.v_numero_serie = item.cmpSerie;
