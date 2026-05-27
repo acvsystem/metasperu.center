@@ -582,7 +582,7 @@ export class MtRwHorario implements CanComponentDeactivate {
     this.isLoading = true;
     const fechaFormateada_1: string = this.dateCalendar[0].split('-').reverse().join('-');
     const fechaFormateada_2: string = this.dateCalendar[1].split('-').reverse().join('-');
-    this.storeService.postSearchHorarios({ range_days: `${fechaFormateada_1} ${fechaFormateada_2}`, code_store: this.keyStore }).subscribe((response: any) => {
+    this.storeService.postoneSearchHorarios({ range_days: `${fechaFormateada_1} ${fechaFormateada_2}`, code_store: this.keyStore }).subscribe((response: any) => {
 
       if (response?.length > 0) {
         this.isLoading = false;
@@ -603,7 +603,7 @@ export class MtRwHorario implements CanComponentDeactivate {
       const fechaFormateada_1: string = this.dateCalendar[0].split('-').reverse().join('-');
       const fechaFormateada_2: string = this.dateCalendar[1].split('-').reverse().join('-');
 
-      this.storeService.postSearchHorarios({ range_days: `${fechaFormateada_1} ${fechaFormateada_2}`, code_store: this.keyStore }).subscribe((response: any) => {
+      this.storeService.postoneSearchHorarios({ range_days: `${fechaFormateada_1} ${fechaFormateada_2}`, code_store: this.keyStore }).subscribe((response: any) => {
         this.isLoading = false;
         this.hayCambios = false;
         this.isEditing = true;
