@@ -539,6 +539,10 @@ export class StoreService {
     updateDateBallot(body: any): Observable<any> {
         return this.http.put<any>(`${this.API_URL_RESOURCES_HUMAN}/api/update/date/schedule/store`, body);
     }
+
+    getAccoutingSokectOnline(): Observable<[]> {
+        return this.http.get<[]>(`${this.API_URL_ACCOUNTING}/api/stores/online`);
+    }
 }
 
 export interface Ballot {

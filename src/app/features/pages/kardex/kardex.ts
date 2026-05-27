@@ -10,14 +10,24 @@ import { StoreService } from '@metasperu/services/store.service';
 export class Kardex {
   storeList: Array<any> = [];
   cboStoreList: Array<any> = [];
-
+  onlineStores: Array<any> = [];
   constructor(private storeService: StoreService) { }
 
   ngOnInit() {
+    this.onOnlineStores();
     this.storeService.getStores().subscribe(
       response => {
         this.storeList = response;
         this.cboStoreList = this.storeList.map(store => ({ key: store.serie, value: store.nombre }));
+      }
+    );
+  }
+
+  onOnlineStores() {
+    this.storeService.getAccoutingSokectOnline().subscribe(
+      (response: any) => {
+        this.onlineStores = response?.tiendasOnline || [];
+        ;
       }
     );
   }

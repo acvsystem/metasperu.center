@@ -17,6 +17,17 @@
                 class="btn btn-primary btn-sm mobil-margin-button"><mat-icon>search</mat-icon>
             </button>
         </ion-col>
+        <ion-col sizeXs="12" sizeSm="12" sizeMd="7" sizeLg="7"
+            style="display: flex;align-items: center;justify-content: end;">
+            <div style="margin-right: 55px;display: flex;align-items: center;">
+                <div [ngClass]="[isOnline ? 'blob blue': 'blob red']"></div>
+                @if(isOnline){
+                <span style="color:rgb(36, 143, 189)">conectado</span>
+                }@else{
+                <span style="color:rgb(212, 53, 53)">sin conexion</span>
+                }
+            </div>
+        </ion-col>
     </ion-row>
 
     <div class="kardex-dashboard">
@@ -110,7 +121,8 @@
                                 <h3 class="title-page" style="margin: 0; font-weight: 700; color: #25282b;">Campos
                                     Libres
                                 </h3>
-                                <h5 style="margin: 0;color: #2c3e50;margin-left: 10px;" >- {{albSelectionated.cmpSerie}} | {{albSelectionated.cmpNumero}}</h5>
+                                <h5 style="margin: 0;color: #2c3e50;margin-left: 10px;">- {{albSelectionated.cmpSerie}}
+                                    | {{albSelectionated.cmpNumero}}</h5>
                             </div>
                             <p style="color: #7f8c8d; margin: 4px 0 15px 0;">Registro de campos libres</p>
                         </ion-col>

@@ -17,6 +17,7 @@ import moment from 'moment';
 })
 export class MtKardex {
   @Input() cboStore: Array<any> = [];
+  @Input() storeOnline: Array<any> = [];
 
   codeStore: string = "";
   v_num_albaran: string = "";
@@ -32,7 +33,7 @@ export class MtKardex {
   v_numero_serie: string = "";
   v_observacion: string = "";
   v_contenedor: string = "";
-
+  isOnline: boolean = false;
   storesSelected: Array<any> = [];
   dateCalendar: Array<any> = [];
   dataAlbaran: Array<any> = [];
@@ -110,12 +111,17 @@ export class MtKardex {
     if (changes['cboStore'] && changes['cboStore'].currentValue) {
       this.cboStore = changes['cboStore'].currentValue;
     }
+
+    if (changes['storeOnline'] && changes['storeOnline'].currentValue) {
+      this.storeOnline = changes['storeOnline'].currentValue;
+    }
   }
 
   onChangeSelect(item: any, property?: string) {
     if (property != 'v_motivo' && property != 'v_tipo_documento') {
       this.storesSelected = [];
       this.storesSelected = [{ serie: item.key, nombre: item.value }];
+      this.isOnline = this.storeOnline.findIndex(store => store.serie === item.key) !== -1;
     }
 
     if (property == 'v_motivo') {
@@ -212,7 +218,7 @@ export class MtKardex {
 
       this.bodyRegisterCpl = body;
       this.storeService.postKardexCamposLibres(body).subscribe((data: any) => {
-       // console.log(data);
+        // console.log(data);
       });
     } else {
       this.messageNotification = 'Seleccione un albaran.';

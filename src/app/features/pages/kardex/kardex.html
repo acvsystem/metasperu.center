@@ -8,10 +8,10 @@
 
     <mat-tab-group dynamicHeight>
         <mat-tab label="KARDEX">
-            <mt-kardex [cboStore]="cboStoreList"></mt-kardex>
+            <mt-kardex [storeOnline]="onlineStores" [cboStore]="cboStoreList"></mt-kardex>
         </mat-tab>
         <mat-tab label="CUO">
-            <mt-cuo [cboStore]="cboStoreList"></mt-cuo>
+            <mt-cuo [storeOnline]="onlineStores" [cboStore]="cboStoreList"></mt-cuo>
         </mat-tab>
     </mat-tab-group>
 </ion-grid>

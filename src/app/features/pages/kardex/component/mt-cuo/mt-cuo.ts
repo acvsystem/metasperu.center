@@ -13,9 +13,11 @@ import { MatPaginator } from '@angular/material/paginator';
 })
 export class MtCuo {
   @Input() cboStore: Array<any> = [];
+  @Input() storeOnline: Array<any> = [];
   messageNotification: string = '';
   typeNotification: NotificationType = 'success';
   isNotification: boolean = false;
+  isOnline: boolean = false;
   storesSelected: Array<any> = [];
   dateCalendar: Array<any> = [];
   displayedColumns: string[] = ['tabla', 'documento', 'fecha', 'comentario', 'cuo'];
@@ -40,6 +42,7 @@ export class MtCuo {
   onChangeSelect(item: any) {
     this.storesSelected = [];
     this.storesSelected = [{ serie: item.key, nombre: item.value }];
+    this.isOnline = this.storeOnline.findIndex(store => store.serie === item.key) !== -1;
   }
 
   onCalendar(event: any): void {

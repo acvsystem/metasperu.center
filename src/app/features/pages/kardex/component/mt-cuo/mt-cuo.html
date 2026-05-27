@@ -23,6 +23,17 @@
                 <span style="margin-left: 5px;">Registrar cuo</span>
             </button>
         </ion-col>
+        <ion-col sizeXs="12" sizeSm="12" sizeMd="4" sizeLg="4"
+            style="display: flex;align-items: center;justify-content: end;">
+            <div style="margin-right: 55px;display: flex;align-items: center;">
+                <div [ngClass]="[isOnline ? 'blob blue': 'blob red']"></div>
+                @if(isOnline){
+                <span style="color:rgb(36, 143, 189)">conectado</span>
+                }@else{
+                <span style="color:rgb(212, 53, 53)">sin conexion</span>
+                }
+            </div>
+        </ion-col>
     </ion-row>
     <ion-row>
         <ion-col>
