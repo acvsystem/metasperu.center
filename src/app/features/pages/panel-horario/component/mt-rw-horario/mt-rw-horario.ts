@@ -45,6 +45,7 @@ export class MtRwHorario implements CanComponentDeactivate {
   keyStore: string = "";
   storeList: Array<any> = [];
   employeEJBList: Array<any> = [];
+  dataPermisions: any = {};
   isCreatePapeleta: boolean = false;
   listaMaestraTrabajadores: Array<any> = [];
   tabIndex = 0;
@@ -79,6 +80,8 @@ export class MtRwHorario implements CanComponentDeactivate {
       const store = this.storeList.find(s => s.serie === serieDecrypted);
       this.keyStore = store ? store.serie : 'OF';
 
+      this.allAtorizacionHoraExtra()
+
       if (!store) {
         console.warn('No se encontró la tienda con serie:', serieDecrypted);
         //  return;
@@ -102,6 +105,14 @@ export class MtRwHorario implements CanComponentDeactivate {
       console.error('Error al inicializar datos de tienda:', error);
     }
   }
+
+  allAtorizacionHoraExtra() {
+    this.storeService.getPermissionStore().subscribe((data: any) => {
+      const isPermision = data.find((store: any) => store.serie === this.keyStore);
+      this.puedeEditarPasado = isPermision?.horarioPermiso == 1 ? true : false;
+      console.log(isPermision);
+    });
+  };
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes && changes.hasOwnProperty('dataSearch')) {
