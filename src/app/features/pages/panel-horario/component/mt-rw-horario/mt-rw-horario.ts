@@ -580,7 +580,9 @@ export class MtRwHorario implements CanComponentDeactivate {
 
   onVerificarHorario() {
     this.isLoading = true;
-    this.storeService.postoneSearchHorarios({ rango_fecha: `${this.dateCalendar[0]} ${this.dateCalendar[1]}`, codigoTienda: this.keyStore }).subscribe((response: any) => {
+    const fechaFormateada_1: string = this.dateCalendar[0].split('-').reverse().join('-');
+    const fechaFormateada_2: string = this.dateCalendar[1].split('-').reverse().join('-');
+    this.storeService.postSearchHorarios({ range_days: `${fechaFormateada_1} ${fechaFormateada_2}`, code_store: this.keyStore }).subscribe((response: any) => {
 
       if (response?.length > 0) {
         this.isLoading = false;
@@ -598,7 +600,10 @@ export class MtRwHorario implements CanComponentDeactivate {
     if (this.dateCalendar.length > 0) {
       this.isLoading = true;
 
-      this.storeService.postoneSearchHorarios({ rango_fecha: `${this.dateCalendar[0]} ${this.dateCalendar[1]}`, codigoTienda: this.keyStore }).subscribe((response: any) => {
+      const fechaFormateada_1: string = this.dateCalendar[0].split('-').reverse().join('-');
+      const fechaFormateada_2: string = this.dateCalendar[1].split('-').reverse().join('-');
+
+      this.storeService.postSearchHorarios({ range_days: `${fechaFormateada_1} ${fechaFormateada_2}`, code_store: this.keyStore }).subscribe((response: any) => {
         this.isLoading = false;
         this.hayCambios = false;
         this.isEditing = true;
@@ -658,7 +663,7 @@ export class MtRwHorario implements CanComponentDeactivate {
       fechaCabecera: fechaHoyPC,
       rangoDias: `${this.convertirFecha(this.horariosProcesados[0].dias[0].fecha)} ${this.convertirFecha(this.horariosProcesados[0].dias[6].fecha)}`,
       datos: this.horariosProcesados,
-      rango: `${this.dateCalendar[0]} ${this.dateCalendar[1]}`
+      rango: `${this.convertirFecha(this.horariosProcesados[0].dias[0].fecha)} ${this.convertirFecha(this.horariosProcesados[0].dias[6].fecha)}`
     };
 
     this.isLoading = false;

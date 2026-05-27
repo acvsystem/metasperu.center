@@ -116,7 +116,7 @@
 
                         <div *ngFor="let dia of item.dias" class="header-dia" [class.day-blocked]="dia.dayBlock">
                             <span>{{ dia.dia }} </span>
-                            <small style="display: inline-flex">{{ dia.fecha }}
+                            <small style="display: inline-flex">{{ dia.fecha | date: 'dd-MM' }}
                                 <button *ngIf="dia.notasDia?.length > 0" matTooltip="Observaciones"
                                     class="btn-add-mini btn-danger btn-observacion"
                                     (click)="openDialogObservacion(dia, dia.id_dia)"
@@ -164,7 +164,7 @@
                             </div>
                         </ng-container>
 
-                        <ng-container *ngIf="item.cargo !='Vacaciones'">
+                        <ng-container>
                             <div class="rango-label libre-label">DIAS LIBRES</div>
                             <div *ngFor="let celda of item.filaLibres; let i = index" class="celda-libre"
                                 [class.cell-blocked]="celda.dayBlock && !puedeEditarPasado">
