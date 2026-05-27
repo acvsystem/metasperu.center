@@ -25,7 +25,7 @@ const routes: Routes = [
     path: 'inventario',
     component: Inventario,
     canActivate: [authGuard],
-    data: { roles: ['SISTEMAS', 'RRHH', 'INVENTARIO', 'OPERACIONES', 'TIENDA'] }
+    data: { roles: ['SISTEMAS', 'RRHH', 'INVENTARIO', 'OPERACIONES', 'TIENDA', 'MARKETING'] }
   },
   {
     path: 'asistencia',
@@ -55,7 +55,7 @@ const routes: Routes = [
     path: 'panel-horario',
     component: PanelHorario,
     canActivate: [authGuard],
-    data: { roles: ['SISTEMAS', 'OPERACIONES', 'TIENDA', 'RRHH'] }
+    data: { roles: ['SISTEMAS', 'OPERACIONES', 'TIENDA', 'RRHH', 'MARKETING'] }
   },
   {
     path: 'tipo-cambio',
