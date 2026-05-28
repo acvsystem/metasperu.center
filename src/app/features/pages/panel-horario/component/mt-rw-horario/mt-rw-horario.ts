@@ -572,21 +572,21 @@ export class MtRwHorario implements CanComponentDeactivate {
     this.isLoading = false;
     this.hayCambios = false;
     // Enviar al servicio
-    /* this.storeService.postRegisterHorarios(payload).subscribe({
-       next: (response: any) => {
-         this.isLoading = false;
-         this.limpiarCache();
-         this.onSearch();
-         this.messageNotification = response.message || 'null';
-         this.abrirNotificacion('success');
- 
-       },
-       error: (error: any) => {
-         this.isLoading = false;
-         this.messageNotification = error.message || 'Error al guardar el horario.';
-         this.abrirNotificacion('danger');
-       }
-     });*/
+    this.storeService.postRegisterHorarios(payload).subscribe({
+      next: (response: any) => {
+        this.isLoading = false;
+        this.limpiarCache();
+        this.onSearch();
+        this.messageNotification = response.message || 'null';
+        this.abrirNotificacion('success');
+
+      },
+      error: (error: any) => {
+        this.isLoading = false;
+        this.messageNotification = error.message || 'Error al guardar el horario.';
+        this.abrirNotificacion('danger');
+      }
+    });
   }
 
   onVerificarHorario() {
