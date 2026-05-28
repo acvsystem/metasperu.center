@@ -567,26 +567,26 @@ export class MtRwHorario implements CanComponentDeactivate {
       year: 'numeric'
     }).format(ahora).replace(/\//g, '-');
 
-    const payload = { codigoTienda: this.keyStore, fechaCabecera: fechaHoyPC, rangoDias: `${this.convertirFecha(this.horariosProcesados[0].dias[0].fecha)} ${this.convertirFecha(this.horariosProcesados[0].dias[6].fecha)}`, datos: this.horariosProcesados };
+    const payload = { codigoTienda: this.keyStore, fechaCabecera: fechaHoyPC, rangoDias: `${this.convertirFechaAll(this.horariosProcesados[0].dias[0].fecha)} ${this.convertirFechaAll(this.horariosProcesados[0].dias[6].fecha)}`, datos: this.horariosProcesados };
 
     this.isLoading = false;
     this.hayCambios = false;
     // Enviar al servicio
-    this.storeService.postRegisterHorarios(payload).subscribe({
-      next: (response: any) => {
-        this.isLoading = false;
-        this.limpiarCache();
-        this.onSearch();
-        this.messageNotification = response.message || 'null';
-        this.abrirNotificacion('success');
-
-      },
-      error: (error: any) => {
-        this.isLoading = false;
-        this.messageNotification = error.message || 'Error al guardar el horario.';
-        this.abrirNotificacion('danger');
-      }
-    });
+    /* this.storeService.postRegisterHorarios(payload).subscribe({
+       next: (response: any) => {
+         this.isLoading = false;
+         this.limpiarCache();
+         this.onSearch();
+         this.messageNotification = response.message || 'null';
+         this.abrirNotificacion('success');
+ 
+       },
+       error: (error: any) => {
+         this.isLoading = false;
+         this.messageNotification = error.message || 'Error al guardar el horario.';
+         this.abrirNotificacion('danger');
+       }
+     });*/
   }
 
   onVerificarHorario() {
@@ -669,18 +669,23 @@ export class MtRwHorario implements CanComponentDeactivate {
       year: 'numeric'
     }).format(ahora).replace(/\//g, '-');
 
+
+    console.log(this.horariosProcesados[0].dias[0].fecha);
+
+
     const payload = {
       codigoTienda: this.keyStore,
       fechaCabecera: fechaHoyPC,
-      rangoDias: `${this.convertirFecha(this.horariosProcesados[0].dias[0].fecha)} ${this.convertirFecha(this.horariosProcesados[0].dias[6].fecha)}`,
+      rangoDias: `${this.convertirFechaAll(this.horariosProcesados[0].dias[0].fecha)} ${this.convertirFechaAll(this.horariosProcesados[0].dias[6].fecha)}`,
       datos: this.horariosProcesados,
-      rango: `${this.convertirFecha(this.horariosProcesados[0].dias[0].fecha)} ${this.convertirFecha(this.horariosProcesados[0].dias[6].fecha)}`
+      rango: `${this.convertirFechaAll(this.horariosProcesados[0].dias[0].fecha)} ${this.convertirFechaAll(this.horariosProcesados[0].dias[6].fecha)}`
     };
 
     this.isLoading = false;
     this.hayCambios = false;
+    console.log(payload);
     // Enviar al servicio
-    this.storeService.putHorario(payload).subscribe({
+    /*this.storeService.putHorario(payload).subscribe({
       next: (response: any) => {
         this.isLoading = false;
         this.limpiarCache();
@@ -692,7 +697,7 @@ export class MtRwHorario implements CanComponentDeactivate {
         this.messageNotification = error.message || 'Error al guardar el horario.';
         this.abrirNotificacion('danger');
       }
-    });
+    });*/
   }
 
 
@@ -700,4 +705,118 @@ export class MtRwHorario implements CanComponentDeactivate {
     this.isCreatePapeleta = !this.isCreatePapeleta;
   }
 
+  convertirFechaAll(fecha: string | Date): string {
+    if (!fecha) return '';
+
+    // Si ya es Date
+    if (fecha instanceof Date) {
+      return this.formatear(fecha);
+    }
+
+    let texto = fecha.toString().trim();
+
+    // Quitar espacios extras
+    texto = texto.replace(/\s+/g, ' ');
+
+    // Caso: "25 - May"
+    const regexDiaMes = /^(\d{1,2})\s*-\s*([A-Za-zñÑáéíóúÁÉÍÓÚ]+)\.?$/;
+
+    if (regexDiaMes.test(texto)) {
+      const match = texto.match(regexDiaMes);
+
+      if (match) {
+        const dia = parseInt(match[1], 10);
+        const mesTexto = match[2].toLowerCase();
+
+        const meses: any = {
+          jan: 0,
+          january: 0,
+          ene: 0,
+          enero: 0,
+
+          feb: 1,
+          february: 1,
+          febrero: 1,
+
+          mar: 2,
+          march: 2,
+          marzo: 2,
+
+          apr: 3,
+          april: 3,
+          abr: 3,
+          abril: 3,
+
+          may: 4,
+          mayo: 4,
+
+          jun: 5,
+          june: 5,
+          junio: 5,
+
+          jul: 6,
+          july: 6,
+          julio: 6,
+
+          aug: 7,
+          august: 7,
+          ago: 7,
+          agosto: 7,
+
+          sep: 8,
+          september: 8,
+          sept: 8,
+          septiembre: 8,
+
+          oct: 9,
+          october: 9,
+          octubre: 9,
+
+          nov: 10,
+          november: 10,
+          noviembre: 10,
+
+          dec: 11,
+          december: 11,
+          dic: 11,
+          diciembre: 11,
+        };
+
+        const mes = meses[mesTexto];
+
+        if (mes !== undefined) {
+          const anio = new Date().getFullYear();
+          return this.formatear(new Date(anio, mes, dia));
+        }
+      }
+    }
+
+    // Caso YYYY-MM-DD
+    if (/^\d{4}-\d{2}-\d{2}$/.test(texto)) {
+      const [anio, mes, dia] = texto.split('-');
+      return `${dia}-${mes}-${anio}`;
+    }
+
+    // Caso DD-MM-YYYY
+    if (/^\d{2}-\d{2}-\d{4}$/.test(texto)) {
+      return texto;
+    }
+
+    // Intento genérico
+    const fechaObj = new Date(texto);
+
+    if (!isNaN(fechaObj.getTime())) {
+      return this.formatear(fechaObj);
+    }
+
+    return '';
+  }
+
+  formatear(fecha: Date): string {
+    const dia = String(fecha.getDate()).padStart(2, '0');
+    const mes = String(fecha.getMonth() + 1).padStart(2, '0');
+    const anio = fecha.getFullYear();
+
+    return `${dia}-${mes}-${anio}`;
+  }
 }
