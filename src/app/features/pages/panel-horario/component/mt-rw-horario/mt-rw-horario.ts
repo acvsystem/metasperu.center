@@ -135,9 +135,12 @@ export class MtRwHorario implements CanComponentDeactivate {
   }
 
   onEmpleadosList() {
-    const socketId = this.socketService.socketID || '';
-
-    return this.storeService.callRegisterEmployes(socketId).subscribe((data: any) => {
+    this.socketService.socket$.subscribe((id) => {
+      if ((id || "").length) {
+        const socketId = this.socketService.socketID || '';
+        this.storeService.callRegisterEmployes(socketId).subscribe((data: any) => {
+        });
+      }
     });
   }
 

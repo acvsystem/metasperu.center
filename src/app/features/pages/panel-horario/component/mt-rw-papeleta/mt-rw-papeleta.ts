@@ -95,7 +95,7 @@ export class MtRwPapeleta implements OnInit {
   ];
 
   constructor(private storeService: StoreService, private socketService: SocketResourcesHumanService) {
-    this.onEmpleadosList();
+    //this.onEmpleadosList();
     this.storeService.getTypeBallot().subscribe((data) => {
       this.typeBallotList = data?.data.map((ballot: any) => ({ key: ballot.ID_TIPO_PAPELETA, value: ballot.DESCRIPCION }));
     });
@@ -137,7 +137,7 @@ export class MtRwPapeleta implements OnInit {
       const serieDecrypted = this.storeService.decrypt(codeStoreEncrypted);
       const store = this.storeList.find(s => s.serie === serieDecrypted);
       this.keyStore = store ? store.serie : 'OF';
-      
+
       if (!store) {
         console.warn('No se encontró la tienda con serie:', serieDecrypted);
         //  return;
@@ -191,8 +191,12 @@ export class MtRwPapeleta implements OnInit {
   }
 
   onEmpleadosList() {
-    const socketId = this.socketService.socketID || '';
-    return this.storeService.callRegisterEmployes(socketId).subscribe((data: any) => {
+    this.socketService.socket$.subscribe((id) => {
+      if ((id || "").length) {
+        const socketId = this.socketService.socketID || '';
+        this.storeService.callRegisterEmployes(socketId).subscribe((data: any) => {
+        });
+      }
     });
   }
 
@@ -279,11 +283,11 @@ export class MtRwPapeleta implements OnInit {
         continue;
       }
 
-     // if (minutosPorCubrir <= 0) break;
+      // if (minutosPorCubrir <= 0) break;
 
       const minutosDisponibles = this.convertirAMinutos(row.HR_EXTRA_SOBRANTE || row.HR_EXTRA_ACUMULADO);
       const minutosYaSolicitados = this.convertirAMinutos(row.HR_EXTRA_SOLICITADO || "00:00");
-   
+
       if (minutosDisponibles > 0) {
         const aDescontar = Math.min(minutosPorCubrir, minutosDisponibles);
 
@@ -293,7 +297,7 @@ export class MtRwPapeleta implements OnInit {
         row.HR_EXTRA_SOLICITADO = this.convertirAFormato(nuevoTotalSolicitado);
         row.HR_EXTRA_SOBRANTE = this.convertirAFormato(minutosDisponibles - aDescontar);
         row.ESTADO = row.HR_EXTRA_SOBRANTE === '00:00' ? 'utilizado' : row.ESTADO;
-        
+
         // AGREGAR AL ARRAY DE AFECTADOS
         this.detallesAfectados.push({
           idHrExtra: row.ID_HR_EXTRA,

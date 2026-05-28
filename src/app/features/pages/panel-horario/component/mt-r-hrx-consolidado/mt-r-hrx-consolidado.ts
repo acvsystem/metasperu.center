@@ -146,15 +146,19 @@ export class MtRHrxConsolidado implements OnInit, OnDestroy {
 
   onEmpleadosList() {
     return new Promise((resolve) => {
-      const socketId = this.socketService.socketID || '';
-      const sub = this.storeService.callRegisterEmployes(socketId).subscribe({
-        next: (data: any) => {
-          // this.storeList = data; // Asumiendo que asignas la data a storeList
-          resolve(true);
-        },
-        error: () => resolve(false)
+      this.socketService.socket$.subscribe((id) => {
+        if ((id || "").length) {
+          const socketId = this.socketService.socketID || '';
+          const sub = this.storeService.callRegisterEmployes(socketId).subscribe({
+            next: (data: any) => {
+              // this.storeList = data; // Asumiendo que asignas la data a storeList
+              resolve(true);
+            },
+            error: () => resolve(false)
+          });
+          this.subscriptions.add(sub);
+        }
       });
-      this.subscriptions.add(sub);
     });
   }
 
