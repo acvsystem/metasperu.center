@@ -33,8 +33,8 @@ export class SocketResourcesHumanService {
             this.socketID = this.socket?.id;
             this.socketSubject.next(this.socketID);
 
-            this.storeService.callRegisterEmployes(this.socketID).subscribe((data: any) => {
-            });
+           /* this.storeService.callRegisterEmployes(this.socketID).subscribe((data: any) => {
+            });*/
         });
 
     }
