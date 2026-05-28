@@ -1,6 +1,6 @@
 import { Component, Inject, } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-
+import { StoreService } from '@metasperu/services/store.service';
 @Component({
   selector: 'mt-mdl-rango-hora',
   standalone: false,
@@ -13,7 +13,7 @@ export class MtMdlRangoHora {
   error: string | null = null;
 
   constructor(
-    public dialogRef: MatDialogRef<MtMdlRangoHora>,
+    public dialogRef: MatDialogRef<MtMdlRangoHora>,private storeService: StoreService,
     @Inject(MAT_DIALOG_DATA) public data: { rangosExistentes: any[], edicion?: any, cargo: any }
   ) { }
 
@@ -33,6 +33,12 @@ export class MtMdlRangoHora {
   }
 
   validarYGuardar() {
+    // 3. Obtener y validar tienda
+    const codeStoreEncrypted = localStorage.getItem('keyStore');
+    if (!codeStoreEncrypted) return;
+
+    const serieDecrypted = this.storeService.decrypt(codeStoreEncrypted);
+ 
     this.error = null;
 
     // 1. Validación: Selección obligatoria
@@ -59,7 +65,7 @@ export class MtMdlRangoHora {
     const duracionHoras = (minFin - minInicio) / 60;
 
     // 2. Validación: Máximo 9 horas
-    if (duracionHoras < 9 && this.data.cargo != 'Asesores PartTime') {
+    if (duracionHoras < 9 && this.data.cargo != 'Asesores PartTime' && serieDecrypted != 'OF') {
       this.error = 'Rango de hora no debe ser menor a 9 horas.';
       return;
     }

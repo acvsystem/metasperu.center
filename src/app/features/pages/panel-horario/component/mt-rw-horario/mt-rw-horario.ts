@@ -77,6 +77,7 @@ export class MtRwHorario implements CanComponentDeactivate {
       if (!codeStoreEncrypted) return;
 
       const serieDecrypted = this.storeService.decrypt(codeStoreEncrypted);
+     
       const store = this.storeList.find(s => s.serie === serieDecrypted);
       this.keyStore = store ? store.serie : 'OF';
 
