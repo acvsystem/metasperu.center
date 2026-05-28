@@ -685,7 +685,7 @@ export class MtRwHorario implements CanComponentDeactivate {
     this.hayCambios = false;
     console.log(payload);
     // Enviar al servicio
-    /*this.storeService.putHorario(payload).subscribe({
+    this.storeService.putHorario(payload).subscribe({
       next: (response: any) => {
         this.isLoading = false;
         this.limpiarCache();
@@ -697,7 +697,7 @@ export class MtRwHorario implements CanComponentDeactivate {
         this.messageNotification = error.message || 'Error al guardar el horario.';
         this.abrirNotificacion('danger');
       }
-    });*/
+    });
   }
 
 
