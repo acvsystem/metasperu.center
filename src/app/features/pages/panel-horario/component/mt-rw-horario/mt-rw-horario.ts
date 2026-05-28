@@ -77,7 +77,7 @@ export class MtRwHorario implements CanComponentDeactivate {
       if (!codeStoreEncrypted) return;
 
       const serieDecrypted = this.storeService.decrypt(codeStoreEncrypted);
-     
+
       const store = this.storeList.find(s => s.serie === serieDecrypted);
       this.keyStore = store ? store.serie : 'OF';
 
@@ -197,14 +197,19 @@ export class MtRwHorario implements CanComponentDeactivate {
 
   generarHorarioMaestroVacio(fechaInicio: string) {
     this.isEditing = false;
-    const nombresCargos = [
+    const nombresCargos = this.keyStore != 'OF' ? [
       'Gerentes',
       'Cajeros',
       'Asesores',
       'Almaceneros',
       'Asesores PartTime',
       'Vacaciones'
-    ];
+    ] : [
+      'Recursos humanos',
+      'Contabilidad',
+      'Sistemas',
+      'Recepción'
+    ]
 
     const diasSemana = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
 
