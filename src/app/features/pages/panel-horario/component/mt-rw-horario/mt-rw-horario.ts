@@ -61,6 +61,7 @@ export class MtRwHorario implements CanComponentDeactivate {
   constructor(private storeService: StoreService, private socketService: SocketResourcesHumanService) { }
 
   async ngOnInit() {
+    console.info('v1727');
     // 1. Cargar datos base
     this.cargarDeCache();
 
