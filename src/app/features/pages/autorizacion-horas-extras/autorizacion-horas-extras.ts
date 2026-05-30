@@ -65,13 +65,13 @@ export class AutorizacionHorasExtras {
       email: row.email
     }
 
-   /* this.storeService.postRespuestaAprobacionHextra(body).subscribe((res: any) => {
+    this.storeService.postRespuestaAprobacionHextra(body).subscribe((res: any) => {
       if (res.success) {
-        // this.messageNotification = 'Respuesta registrada exitosamente.';
-        //this.abrirNotificacion('success');
+        this.messageNotification = 'Respuesta registrada exitosamente.';
+        this.abrirNotificacion('success');
         this.allAtorizacionHoraExtra();
       }
-    });*/
+    });
   }
 
 
