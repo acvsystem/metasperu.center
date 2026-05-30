@@ -255,9 +255,11 @@ export class MtRwPapeleta implements OnInit {
     const totalOriginal = this.convertirAMinutos(this.totalHorasDisponiblesOriginal);
     const totalSolicitado = diffMinutos;
     this.horasDisponibles = this.convertirAFormato(Math.max(0, totalOriginal - totalSolicitado));
-    console.log('Horas solicitadas:', this.horasSolicitadas, 'Horas disponibles:', this.totalHorasDisponiblesOriginal);
-    this.excesoPermitido = this.esMayorQueDisponible(this.horasSolicitadas, this.horasDisponibles);
 
+
+
+    this.excesoPermitido = this.esMayorQueDisponible(this.horasSolicitadas, this.totalHorasDisponiblesOriginal);
+    console.log('Horas solicitadas:', this.horasSolicitadas, 'Horas disponibles:', this.totalHorasDisponiblesOriginal, this.excesoPermitido);
     if (!this.excesoPermitido || this.horasSolicitadas == this.totalHorasDisponiblesOriginal) {
       this.distribuirHorasSolicitadas();
     }
@@ -288,9 +290,10 @@ export class MtRwPapeleta implements OnInit {
       const minutosDisponibles = this.convertirAMinutos(row.HR_EXTRA_SOBRANTE || row.HR_EXTRA_ACUMULADO);
       const minutosYaSolicitados = this.convertirAMinutos(row.HR_EXTRA_SOLICITADO || "00:00");
 
+      console.log(294, minutosDisponibles > 0, minutosDisponibles);
       if (minutosDisponibles > 0) {
         const aDescontar = Math.min(minutosPorCubrir, minutosDisponibles);
-
+        console.log(294, aDescontar);
         const nuevoTotalSolicitado = minutosYaSolicitados + aDescontar;
 
         // Asignar valores
@@ -306,7 +309,7 @@ export class MtRwPapeleta implements OnInit {
           hrExtraSobrante: row.HR_EXTRA_SOBRANTE,
           fecha: row.FECHA
         });
-
+        console.log(310, this.detallesAfectados);
         minutosPorCubrir -= aDescontar;
       }
     }
