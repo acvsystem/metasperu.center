@@ -91,14 +91,20 @@ export class MtRwHorario implements CanComponentDeactivate {
 
       // 4. Escuchar el socket con filtrado reactivo
       this.socketService.onRefreshEmployesEJB((data: any[]) => {
-        console.log('Datos recibidos por socket:', data);
+        console.log(data);
         if (!data) return;
+
         const codigo_unid_ejb = store ? store.codigo_ejb : '0001';
 
-        // Filtramos y asignamo
-        const filtrados = data.filter(emp => emp.code_unid_servicio === codigo_unid_ejb);
+        let filtrados = data.filter(emp => emp.code_unid_servicio === codigo_unid_ejb);
 
-        this.employeEJBList = filtrados;
+        if (codigo_unid_ejb === '0016') {
+          filtrados = data.filter(emp => emp.code_unid_servicio === '0016' || emp.code_unid_servicio === '0019');
+        }
+        // Filtramos y asignamo
+
+
+        this.employeEJBList = filtrados.map(ejb => ({ key: ejb.nro_documento, value: ejb.nombre_completo }));
         this.listaMaestraTrabajadores = [...filtrados]; // Clonamos para evitar problemas de referencia
 
       });
