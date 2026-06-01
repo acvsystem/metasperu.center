@@ -104,9 +104,8 @@ export class MtRwHorario implements CanComponentDeactivate {
         // Filtramos y asignamo
 
 
-        this.employeEJBList = filtrados.map(ejb => ({ key: ejb.nro_documento, value: ejb.nombre_completo }));
-        this.listaMaestraTrabajadores = [...filtrados]; // Clonamos para evitar problemas de referencia
-
+        this.employeEJBList = filtrados;
+        this.listaMaestraTrabajadores = [...filtrados];
       });
 
     } catch (error) {
