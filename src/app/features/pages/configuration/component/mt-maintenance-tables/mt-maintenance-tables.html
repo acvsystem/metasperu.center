@@ -1,0 +1,79 @@
+<div class="maintenance-container">
+    <div class="maintenance-header">
+        <div>
+            <h2>Mantenimiento de papeletas y horas extra</h2>
+            <small class="text-muted">Administracion directa de cabecera, detalle y bolsa de horas.</small>
+        </div>
+        <button matTooltip="Nuevo registro" (click)="openDialog()" type="button" class="btn btn-primary btn-sm action-button">
+            <mat-icon>add</mat-icon>
+            <span>Nuevo registro</span>
+        </button>
+    </div>
+
+    <mat-button-toggle-group [value]="activeResource.key" (change)="changeResource($event.value)" class="resource-toggle">
+        <mat-button-toggle *ngFor="let resource of resources" [value]="resource.key">
+            {{ resource.title }}
+        </mat-button-toggle>
+    </mat-button-toggle-group>
+
+    <div class="resource-summary">
+        <strong>{{ activeResource.title }}</strong>
+        <span>{{ activeResource.description }}</span>
+    </div>
+
+    <div class="filters-row">
+        <mat-form-field *ngFor="let filter of activeResource.filters" appearance="fill" class="custom-filter-internal">
+            <mat-label>{{ getColumnLabel(filter) }}</mat-label>
+            <input matInput [(ngModel)]="filterValues[filter]" (keyup.enter)="search()">
+        </mat-form-field>
+
+        <button matTooltip="Buscar" (click)="search()" type="button" class="btn btn-primary btn-sm icon-action">
+            <mat-icon>search</mat-icon>
+        </button>
+        <button matTooltip="Limpiar filtros" (click)="clearFilters()" type="button" class="btn btn-light btn-sm icon-action">
+            <mat-icon>filter_alt_off</mat-icon>
+        </button>
+    </div>
+
+    <div class="dynamic-table-container shadow-sm border rounded">
+        <div *ngIf="loading" class="loading-overlay">
+            <mat-spinner diameter="34"></mat-spinner>
+        </div>
+        <table mat-table [dataSource]="dataSource" class="w-100">
+            <ng-container *ngFor="let column of activeResource.displayColumns" [matColumnDef]="column">
+                <th mat-header-cell *matHeaderCellDef> {{ getColumnLabel(column) }} </th>
+                <td mat-cell *matCellDef="let element"> {{ getCellValue(element, column) }} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="acciones">
+                <th mat-header-cell *matHeaderCellDef class="text-center"> Acciones </th>
+                <td mat-cell *matCellDef="let element" class="text-center actions-cell">
+                    <button mat-icon-button color="accent" matTooltip="Editar" (click)="openDialog(element)">
+                        <mat-icon>edit</mat-icon>
+                    </button>
+                    <button mat-icon-button color="warn" matTooltip="Eliminar" (click)="delete(element)">
+                        <mat-icon>delete</mat-icon>
+                    </button>
+                </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+            <tr class="mat-row empty-row" *matNoDataRow>
+                <td class="mat-cell" [attr.colspan]="displayedColumns.length">No hay registros para mostrar.</td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="pagination-row">
+        <span>{{ fromRecord }} - {{ toRecord }} de {{ total }}</span>
+        <div>
+            <button mat-icon-button matTooltip="Anterior" [disabled]="page <= 1" (click)="previousPage()">
+                <mat-icon>chevron_left</mat-icon>
+            </button>
+            <button mat-icon-button matTooltip="Siguiente" [disabled]="page * limit >= total" (click)="nextPage()">
+                <mat-icon>chevron_right</mat-icon>
+            </button>
+        </div>
+    </div>
+</div>

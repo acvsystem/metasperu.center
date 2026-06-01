@@ -543,6 +543,34 @@ export class StoreService {
     getAccoutingSokectOnline(): Observable<[]> {
         return this.http.get<[]>(`${this.API_URL_ACCOUNTING}/api/stores/online`);
     }
+
+    getMaintenanceRecords(resource: string, params: any): Observable<any> {
+        let httpParams = new HttpParams();
+        Object.keys(params || {}).forEach((key) => {
+            const value = params[key];
+            if (value !== undefined && value !== null && value !== '') {
+                httpParams = httpParams.set(key, String(value));
+            }
+        });
+
+        return this.http.get<any>(`${this.API_URL}/api/maintenance/${resource}`, { params: httpParams })
+            .pipe(catchError(this.handleError));
+    }
+
+    createMaintenanceRecord(resource: string, body: any): Observable<any> {
+        return this.http.post<any>(`${this.API_URL}/api/maintenance/${resource}`, body)
+            .pipe(catchError(this.handleError));
+    }
+
+    updateMaintenanceRecord(resource: string, id: number | string, body: any): Observable<any> {
+        return this.http.put<any>(`${this.API_URL}/api/maintenance/${resource}/${id}`, body)
+            .pipe(catchError(this.handleError));
+    }
+
+    deleteMaintenanceRecord(resource: string, id: number | string): Observable<any> {
+        return this.http.delete<any>(`${this.API_URL}/api/maintenance/${resource}/${id}`)
+            .pipe(catchError(this.handleError));
+    }
 }
 
 export interface Ballot {

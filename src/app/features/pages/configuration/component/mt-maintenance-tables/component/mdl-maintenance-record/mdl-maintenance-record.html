@@ -1,0 +1,38 @@
+<div class="modal-custom">
+    <header mat-dialog-title class="modal-header">
+        <mat-icon>{{ isEdit ? 'edit' : 'add' }}</mat-icon>
+        <span style="padding-left: 5px;">{{ isEdit ? 'Editar' : 'Nuevo' }} - {{ data.resource.title }}</span>
+    </header>
+
+    <mat-dialog-content class="modal-body">
+        <form [formGroup]="form" class="maintenance-form">
+            <ng-container *ngFor="let field of data.resource.fields">
+                <mat-form-field *ngIf="field.type !== 'checkbox' && field.type !== 'textarea'" appearance="fill" class="custom-filter-internal">
+                    <mat-label>{{ field.label }}</mat-label>
+                    <input matInput [type]="field.type === 'number' ? 'number' : 'text'" [formControlName]="field.key">
+                    <mat-error *ngIf="form.get(field.key)?.hasError('required')">Campo requerido</mat-error>
+                </mat-form-field>
+
+                <mat-form-field *ngIf="field.type === 'textarea'" appearance="fill" class="form-field form-field-wide">
+                    <mat-label>{{ field.label }}</mat-label>
+                    <textarea matInput rows="3" [formControlName]="field.key"></textarea>
+                    <mat-error *ngIf="form.get(field.key)?.hasError('required')">Campo requerido</mat-error>
+                </mat-form-field>
+
+                <div *ngIf="field.type === 'checkbox'" class="checkbox-field">
+                    <mat-checkbox [formControlName]="field.key">{{ field.label }}</mat-checkbox>
+                </div>
+            </ng-container>
+        </form>
+    </mat-dialog-content>
+
+    <mat-dialog-actions align="end" class="modal-actions">
+        <button (click)="close()" type="button" class="btn btn-danger btn-sm dialog-button">
+            CANCELAR
+        </button>
+        <button [disabled]="form.invalid" (click)="save()" type="button" class="btn btn-primary btn-sm dialog-button">
+            <mat-icon>save</mat-icon>
+            <span>{{ isEdit ? 'ACTUALIZAR' : 'GUARDAR' }}</span>
+        </button>
+    </mat-dialog-actions>
+</div>

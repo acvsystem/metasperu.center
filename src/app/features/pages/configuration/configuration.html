@@ -11,11 +11,14 @@
                 <mat-tab label="Permisos Tiendas">
                     <mt-permisos-tiendas *ngIf="tabIndex === 0"></mt-permisos-tiendas>
                 </mat-tab>
-                <mat-tab label="Usuarios sistema">
+                <mat-tab label="Usuarios sistema" *ngIf="roleUser == 'SISTEMAS'">
                     <mt-usuarios-sistema *ngIf="tabIndex === 1"></mt-usuarios-sistema>
                 </mat-tab>
-                <mat-tab label="Registro Tiendas">
+                <mat-tab label="Registro Tiendas" *ngIf="roleUser == 'SISTEMAS'">
                     <mt-parametros-tienda *ngIf="tabIndex === 2"></mt-parametros-tienda>
+                </mat-tab>
+                <mat-tab label="Mantenimiento RRHH" *ngIf="roleUser == 'SISTEMAS'">
+                    <mt-maintenance-tables *ngIf="tabIndex === 3"></mt-maintenance-tables>
                 </mat-tab>
             </mat-tab-group>
         </ion-col>

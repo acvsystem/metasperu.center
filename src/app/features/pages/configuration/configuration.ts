@@ -9,7 +9,12 @@ import { Component } from '@angular/core';
 })
 export class Configuration {
   tabIndex = 0;
-  
+  roleUser = "";
+
+  ngOnInit() {
+    this.roleUser = localStorage.getItem('name') || "";
+  }
+
   onTabChange(index: number) {
     this.tabIndex = index;
   }

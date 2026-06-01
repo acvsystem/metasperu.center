@@ -62,6 +62,8 @@ import { MtRPapeletas } from './features/pages/panel-horario/component/mt-r-pape
 import { MtRHrxConsolidado } from './features/pages/panel-horario/component/mt-r-hrx-consolidado/mt-r-hrx-consolidado';
 import { Configuration } from './features/pages/configuration/configuration';
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MtPermisosTiendas } from './features/pages/configuration/component/mt-permisos-tiendas/mt-permisos-tiendas';
 import { MtUsuariosSistema } from './features/pages/configuration/component/mt-usuarios-sistema/mt-usuarios-sistema';
 import { MdlUsuarioTienda } from './features/pages/configuration/component/mt-usuarios-sistema/component/mdl-usuario-tienda/mdl-usuario-tienda';
@@ -75,6 +77,8 @@ import { MdlExtraParametros } from './features/pages/configuration/component/mt-
 import { MtMdlPapeletas } from './features/pages/panel-horario/component/mt-rw-horario/component/mt-mdl-papeletas/mt-mdl-papeletas';
 import { MAT_DATE_LOCALE } from '@angular/material/core';
 import {MatButtonToggleModule} from '@angular/material/button-toggle';
+import { MtMaintenanceTables } from './features/pages/configuration/component/mt-maintenance-tables/mt-maintenance-tables';
+import { MdlMaintenanceRecord } from './features/pages/configuration/component/mt-maintenance-tables/component/mdl-maintenance-record/mdl-maintenance-record';
 
 registerLocaleData(localeEsPe);
 @NgModule({
@@ -123,7 +127,9 @@ registerLocaleData(localeEsPe);
     MtParametrosTienda,
     MdlInUpdParametroStore,
     MdlExtraParametros,
-    MtMdlPapeletas
+    MtMdlPapeletas,
+    MtMaintenanceTables,
+    MdlMaintenanceRecord
   ],
   imports: [
     IonicModule.forRoot(),
@@ -132,6 +138,8 @@ registerLocaleData(localeEsPe);
     MatMenu,
     MatMenuModule,
     MatCheckboxModule,
+    MatDialogModule,
+    MatSnackBarModule,
     MatFormFieldModule,
     MatButtonToggleModule,
     MatTabsModule,
