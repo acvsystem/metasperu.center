@@ -75,11 +75,15 @@ export class RrhhAsistencia {
 
     this.socketService.onRefreshEmployesAsistence((data: any) => {
       this.storeService.callRefreshAsistenceEmployes(this.propertyCode).subscribe((data: any) => {
-        this.dataTable = this.obtenerDataPorPropiedad(data, this.propertyCode);
-        if (this.isViewFeriados) {
-          this.dataEJBFeriado = this.obtenerDataPorPropiedad(data, 'ejb');
-          this.dataTableFeriado = this.obtenerFeriado(this.dataTable);
+        if (data.asistencia.length == 2) {
+          this.dataTable = this.obtenerDataPorPropiedad(data, this.propertyCode);
+
+          if (this.isViewFeriados) {
+            this.dataEJBFeriado = this.obtenerDataPorPropiedad(data, 'ejb');
+            this.dataTableFeriado = this.obtenerFeriado(this.dataTable);
+          }
         }
+
         this.isLoading = false;
       });
     });
@@ -234,11 +238,11 @@ export class RrhhAsistencia {
     this.storeService.callRegisterEmployes(socketId).subscribe((data: any) => {
     });
 
-   
-      this.storeService.callAsistenceEmployes(this.dateCalendar, this.typeCalendar, socketId).subscribe((data: any) => {
-        this.propertyCode = data.property;
-      });
-   
+
+    this.storeService.callAsistenceEmployes(this.dateCalendar, this.typeCalendar, socketId).subscribe((data: any) => {
+      this.propertyCode = data.property;
+    });
+
 
     if (this.databaseEmployes == 'oficina') {
 
