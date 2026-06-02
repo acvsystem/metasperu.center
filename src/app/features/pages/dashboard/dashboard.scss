@@ -397,3 +397,9 @@ mat-spinner {
 .mat-tab-group {
   margin-bottom: 48px;
 }
+
+.list-group {
+  max-height: 301px;
+  margin-bottom: 10px;
+  overflow: auto;
+}

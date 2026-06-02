@@ -130,12 +130,12 @@
                   </ul>
                 </div>
 
-                <button (click)="onDeleteColaPanama()" type="button" matTooltip="Eliminar Cola Panamá" disabled
+                <button (click)="onDeleteColaPanama()" type="button" matTooltip="Eliminar Cola Panamá" 
                   style="display: flex;justify-content: center;align-items: center;margin-right: 10px;"
                   class="btn btn-primary btn-sm mobil-margin-button"><mat-icon
                     style="margin-right: 10px;">delete_sweep</mat-icon>
                   Panama</button>
-                <button (click)="drawer.toggle()" type="button" 
+                <button (click)="drawer.toggle()" type="button"
                   style="display: flex;justify-content: center;align-items: center;margin-right: 10px;display: none;"
                   class="btn btn-primary btn-sm mobil-margin-button"><mat-icon
                     style="margin-right: 10px;">storage</mat-icon> Servidor</button>
@@ -301,6 +301,29 @@
                                     style="margin-left: 50px;">{{terminal.cantidad}}</span>
                                   <span *ngIf="terminal.cantidad > 0" class="badge bg-danger badge-pill"
                                     style="margin-left: 50px;">{{terminal.cantidad}}</span>
+                                </li>
+                                }
+                              </ul>
+                            </ion-col>
+                          </ion-row>
+                          <ion-row>
+                            <ion-col sizeXs="3" sizeSm="3" sizeMd="3" sizeLg="3">
+                              <div style="text-align: center;">
+                                <div class="head-terminal">
+                                  Detalles Clientes
+                                </div>
+                              </div>
+                              <ul class="list-group">
+                                @for(detalle of element.detallesClientes; track $index;let idx = $index){
+                                <li class="list-group-item">
+                                  <div style="display: flex;justify-content: space-between;">
+                                    <span>nombreCliente</span>
+                                    <span>{{detalle.nombreCliente}}</span>
+                                  </div>
+                                  <div style="display: flex;justify-content: space-between;">
+                                    <span>nombreComercial</span>
+                                    <span>{{detalle.nombreComercial}}</span>
+                                  </div>
                                 </li>
                                 }
                               </ul>

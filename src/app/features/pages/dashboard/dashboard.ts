@@ -181,6 +181,10 @@ export class Dashboard {
       if (index != -1) {
         this.dataSource.data[index].clientes = response['clients'];
         this.dataSource.data[index].clientesLoading = false;
+        if ((response['detalle_clientes'] || []).length) {
+          this.dataSource.data[index].detallesClientes = response['detalle_clientes'] || [];
+        }
+
       }
     });
 
