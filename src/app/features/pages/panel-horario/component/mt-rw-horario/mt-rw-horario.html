@@ -116,8 +116,21 @@
 
                         <div *ngFor="let dia of item.dias" class="header-dia" [class.day-blocked]="dia.dayBlock">
                             <span>{{ dia.dia }} </span>
-                            <small style="display: inline-flex">{{ dia.fecha  }}
-                                <button  matTooltip="Observaciones"
+                            <small style="display: inline-flex">{{ dia.fecha }}
+                                <button matTooltip="Observaciones" *ngIf="isReadOnly && dia.notasDia?.length > 0"
+                                    class="btn-add-mini btn-danger btn-observacion"
+                                    (click)="openDialogObservacion(dia, dia.id_dia)"
+                                    [class.cell-observacion]="dia.notasDia?.length > 0">
+                                    <mat-icon
+                                        style="font-size: 14px; display: flex; justify-content: center; align-items: center;padding-right: 2px;">
+                                        @if(dia.notasDia?.length > 0){
+                                        priority_high
+                                        }@else if(!isReadOnly){
+                                        add_comment
+                                        }
+                                    </mat-icon>
+                                </button>
+                                <button matTooltip="Observaciones" *ngIf="!isReadOnly"
                                     class="btn-add-mini btn-danger btn-observacion"
                                     (click)="openDialogObservacion(dia, dia.id_dia)"
                                     [class.cell-observacion]="dia.notasDia?.length > 0">

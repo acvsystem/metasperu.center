@@ -267,7 +267,7 @@ export class MtRwHorario implements CanComponentDeactivate {
       code_store: this.dataSearch.code_store
     };
 
-    this.storeService.postSearchHorarios(body).subscribe(response => {
+    this.storeService.postoneSearchHorarios(body).subscribe(response => {
       console.log(response);
       this.isLoading = false;
 
