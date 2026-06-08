@@ -53,7 +53,7 @@
             </button>
 
             <div class="calendar-wrapper">
-                <mt-calendar [isPeriodo]="false" [isMultiSelect]="false" [isDefault]="false" [isRange]="true"
+                <mt-calendar [isPeriodo]="false" [defaultValue]="defaultCalendar" [isMultiSelect]="false" [isDefault]="false" [isRange]="true"
                     placeholder="Seleccione fecha" (afterChange)="onCalendar($event)">
                 </mt-calendar>
             </div>

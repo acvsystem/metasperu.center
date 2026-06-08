@@ -285,32 +285,31 @@ export class MtRwPapeleta implements OnInit {
         continue;
       }
 
-      // if (minutosPorCubrir <= 0) break;
-
       const minutosDisponibles = this.convertirAMinutos(row.HR_EXTRA_SOBRANTE || row.HR_EXTRA_ACUMULADO);
       const minutosYaSolicitados = this.convertirAMinutos(row.HR_EXTRA_SOLICITADO || "00:00");
 
-      console.log(294, minutosDisponibles > 0, minutosDisponibles);
       if (minutosDisponibles > 0) {
         const aDescontar = Math.min(minutosPorCubrir, minutosDisponibles);
-        console.log(294, aDescontar);
         const nuevoTotalSolicitado = minutosYaSolicitados + aDescontar;
 
         // Asignar valores
         row.HR_EXTRA_SOLICITADO = this.convertirAFormato(nuevoTotalSolicitado);
         row.HR_EXTRA_SOBRANTE = this.convertirAFormato(minutosDisponibles - aDescontar);
         row.ESTADO = row.HR_EXTRA_SOBRANTE === '00:00' ? 'utilizado' : row.ESTADO;
+        if (row.HR_EXTRA_SOLICITADO != '00:00') {
 
-        // AGREGAR AL ARRAY DE AFECTADOS
-        this.detallesAfectados.push({
-          idHrExtra: row.ID_HR_EXTRA,
-          hrExtraAcumulado: row.HR_EXTRA_ACUMULADO,
-          hrExtraSolicitado: row.HR_EXTRA_SOLICITADO,
-          hrExtraSobrante: row.HR_EXTRA_SOBRANTE,
-          fecha: row.FECHA
-        });
-        console.log(310, this.detallesAfectados);
-        minutosPorCubrir -= aDescontar;
+          // AGREGAR AL ARRAY DE AFECTADOS
+          this.detallesAfectados.push({
+            idHrExtra: row.ID_HR_EXTRA,
+            hrExtraAcumulado: row.HR_EXTRA_ACUMULADO,
+            hrExtraSolicitado: row.HR_EXTRA_SOLICITADO,
+            hrExtraSobrante: row.HR_EXTRA_SOBRANTE,
+            fecha: row.FECHA
+          });
+
+          minutosPorCubrir -= aDescontar;
+        }
+
       }
     }
   }

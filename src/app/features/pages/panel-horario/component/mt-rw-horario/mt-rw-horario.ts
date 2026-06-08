@@ -46,6 +46,7 @@ export class MtRwHorario implements CanComponentDeactivate {
   storeList: Array<any> = [];
   employeEJBList: Array<any> = [];
   dataPermisions: any = {};
+  defaultCalendar: any = {};
   isCreatePapeleta: boolean = false;
   listaMaestraTrabajadores: Array<any> = [];
   tabIndex = 0;
@@ -61,7 +62,7 @@ export class MtRwHorario implements CanComponentDeactivate {
   constructor(private storeService: StoreService, private socketService: SocketResourcesHumanService) { }
 
   async ngOnInit() {
-    console.info('v1727');
+    console.info('v1954');
     // 1. Cargar datos base
     this.cargarDeCache();
 
@@ -400,6 +401,8 @@ export class MtRwHorario implements CanComponentDeactivate {
 
   // 3. Función para recuperar los datos
   cargarDeCache() {
+    this.defaultCalendar = JSON.parse(localStorage.getItem('calendar') || '{}');
+   
     const hayCambios = localStorage.getItem('hayCambios');
     if (hayCambios === 'true') {
       this.hayCambios = true;
@@ -411,6 +414,7 @@ export class MtRwHorario implements CanComponentDeactivate {
     const cache: any = localStorage.getItem('horario_metas_peru');
 
     if (JSON.parse(cache || "[]").length > 0) {
+      this.isEditing = true;
       this.horariosProcesados = JSON.parse(cache || "[]");
     } else {
       this.hayCambios = false;
@@ -570,6 +574,7 @@ export class MtRwHorario implements CanComponentDeactivate {
 
   onCalendar(event: any): void {
     const { isPeriodo, isMultiSelect, isDefault, isRange, value } = event;
+    localStorage.setItem('calendar', JSON.stringify(event));
     this.dateCalendar = value;
   }
 
@@ -684,10 +689,6 @@ export class MtRwHorario implements CanComponentDeactivate {
       year: 'numeric'
     }).format(ahora).replace(/\//g, '-');
 
-
-    console.log(this.horariosProcesados[0].dias[0].fecha);
-
-
     const payload = {
       codigoTienda: this.keyStore,
       fechaCabecera: fechaHoyPC,
@@ -698,7 +699,7 @@ export class MtRwHorario implements CanComponentDeactivate {
 
     this.isLoading = false;
     this.hayCambios = false;
-    console.log(payload);
+  
     // Enviar al servicio
     this.storeService.putHorario(payload).subscribe({
       next: (response: any) => {

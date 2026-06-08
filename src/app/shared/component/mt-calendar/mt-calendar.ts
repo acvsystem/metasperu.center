@@ -6,6 +6,7 @@ import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/materia
 import { MatDatepicker, MatDatepickerInputEvent } from '@angular/material/datepicker';
 import { provideMomentDateAdapter } from '@angular/material-moment-adapter';
 import * as _moment from 'moment';
+import 'moment/locale/es';
 import { default as _rollupMoment, Moment } from 'moment';
 import {
   MatMomentDateModule,
@@ -22,6 +23,14 @@ import {
 } from '@angular/material/snack-bar';
 
 const moment = _rollupMoment || _moment;
+moment.locale('es');
+
+type MtCalendarDefaultValue = {
+  id?: string;
+  isDetallado?: boolean;
+  type?: string;
+  value?: string[] | string;
+};
 
 export const MY_FORMATS = {
   parse: {
@@ -61,7 +70,8 @@ export class MtCalendar implements OnInit {
   @Input() isReset: boolean = false;
   @Input() placeholder: string = "";
   @Input() id: string = "";
-  @Input() selected: string = "";
+  @Input() selected: string | MtCalendarDefaultValue = "";
+  @Input() defaultValue: MtCalendarDefaultValue | null = null;
   // Inicializa con la fecha de hoy
   init: Date = new Date();
 
@@ -78,6 +88,7 @@ export class MtCalendar implements OnInit {
     end: new FormControl<Date | null>(null),
   });
   public resetModel = new Date();
+  private lastAppliedDefaultKey = '';
   public dateClass = (date: Date) => {
     if (this._findDate(date) !== -1) {
       return ['selected'];
@@ -96,6 +107,9 @@ export class MtCalendar implements OnInit {
   }
 
   ngOnInit() {
+    console.log(this.defaultValue);
+    this.applyDefaultValue(this.defaultValue || this.selected);
+
     if (this.isDefault) {
       this.afterChange.emit({ id: this.id, isDefault: true, value: `${moment(this.date.value).format('YYYY/MM/DD')}` });
     }
@@ -107,10 +121,47 @@ export class MtCalendar implements OnInit {
   }
 
   ngOnChanges(changes: SimpleChanges) {
+    if (changes && (changes.hasOwnProperty('defaultValue') || changes.hasOwnProperty('selected'))) {
+      console.log(this.defaultValue);
+      this.applyDefaultValue(this.defaultValue || this.selected);
+    }
+
     if (changes && changes.hasOwnProperty('isReset')) {
       if (this.isReset && this.isTime) {
         this.vTimer = "";
         this.afterChange.emit({ isTime: true, value: ``, id: this.id });
+      }
+    }
+  }
+
+  private applyDefaultValue(defaultValue: string | MtCalendarDefaultValue | null) {
+    if (!defaultValue || typeof defaultValue === 'string') {
+      return;
+    }
+
+    if ((defaultValue.type === 'isDetallado' || defaultValue.isDetallado) && Array.isArray(defaultValue.value)) {
+      const [start, end] = defaultValue.value;
+      const startDate = moment(start, 'YYYY-MM-DD', true);
+      const endDate = moment(end, 'YYYY-MM-DD', true);
+      const defaultKey = `${defaultValue.id ?? this.id}|${start}|${end}`;
+
+      if (startDate.isValid() && endDate.isValid()) {
+        if (this.lastAppliedDefaultKey === defaultKey) {
+          return;
+        }
+
+        this.lastAppliedDefaultKey = defaultKey;
+        this.range.patchValue({
+          start: startDate.toDate(),
+          end: endDate.toDate(),
+        }, { emitEvent: false });
+
+        this.afterChange.emit({
+          id: defaultValue.id ?? this.id,
+          isDetallado: true,
+          type: 'isDetallado',
+          value: [startDate.format('YYYY-MM-DD'), endDate.format('YYYY-MM-DD')],
+        });
       }
     }
   }
