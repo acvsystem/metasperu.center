@@ -69,7 +69,7 @@
         @if(isDefault) {
         <mat-form-field appearance="outline" subscriptSizing="dynamic">
             <mat-label>{{placeholder}}</mat-label>
-            <input matInput [matDatepicker]="picker" (dateChange)="onChangeInput($event)">
+            <input matInput [matDatepicker]="picker" [formControl]="date" (dateChange)="onChangeInput($event)">
             <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
             <mat-datepicker #picker></mat-datepicker>
         </mat-form-field>
