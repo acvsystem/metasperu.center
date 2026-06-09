@@ -567,8 +567,8 @@ export class MtRwPapeleta implements OnInit {
       },
       detalles: this.detallesAfectados
     };
-console.log(body);
-    /*this.storeService.postSaveBallot(body).subscribe((data) => {
+
+    this.storeService.postSaveBallot(body).subscribe((data) => {
 
       if ((data?.error || "").length > 0) {
         this.messageNotification = data.error || 'Error al guardar la papeleta.';
@@ -581,7 +581,7 @@ console.log(body);
         this.resetForm();
       }
       this.isLoading = false;
-    });*/
+    });
   }
 
   resetForm() {
