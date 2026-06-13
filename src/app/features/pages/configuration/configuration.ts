@@ -12,7 +12,7 @@ export class Configuration {
   roleUser = "";
 
   ngOnInit() {
-    this.roleUser = localStorage.getItem('name') || "";
+    this.roleUser = localStorage.getItem('role') || "";
   }
 
   onTabChange(index: number) {
