@@ -576,7 +576,7 @@ export class MtRwPapeleta implements OnInit {
       },
       detalles: this.detallesAfectados
     };
-    /*
+    
         this.storeService.postSaveBallot(body).subscribe((data) => {
     
           if ((data?.error || "").length > 0) {
@@ -591,7 +591,7 @@ export class MtRwPapeleta implements OnInit {
           }
           this.isLoading = false;
         });
-    */
+    
 
   }
 
