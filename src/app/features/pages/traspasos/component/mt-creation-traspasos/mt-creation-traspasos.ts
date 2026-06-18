@@ -354,19 +354,19 @@ export class MtCreationTraspasos {
     let tipoTienda = "";
 
     if ((this.unsOrigen == 'VSBA' && this.unsDestino == 'VSBA')) {
-      tipoTienda = 'VSBA';
+      tipoTienda = 'VS';
     }
 
     if ((this.unsOrigen == 'VSBA' && this.unsDestino == 'VSFA')) {
-      tipoTienda = 'VSBA_VSFA';
+      tipoTienda = 'VS';
     }
 
     if ((this.unsOrigen == 'VSFA' && this.unsDestino == 'VSBA')) {
-      tipoTienda = 'VSFA_VSBA';
+      tipoTienda = 'VS';
     }
 
     if ((this.unsOrigen == 'VSFA' && this.unsDestino == 'VSFA')) {
-      tipoTienda = 'VSFA';
+      tipoTienda = 'VS';
     }
 
     if (this.unsOrigen == 'BBW' && this.unsDestino == 'BBW') {

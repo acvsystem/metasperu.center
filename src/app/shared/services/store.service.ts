@@ -220,6 +220,20 @@ export class StoreService {
         );
     }
 
+    callAccessCheckinout(fechaDesde: string, fechaHasta: string, documento: string = '', socketId: string = ''): Observable<any> {
+        return this.http.post(
+            `${this.API_URL_RESOURCES_HUMAN}/api/access/checkinout`,
+            {
+                "fecha_desde": fechaDesde,
+                "fecha_hasta": fechaHasta,
+                "documento": documento,
+                "socketId": socketId
+            }
+        ).pipe(
+            catchError(this.handleError)
+        );
+    }
+
     callRefreshAsistenceEmployes(propertyCode: string): Observable<any> {
         return this.http.post(
             `${this.API_URL_RESOURCES_HUMAN}/api/asistence/employes/store/refresh`,

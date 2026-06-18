@@ -31,6 +31,7 @@ export class RrhhAsistencia {
   isNotification: boolean = false;
   databaseEmployes: string = 'tienda';
   cboStoreList: Array<any> = [{ key: 'isDefault', value: 'General' }, { key: 'isDetallado', value: 'Detallado' }, { key: 'isFeriados', value: 'Feriados' }]
+  allEmplotes: Array<any> = [];
 
   columnsInventory: tableColumns[] = [
     { isSticky: true, matColumnDef: 'tienda', titleColumn: 'Tienda', propertyValue: 'tienda', filterActive: false, isCboFilter: false, cboFilter: [] },
@@ -61,9 +62,22 @@ export class RrhhAsistencia {
     { isSticky: false, matColumnDef: 'horasTrabajadas', titleColumn: 'Horas Trabajadas', propertyValue: 'horasTotales', filterActive: false, isCboFilter: false, cboFilter: [] },
     { isSticky: false, matColumnDef: 'accion', titleColumn: 'Accion', propertyValue: 'accion', filterActive: false, isCboFilter: false, cboFilter: [] }];
 
+  columnsOficina: tableColumns[] = [
+    { isSticky: true, matColumnDef: 'nombre_completo', titleColumn: 'Nombre Completo', propertyValue: 'nombre', filterActive: false, isCboFilter: false, cboFilter: [] },
+    { isSticky: true, matColumnDef: 'nro_documento', titleColumn: 'N° Documento', propertyValue: 'documento', filterActive: false, isCboFilter: false, cboFilter: [] },
+    { isSticky: false, matColumnDef: 'fecha', titleColumn: 'Fecha', propertyValue: 'fecha', filterActive: false, isCboFilter: false, cboFilter: [] },
+    { isSticky: false, matColumnDef: 'registro_1', titleColumn: 'Registro 1', propertyValue: 'registro_1', filterActive: false, isCboFilter: false, cboFilter: [] },
+    { isSticky: false, matColumnDef: 'registro_2', titleColumn: 'Registro 2', propertyValue: 'registro_2', filterActive: false, isCboFilter: false, cboFilter: [] },
+    { isSticky: false, matColumnDef: 'registro_3', titleColumn: 'Registro 3', propertyValue: 'registro_3', filterActive: false, isCboFilter: false, cboFilter: [] },
+    { isSticky: false, matColumnDef: 'registro_4', titleColumn: 'Registro 4', propertyValue: 'registro_4', filterActive: false, isCboFilter: false, cboFilter: [] },
+    { isSticky: false, matColumnDef: 'registro_5', titleColumn: 'Registro 5', propertyValue: 'registro_5', filterActive: false, isCboFilter: false, cboFilter: [] },
+    { isSticky: false, matColumnDef: 'registro_6', titleColumn: 'Registro 6', propertyValue: 'registro_6', filterActive: false, isCboFilter: false, cboFilter: [] },
+    { isSticky: false, matColumnDef: 'total_registros', titleColumn: 'Total', propertyValue: 'totalRegistros', filterActive: false, isCboFilter: false, cboFilter: [] }];
+
 
   displayedColumnsInventory = this.columnsInventory.map(col => col.matColumnDef);
   displayedColumnsFeriado = this.columnsFeriado.map(col => col.matColumnDef);
+  displayedColumnsOficina = this.columnsOficina.map(col => col.matColumnDef);
 
   constructor(private storeService: StoreService, private socketService: SocketResourcesHumanService) {
 
@@ -71,7 +85,14 @@ export class RrhhAsistencia {
 
   ngOnInit() {
 
+    this.onEmpleadosList();
 
+    // 4. Escuchar el socket con filtrado reactivo
+    this.socketService.onRefreshEmployesEJB((data: any[]) => {
+      console.log(data);
+      if (!data) return;
+      this.allEmplotes = data;
+    });
 
     this.socketService.onRefreshEmployesAsistence((data: any) => {
       this.storeService.callRefreshAsistenceEmployes(this.propertyCode).subscribe((data: any) => {
@@ -88,6 +109,17 @@ export class RrhhAsistencia {
       });
     });
 
+  }
+
+
+  onEmpleadosList() {
+    this.socketService.socket$.subscribe((id) => {
+      if ((id || "").length) {
+        const socketId = this.socketService.socketID || '';
+        this.storeService.callRegisterEmployes(socketId).subscribe((data: any) => {
+        });
+      }
+    });
   }
 
   exportFeriados() {
@@ -212,6 +244,91 @@ export class RrhhAsistencia {
     return resultado ? resultado.data : [];
   }
 
+  get dataTableView() {
+    if (this.databaseEmployes == 'oficina') return this.dataTable;
+    return this.isViewFeriados ? this.dataTableFeriado : this.dataTable;
+  }
+
+  get columnsTableView() {
+    if (this.databaseEmployes == 'oficina') return this.columnsOficina;
+    return this.isViewFeriados ? this.columnsFeriado : this.columnsInventory;
+  }
+
+  get displayedColumnsView() {
+    if (this.databaseEmployes == 'oficina') return this.displayedColumnsOficina;
+    return this.isViewFeriados ? this.displayedColumnsFeriado : this.displayedColumnsInventory;
+  }
+
+  private getFechaConsulta(): { fechaDesde: string; fechaHasta: string } | null {
+    if (!this.dateCalendar || this.dateCalendar.length == 0) return null;
+
+    if (Array.isArray(this.dateCalendar)) {
+      const fechaDesde = String(this.dateCalendar[0] || '').split('T')[0];
+      const fechaHasta = String(this.dateCalendar[this.dateCalendar.length - 1] || this.dateCalendar[0] || '').split('T')[0];
+      return { fechaDesde, fechaHasta };
+    }
+
+    const fecha = String(this.dateCalendar).split('T')[0];
+    return { fechaDesde: fecha, fechaHasta: fecha };
+  }
+
+  obtenerDataEmploye(document: string) {
+    const resultado = this.allEmplotes.find((item: any) => item.nro_documento === document);
+    return resultado ? resultado : [];
+  }
+
+  private mapOficinaToTable(data: Array<any>): Array<any> {
+    return (data || []).flatMap((persona: any) => {
+      return (persona.asistencia || []).map((dia: any) => {
+        const registros = dia.registros || [];
+        const dataEmploye = this.obtenerDataEmploye(persona.documento || persona.dni || '');
+
+        const row: any = {
+          nombre: dataEmploye.nombre_completo || '',
+          documento: persona.dni || persona.documento || '',
+          userid: persona.userid || '',
+          fecha: dia.fecha || '',
+          totalRegistros: registros.length,
+          sn: registros[0]?.sn || ''
+        };
+
+        registros.slice(0, 6).forEach((registro: any, index: number) => {
+          row[`registro_${index + 1}`] = registro.hora || '';
+        });
+
+        return row;
+      });
+    });
+  }
+
+  private searchOficinaAsistence() {
+    const fechas = this.getFechaConsulta();
+    if (!fechas?.fechaDesde || !fechas?.fechaHasta) {
+      this.messageNotification = 'Seleccione una fecha o rango de fecha.';
+      this.abrirNotificacion('danger');
+      this.isLoading = false;
+      return;
+    }
+
+    this.storeService.callAccessCheckinout(
+      fechas.fechaDesde,
+      fechas.fechaHasta,
+      '',
+      this.socketService.socketID || ''
+    ).subscribe({
+      next: (response: any) => {
+        this.dataTable = this.mapOficinaToTable(response.data || []);
+        this.dataTableFeriado = [];
+        this.isLoading = false;
+      },
+      error: (error: any) => {
+        this.messageNotification = error?.error?.message || 'No se pudo consultar la asistencia de oficina.';
+        this.abrirNotificacion('danger');
+        this.isLoading = false;
+      }
+    });
+  }
+
   onSearchAsistence() {
 
     if (this.typeCalendar.length == 0) {
@@ -233,6 +350,12 @@ export class RrhhAsistencia {
     }
 
     this.isLoading = true;
+
+    if (this.databaseEmployes == 'oficina') {
+      this.searchOficinaAsistence();
+      return;
+    }
+
     const socketId = this.socketService.socketID;
 
     this.storeService.callRegisterEmployes(socketId).subscribe((data: any) => {
@@ -243,10 +366,6 @@ export class RrhhAsistencia {
       this.propertyCode = data.property;
     });
 
-
-    if (this.databaseEmployes == 'oficina') {
-
-    }
 
   }
 
