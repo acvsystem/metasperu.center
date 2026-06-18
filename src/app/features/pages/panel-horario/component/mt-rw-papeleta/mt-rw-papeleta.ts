@@ -479,8 +479,17 @@ export class MtRwPapeleta implements OnInit {
 
   validarSiEsHoy(desde: string, hasta: string) {
     // Generamos el formato YYYY-MM-DD local de hoy
-    const hoyString = new Date().toISOString().split('T')[0];
+    const opciones = {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      timeZone: 'America/Lima'
+    } as const; // <--- El truco mágico para TypeScript
 
+    const [mes, dia, anio] = new Intl.DateTimeFormat('en-US', opciones).format(new Date()).split('/');
+    const hoyString = `${anio}-${mes}-${dia}`;
+
+    console.log(hoyString);
     // Comparamos directamente
     const esDesdeHoy = desde.replace(/\//g, '-') === hoyString;
     const esHastaHoy = hasta.replace(/\//g, '-') === hoyString;
@@ -567,21 +576,23 @@ export class MtRwPapeleta implements OnInit {
       },
       detalles: this.detallesAfectados
     };
+    
+        this.storeService.postSaveBallot(body).subscribe((data) => {
+    
+          if ((data?.error || "").length > 0) {
+            this.messageNotification = data.error || 'Error al guardar la papeleta.';
+            this.abrirNotificacion('danger');
+          }
+    
+          if (data?.success) {
+            this.isLoading = false;
+            this.openDialogBallot(data?.codigo);
+            this.resetForm();
+          }
+          this.isLoading = false;
+        });
+    
 
-    this.storeService.postSaveBallot(body).subscribe((data) => {
-
-      if ((data?.error || "").length > 0) {
-        this.messageNotification = data.error || 'Error al guardar la papeleta.';
-        this.abrirNotificacion('danger');
-      }
-
-      if (data?.success) {
-        this.isLoading = false;
-        this.openDialogBallot(data?.codigo);
-        this.resetForm();
-      }
-      this.isLoading = false;
-    });
   }
 
   resetForm() {
