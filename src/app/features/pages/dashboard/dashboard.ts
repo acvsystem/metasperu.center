@@ -246,6 +246,16 @@ export class Dashboard {
         this.onNotification({ error: 'error', message: err?.message });
       }
     });
+
+        this.storeService.callDocumentsMissing().subscribe({
+      next: (result) => {
+        console.log(result);
+        this.onNotification({ message: result?.message });
+      },
+      error: (err) => {
+        this.onNotification({ error: 'error', message: err?.message });
+      }
+    });
   }
 
   onTransactions() {
