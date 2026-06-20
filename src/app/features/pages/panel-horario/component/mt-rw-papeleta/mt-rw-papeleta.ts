@@ -104,8 +104,10 @@ export class MtRwPapeleta implements OnInit {
       console.log(hours);
       this.horasDisponibles = hours.data.totalHorasFormato;
       this.totalHorasDisponiblesOriginal = hours.data.totalHorasFormato;
-
-      this.horasExtras = hours.data.horasExtras;
+      const horasExtrasData = hours.data.horasExtras || [];
+      this.horasExtras = Array.from(
+        new Map(horasExtrasData.map((item: any) => [item.FECHA, item])).values()
+      );
 
       this.horasExtrasOriginal = [...hours.data.horasExtras];
       this.isLoading = false;
@@ -576,22 +578,22 @@ export class MtRwPapeleta implements OnInit {
       },
       detalles: this.detallesAfectados
     };
-    
-        this.storeService.postSaveBallot(body).subscribe((data) => {
-    
-          if ((data?.error || "").length > 0) {
-            this.messageNotification = data.error || 'Error al guardar la papeleta.';
-            this.abrirNotificacion('danger');
-          }
-    
-          if (data?.success) {
-            this.isLoading = false;
-            this.openDialogBallot(data?.codigo);
-            this.resetForm();
-          }
-          this.isLoading = false;
-        });
-    
+
+    this.storeService.postSaveBallot(body).subscribe((data) => {
+
+      if ((data?.error || "").length > 0) {
+        this.messageNotification = data.error || 'Error al guardar la papeleta.';
+        this.abrirNotificacion('danger');
+      }
+
+      if (data?.success) {
+        this.isLoading = false;
+        this.openDialogBallot(data?.codigo);
+        this.resetForm();
+      }
+      this.isLoading = false;
+    });
+
 
   }
 
