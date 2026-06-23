@@ -33,8 +33,8 @@ export class SocketResourcesHumanService {
             this.socketID = this.socket?.id;
             this.socketSubject.next(this.socketID);
 
-           /* this.storeService.callRegisterEmployes(this.socketID).subscribe((data: any) => {
-            });*/
+            /* this.storeService.callRegisterEmployes(this.socketID).subscribe((data: any) => {
+             });*/
         });
 
     }
@@ -64,5 +64,11 @@ export class SocketResourcesHumanService {
     offHoursWorksEmployes(callback: (data: any) => void) {
         this.socket?.off('py_works_hours_employes_response', callback);
     }
+
+    onAsistenceOneEmploye(callback: (data: any) => void) {
+        this.socket?.on('py_asistence_employes_response', callback);
+    }
+
+
 
 }

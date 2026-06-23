@@ -3,6 +3,8 @@ import { StoreService } from '@metasperu/services/store.service';
 export type NotificationType = 'success' | 'warning' | 'danger';
 import { MatDialog } from '@angular/material/dialog';
 import { MtComentario } from './component/mt-comentario/mt-comentario';
+import { SocketResourcesHumanService } from '@metasperu/services/socketResourcesHuman';
+import { MtMarcacionesEmployes } from '@metasperu/component/mt-datatable/component/mt-marcaciones-employes/mt-marcaciones-employes';
 
 @Component({
   selector: 'autorizacion-horas-extras',
@@ -29,12 +31,31 @@ export class AutorizacionHorasExtras {
   isNotification: boolean = false;
   messageNotification: string = '';
   comentarioModal: string = "";
-
-
-  constructor(private storeService: StoreService) { }
+  marcacionesEmpleado: any[] = [];
+  isLoading: boolean = false;
+  titleLoader: string = "Cargando información...";
+  isModalActive: boolean = false;
+  isConectedSocket: boolean = false;
+  constructor(private storeService: StoreService, private socketService: SocketResourcesHumanService) { }
 
   ngOnInit() {
     this.allAtorizacionHoraExtra();
+    this.socketService.onAsistenceOneEmploye((response: any) => {
+      this.marcacionesEmpleado = [];
+      this.isLoading = false;
+      this.marcacionesEmpleado = response?.data;
+      if (this.marcacionesEmpleado.length && !this.isModalActive) {
+        this.openDialog();
+      }
+    });
+
+    this.socketService.socket$.subscribe((id) => {
+      if ((id || "").length) {
+        this.isConectedSocket = true;
+      } else {
+        this.isConectedSocket = false;
+      }
+    });
   }
 
   allAtorizacionHoraExtra() {
@@ -44,36 +65,65 @@ export class AutorizacionHorasExtras {
   }
 
   async onAuth(row: any) {
-    console.log(row);
-    this.comentarioModal = "";
-    const usuario = localStorage.getItem('name') || "";
 
-    if (row.accion == 'rechazar') {
-      await this.openComentarioModal();
-    }
+    if (row.accion != 'marcaciones') {
+      this.comentarioModal = "";
+      const usuario = localStorage.getItem('name') || "";
 
-    const body = {
-      id_auth_hrx: row.id_auth_hr_ext,
-      id_hrx: row.id_hora_extra,
-      aprobado: row.accion == 'aprobado' ? true : false,
-      comentario: this.comentarioModal,
-      usuario: usuario,
-      tienda: row.descripcion,
-      fecha: row.fecha,
-      hr_extra: row.hr_extra,
-      nombre_empleado: row.nombre_completo,
-      email: row.email
-    }
-
-    this.storeService.postRespuestaAprobacionHextra(body).subscribe((res: any) => {
-      if (res.success) {
-        this.messageNotification = 'Respuesta registrada exitosamente.';
-        this.abrirNotificacion('success');
-        this.allAtorizacionHoraExtra();
+      if (row.accion == 'rechazar') {
+        await this.openComentarioModal();
       }
-    });
+
+      const body = {
+        id_auth_hrx: row.id_auth_hr_ext,
+        id_hrx: row.id_hora_extra,
+        aprobado: row.accion == 'aprobado' ? true : false,
+        comentario: this.comentarioModal,
+        usuario: usuario,
+        tienda: row.descripcion,
+        fecha: row.fecha,
+        hr_extra: row.hr_extra,
+        nombre_empleado: row.nombre_completo,
+        email: row.email
+      }
+
+      this.storeService.postRespuestaAprobacionHextra(body).subscribe((res: any) => {
+        if (res.success) {
+          this.messageNotification = 'Respuesta registrada exitosamente.';
+          this.abrirNotificacion('success');
+          this.allAtorizacionHoraExtra();
+        }
+      });
+    } else {
+      this.isLoading = true;
+      this.titleLoader = "Cargando marcaciones...";
+      const body = {
+        "fecha_desde": row.fecha,
+        "fecha_hasta": row.fecha,
+        "documento": row.nro_documento,
+        "socket": this.socketService.socketID,
+        "isAsistencia": true
+      };
+
+      this.storeService.postHoursWorksEmployes(body).subscribe(() => {
+
+      });
+    }
   }
 
+  openDialog() {
+    this.isModalActive = true;
+    const dialogRef = this.dialog.open(MtMarcacionesEmployes, {
+      panelClass: 'modal-mediano',
+      data: {
+        dataDialog: this.marcacionesEmpleado,
+        title: 'Marcaciones del empleado'
+      }
+    })
+    dialogRef.afterClosed().subscribe((saved: boolean) => {
+      this.isModalActive = false;
+    });
+  }
 
   openComentarioModal() {
     return new Promise((resolve, reject) => {
@@ -101,6 +151,8 @@ export class AutorizacionHorasExtras {
     // Aquí es donde realmente desaparece del DOM
     this.isNotification = false;
   }
+
+
 }
 
 export interface tableColumns {

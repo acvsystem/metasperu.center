@@ -12,6 +12,7 @@ import {
   MatDialogTitle,
   MatDialogContent,
 } from '@angular/material/dialog';
+import { MtMarcacionesEmployes } from '@metasperu/component/mt-datatable/component/mt-marcaciones-employes/mt-marcaciones-employes';
 
 @Component({
   selector: 'mt-rw-papeleta',
@@ -93,6 +94,7 @@ export class MtRwPapeleta implements OnInit {
     { key: 'Cajero', value: 'Cajero' },
     { key: 'Almacenero', value: 'Almacenero' }
   ];
+  marcacionesEmpleado: any[] = [];
 
   constructor(private storeService: StoreService, private socketService: SocketResourcesHumanService) {
     //this.onEmpleadosList();
@@ -105,6 +107,8 @@ export class MtRwPapeleta implements OnInit {
       this.horasDisponibles = hours.data.totalHorasFormato;
       this.totalHorasDisponiblesOriginal = hours.data.totalHorasFormato;
       const horasExtrasData = hours.data.horasExtras || [];
+      this.marcacionesEmpleado = hours.data.marcaciones || [];
+
       this.horasExtras = Array.from(
         new Map(horasExtrasData.map((item: any) => [item.FECHA, item])).values()
       );
@@ -455,6 +459,18 @@ export class MtRwPapeleta implements OnInit {
     console.log(value);
     this.comentarioPapeleta = value;
   }
+
+  openDialog(fecha?: string) {
+    const dataMarcaciones = this.marcacionesEmpleado.filter(marc => marc.dia === fecha);
+    this.dialog.open(MtMarcacionesEmployes, {
+      panelClass: 'modal-mediano',
+      data: {
+        dataDialog: dataMarcaciones,
+        title: 'Marcaciones del empleado'
+      }
+    });
+  }
+
 
   resetChangeType() {
     this.timeDesde = '';

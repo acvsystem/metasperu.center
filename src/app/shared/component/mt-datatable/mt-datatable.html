@@ -105,9 +105,10 @@
                     <span class="badge text-bg-success">{{element[col.propertyValue]}}</span>
                     }@else if(element[col.propertyValue] == 'rechazado'){
                     <span class="badge text-bg-danger">{{element[col.propertyValue]}}</span>
-                    }@else if(element[col.propertyValue] == 'espera aprobacion' || element[col.propertyValue] == 'pendiente'){
+                    }@else if(element[col.propertyValue] == 'espera aprobacion' || element[col.propertyValue] ==
+                    'pendiente'){
                     <span class="badge text-bg-warning">{{element[col.propertyValue]}}</span>
-                    }                   
+                    }
 
                     }@else if(col.propertyValue == 'view_papeleta'){
                     <button matTooltip="Ver papeleta" id="searchProducto" type="button" class="btn btn-primary btn-sm"
@@ -121,10 +122,16 @@
                         style="padding-bottom: 0px;padding-top: 0;margin-right: 3px;">
                         <mat-icon style="margin-top: 6px;">check_circle</mat-icon>
                     </button>
-                    <button matTooltip="Rechazzar" id="searchProducto" type="button" class="btn btn-danger btn-sm"
+                    <button matTooltip="Rechazar" id="searchProducto" type="button" class="btn btn-danger btn-sm"
                         (click)="onCallback(element,'rechazar')"
                         style="padding-bottom: 0px;padding-top: 0;margin-right: 3px;">
                         <mat-icon style="margin-top: 6px;">cancel</mat-icon>
+                    </button>
+                    <button matTooltip="Marcaciones" id="searchProducto" type="button" class="btn btn-primary btn-sm"
+                        (click)="onCallback(element,'marcaciones')"
+                        [disabled]="!isConectedSocket"
+                        style="padding-bottom: 0px;padding-top: 0;margin-right: 3px;">
+                        <mat-icon style="margin-top: 6px;">fingerprint</mat-icon>
                     </button>
                     }@else if(col.propertyValue == 'cAccion'){
                     <button matTooltip="Eliminar" id="searchProducto" type="button" class="btn btn-danger btn-sm"
@@ -186,11 +193,18 @@
                     <div class="info-item"><small>TIENDA</small><span>{{item.descripcion}}</span></div>
                     <div class="info-item"><small>FECHA</small><span>{{item.fecha}}</span></div>
                     <div class="info-item"><small>HR. EXTRA</small><span>{{item.hr_extra}}</span></div>
-                </div>
-                <div style="padding-left: 20px;padding-bottom: 15px;padding-right: 20px;">
-                    <div class="info-item"><small>COMENTARIO</small><span
+                    <div class="info-item" style="width: 80% !important;"><small>COMENTARIO</small><span
                             style="word-wrap: break-word;">{{item.comentario}}</span></div>
+                    <div>
+                        <button matTooltip="Marcaciones" id="searchProducto" type="button"
+                            [disabled]="!isConectedSocket"
+                            class="btn btn-primary btn-sm" (click)="onCallback(item,'marcaciones')"
+                            style="padding-bottom: 0px;padding-top: 0;margin-right: 3px;">
+                            <mat-icon style="margin-top: 6px;">fingerprint</mat-icon>
+                        </button>
+                    </div>
                 </div>
+
             </div>
 
             <div class="card-footer">

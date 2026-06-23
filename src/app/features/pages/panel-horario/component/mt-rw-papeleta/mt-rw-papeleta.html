@@ -25,8 +25,9 @@
     <form>
       <div class="row g-3 mb-4">
         <div class="col-12">
-          <mt-select #selStore *ngIf="keyStore == 'OF'" [data]="cboStore" (selectdOption)="onChangeSelect($event,'selectStore')"
-            [isMultiselect]=false label="Seleccione una tienda" title="Tienda">
+          <mt-select #selStore *ngIf="keyStore == 'OF'" [data]="cboStore"
+            (selectdOption)="onChangeSelect($event,'selectStore')" [isMultiselect]=false label="Seleccione una tienda"
+            title="Tienda">
           </mt-select>
         </div>
         <div class="col-12">
@@ -35,8 +36,9 @@
           </mt-select>
         </div>
         <div class="col-md-6">
-          <mt-select *ngIf="keyStore != 'OF'" #selType [data]="typeBallotList" (selectdOption)="onChangeSelect($event,'selectTypeBallot')"
-            [isMultiselect]=false label="Tipo papeleta" title="Tipo">
+          <mt-select *ngIf="keyStore != 'OF'" #selType [data]="typeBallotList"
+            (selectdOption)="onChangeSelect($event,'selectTypeBallot')" [isMultiselect]=false label="Tipo papeleta"
+            title="Tipo">
           </mt-select>
         </div>
         <div class="col-md-6">
@@ -104,9 +106,9 @@
               <td>
                 <span class="badge badge-text" [ngClass]="getClaseEstado(column.ESTADO)">
                   @if(column.ESTADO == 'aprobar'){
-                    solicitar aprobacion
+                  solicitar aprobacion
                   }@else{
-                    {{column.ESTADO}}
+                  {{column.ESTADO}}
                   }
                 </span>
               </td>
@@ -116,6 +118,12 @@
                   (click)="onSolicitarAprobacionHrx(column)"
                   style="padding-bottom: 0px;padding-left: 2px;padding-right: 2px;padding-top: 0;margin-right: 3px;height: 30px;">
                   <mat-icon style="margin-top: 6px;font-size: 17px;">task_alt</mat-icon>
+                </button>
+                <button  matTooltip="Marcaciones" id="searchProducto" type="button"
+                   class="btn btn-primary btn-sm"
+                  (click)="openDialog(column.FECHA)"
+                  style="padding-bottom: 0px;padding-left: 2px;padding-right: 2px;padding-top: 0;margin-right: 3px;height: 30px;">
+                  <mat-icon style="margin-top: 6px;font-size: 17px;">fingerprint</mat-icon>
                 </button>
               </td>
             </tr>

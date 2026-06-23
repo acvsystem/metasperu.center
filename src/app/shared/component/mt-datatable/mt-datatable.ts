@@ -23,6 +23,7 @@ export class MtDatatable implements OnInit, OnChanges, AfterViewInit {
   @Input() extraColumns: string[] = [];
   @Input() isFeriado: boolean = false;
   @Input() isTableMobile: boolean = false;
+  @Input() isConectedSocket: boolean = false;
   @Output() currentDataFilter = new EventEmitter<any[]>();
   @Output() rowSelected = new EventEmitter<any[]>();
   @Output() callback = new EventEmitter<any[]>();
@@ -187,6 +188,7 @@ export class MtDatatable implements OnInit, OnChanges, AfterViewInit {
     row['accion'] = event;
     this.callback.emit(row);
   }
+
 }
 
 // Interfaces mejoradas

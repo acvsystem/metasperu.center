@@ -20,8 +20,8 @@
             <tr>
                 <td>{{item.caja}}</td>
                 <td>{{item.dia}}</td>
-                <td>{{item.hrIn}}</td>
-                <td>{{item.hrOut}}</td>
+                <td>{{item.hrIn | date:'HH:mm:ss'}}</td>
+                <td>{{item.hrOut | date:'HH:mm:ss'}}</td>
                 <td><span class="status present">{{item.hrWorking}}</span></td>
             </tr>
             }
