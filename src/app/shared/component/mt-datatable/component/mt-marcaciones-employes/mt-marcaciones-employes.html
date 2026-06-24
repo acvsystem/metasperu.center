@@ -20,8 +20,17 @@
             <tr>
                 <td>{{item.caja}}</td>
                 <td>{{item.dia}}</td>
+                @if(item.hrIn.length == 8){
+                <td>{{item.hrIn}}</td>
+                }@else{
                 <td>{{item.hrIn | date:'HH:mm:ss'}}</td>
+                }
+
+                @if(item.hrOut.length == 8){
+                <td>{{item.hrOut}}</td>
+                }@else{
                 <td>{{item.hrOut | date:'HH:mm:ss'}}</td>
+                }
                 <td><span class="status present">{{item.hrWorking}}</span></td>
             </tr>
             }
