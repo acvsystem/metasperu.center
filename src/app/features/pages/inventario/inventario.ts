@@ -51,7 +51,6 @@ export class Inventario {
 
 
     this.socketInventoryService.onOneInvenrotyStore((data: any) => {
-      console.log(data);
       //this.dataInventory = data.dataCode;
     });
 
@@ -74,12 +73,17 @@ export class Inventario {
       this.serieStore = data.serieStore;
       this.storeService.callUpdateInventory(this.selectedStore.key, `${this.serieStore}`).subscribe(
         response => {
+          console.log('Inventario actualizado:', response);
           this.countOnlienStore += 1;
           this.titleLoader = `Obteniendo Inventario ${this.countOnlienStore}/${this.dataStoreOnline.length}`;
 
           if (this.countOnlienStore === this.dataStoreOnline.length) {
             if (this.searchCodigoBarra.length) {
-              this.dataInventory = response.inventory.filter((item: any) => item.cCodigoBarra === this.searchCodigoBarra);
+              const filteredInventory = response.inventory.filter((item: any) => item.cCodigoBarra === this.searchCodigoBarra);
+              this.dataInventory = response.inventory.filter((item: any) => item.cSubFamilia === filteredInventory[0]?.cSubFamilia
+                && item.cColor === filteredInventory[0]?.cColor);
+              // Copia el arreglo, lo ordena y asigna la nueva referencia
+              this.dataInventory = [...this.dataInventory].sort((a, b) => a.cTalla.localeCompare(b.cTalla));
             } else {
               this.dataInventory = response.inventory;
             }
