@@ -51,6 +51,7 @@ export class MtRwHorario implements CanComponentDeactivate {
   listaMaestraTrabajadores: Array<any> = [];
   tabIndex = 0;
   dialog = inject(MatDialog);
+  isPageMantenimiento: boolean = true;
   @HostListener('window:beforeunload', ['$event'])
   unloadNotification($event: any) {
     if (this.hayCambios) {

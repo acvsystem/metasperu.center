@@ -1,3 +1,6 @@
+@if(isPageMantenimiento) {
+<mt-page-mantenimiento></mt-page-mantenimiento>
+}@else{
 @if(isCreatePapeleta){
 <ion-row class="ion-align-items-center" style="margin-left: 10px;">
     <ion-col size="12" size-md="12">
@@ -53,8 +56,9 @@
             </button>
 
             <div class="calendar-wrapper">
-                <mt-calendar [isPeriodo]="false" [defaultValue]="defaultCalendar" [isMultiSelect]="false" [isDefault]="false" [isRange]="true"
-                    placeholder="Seleccione fecha" (afterChange)="onCalendar($event)">
+                <mt-calendar [isPeriodo]="false" [defaultValue]="defaultCalendar" [isMultiSelect]="false"
+                    [isDefault]="false" [isRange]="true" placeholder="Seleccione fecha"
+                    (afterChange)="onCalendar($event)">
                 </mt-calendar>
             </div>
 
@@ -221,4 +225,5 @@
 @if (isNotification) {
 <mt-notification [type]="typeNotification" [message]="messageNotification"
     (onClose)="cerrarNotificacion()"></mt-notification>
+}
 }

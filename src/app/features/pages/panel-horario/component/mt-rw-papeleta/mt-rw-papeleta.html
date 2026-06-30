@@ -119,8 +119,7 @@
                   style="padding-bottom: 0px;padding-left: 2px;padding-right: 2px;padding-top: 0;margin-right: 3px;height: 30px;">
                   <mat-icon style="margin-top: 6px;font-size: 17px;">task_alt</mat-icon>
                 </button>
-                <button  matTooltip="Marcaciones" id="searchProducto" type="button"
-                   class="btn btn-primary btn-sm"
+                <button matTooltip="Marcaciones" id="searchProducto" type="button" class="btn btn-primary btn-sm"
                   (click)="openDialog(column.FECHA)"
                   style="padding-bottom: 0px;padding-left: 2px;padding-right: 2px;padding-top: 0;margin-right: 3px;height: 30px;">
                   <mat-icon style="margin-top: 6px;font-size: 17px;">fingerprint</mat-icon>
@@ -140,9 +139,11 @@
     </form>
   </mat-card>
 
+</div>
   @if (isNotification) {
   <mt-notification [type]="typeNotification" [message]="messageNotification"
     (onClose)="cerrarNotificacion()"></mt-notification>
   }
 
   <mt-loader *ngIf="isLoading" [title]="titleLoader"></mt-loader>
+  

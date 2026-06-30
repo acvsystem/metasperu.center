@@ -377,8 +377,10 @@ export class MtRwPapeleta implements OnInit {
       return `${anio}-${mes}-${dia}`;
     };
 
-
+    const codeStoreEmploye = this.allEmplotes.find(emp => emp.nro_documento === this.selectEmploye.key)?.code_unid_servicio || ''
+    const serieStore = this.storeList.find(store => store.codigo_ejb === codeStoreEmploye)?.serie || '';
     const body = {
+      "serie": serieStore,
       "fecha_desde": formatearFecha(fechaInicio),
       "fecha_hasta": formatearFecha(hoy),
       "documento": this.selectEmploye.key,

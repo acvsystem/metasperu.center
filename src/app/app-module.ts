@@ -79,6 +79,7 @@ import { MAT_DATE_LOCALE } from '@angular/material/core';
 import {MatButtonToggleModule} from '@angular/material/button-toggle';
 import { MtMaintenanceTables } from './features/pages/configuration/component/mt-maintenance-tables/mt-maintenance-tables';
 import { MdlMaintenanceRecord } from './features/pages/configuration/component/mt-maintenance-tables/component/mdl-maintenance-record/mdl-maintenance-record';
+import { MtPageMantenimiento } from './shared/component/mt-page-mantenimiento/mt-page-mantenimiento';
 
 registerLocaleData(localeEsPe);
 @NgModule({
@@ -129,7 +130,8 @@ registerLocaleData(localeEsPe);
     MdlExtraParametros,
     MtMdlPapeletas,
     MtMaintenanceTables,
-    MdlMaintenanceRecord
+    MdlMaintenanceRecord,
+    MtPageMantenimiento
   ],
   imports: [
     IonicModule.forRoot(),
