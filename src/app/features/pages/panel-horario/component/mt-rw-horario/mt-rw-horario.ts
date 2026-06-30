@@ -43,6 +43,7 @@ export class MtRwHorario implements CanComponentDeactivate {
   hayCambios: boolean = false;
   isEditing: boolean = false;
   keyStore: string = "";
+  keyStore_2: string = "";
   storeList: Array<any> = [];
   employeEJBList: Array<any> = [];
   dataPermisions: any = {};
@@ -51,7 +52,7 @@ export class MtRwHorario implements CanComponentDeactivate {
   listaMaestraTrabajadores: Array<any> = [];
   tabIndex = 0;
   dialog = inject(MatDialog);
-  isPageMantenimiento: boolean = true;
+  isPageMantenimiento = false;
   @HostListener('window:beforeunload', ['$event'])
   unloadNotification($event: any) {
     if (this.hayCambios) {
@@ -77,12 +78,15 @@ export class MtRwHorario implements CanComponentDeactivate {
 
       // 3. Obtener y validar tienda
       const codeStoreEncrypted = localStorage.getItem('keyStore');
+      const oldCodeStoreEncrypted = localStorage.getItem('keyStore_2') || "";
       if (!codeStoreEncrypted) return;
 
       const serieDecrypted = this.storeService.decrypt(codeStoreEncrypted);
+      const oldSerieDecrypted = this.storeService.decrypt(oldCodeStoreEncrypted);
 
       const store = this.storeList.find(s => s.serie === serieDecrypted);
       this.keyStore = store ? store.serie : 'OF';
+      this.keyStore_2 = oldSerieDecrypted;
 
       this.allAtorizacionHoraExtra()
 
@@ -266,7 +270,8 @@ export class MtRwHorario implements CanComponentDeactivate {
   onSearhchHorario() {
     const body = {
       range_days: this.dataSearch.range_days,
-      code_store: this.dataSearch.code_store
+      code_store: this.dataSearch.code_store,
+      old_code_store: this.dataSearch.old_code_store
     };
 
     this.storeService.postoneSearchHorarios(body).subscribe(response => {
@@ -403,7 +408,7 @@ export class MtRwHorario implements CanComponentDeactivate {
   // 3. Función para recuperar los datos
   cargarDeCache() {
     this.defaultCalendar = JSON.parse(localStorage.getItem('calendar') || '{}');
-   
+
     const hayCambios = localStorage.getItem('hayCambios');
     if (hayCambios === 'true') {
       this.hayCambios = true;
@@ -614,7 +619,7 @@ export class MtRwHorario implements CanComponentDeactivate {
     this.isLoading = true;
     const fechaFormateada_1: string = this.dateCalendar[0].split('-').reverse().join('-');
     const fechaFormateada_2: string = this.dateCalendar[1].split('-').reverse().join('-');
-    this.storeService.postoneSearchHorarios({ range_days: `${fechaFormateada_1} ${fechaFormateada_2}`, code_store: this.keyStore }).subscribe((response: any) => {
+    this.storeService.postoneSearchHorarios({ range_days: `${fechaFormateada_1} ${fechaFormateada_2}`, old_code_store: this.keyStore_2, code_store: this.keyStore }).subscribe((response: any) => {
 
       if (response?.length > 0) {
         this.isLoading = false;
@@ -635,7 +640,7 @@ export class MtRwHorario implements CanComponentDeactivate {
       const fechaFormateada_1: string = this.dateCalendar[0].split('-').reverse().join('-');
       const fechaFormateada_2: string = this.dateCalendar[1].split('-').reverse().join('-');
 
-      this.storeService.postoneSearchHorarios({ range_days: `${fechaFormateada_1} ${fechaFormateada_2}`, code_store: this.keyStore }).subscribe((response: any) => {
+      this.storeService.postoneSearchHorarios({ range_days: `${fechaFormateada_1} ${fechaFormateada_2}`, old_code_store: this.keyStore_2, code_store: this.keyStore }).subscribe((response: any) => {
         this.isLoading = false;
         this.hayCambios = false;
         this.isEditing = true;
@@ -700,7 +705,7 @@ export class MtRwHorario implements CanComponentDeactivate {
 
     this.isLoading = false;
     this.hayCambios = false;
-  
+
     // Enviar al servicio
     this.storeService.putHorario(payload).subscribe({
       next: (response: any) => {

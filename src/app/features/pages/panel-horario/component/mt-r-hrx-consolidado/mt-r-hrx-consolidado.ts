@@ -168,6 +168,7 @@ export class MtRHrxConsolidado implements OnInit, OnDestroy {
     console.log(this.employeEJBList);
     this.employeEJBList.forEach((item) => {
       const body = {
+        serie: this.selectedStore.key || this.keyStore,
         fecha_desde: fechaDesde,
         fecha_hasta: fechaHasta,
         documento: item.key,

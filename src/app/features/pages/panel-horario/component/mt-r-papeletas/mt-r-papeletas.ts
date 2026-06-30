@@ -11,6 +11,7 @@ import { lastValueFrom } from 'rxjs';
 export class MtRPapeletas {
   storeList: Array<any> = [];
   keyStore: string = "";
+  keyStore_2: string = "";
   dataTable: Array<any> = [];
   columnsData: tableColumns[] = [
     { isSticky: true, matColumnDef: 'codigo_papeleta', titleColumn: 'Codigo Papeleta', propertyValue: 'codigo_papeleta', filterActive: false, isCboFilter: false, cboFilter: [] },
@@ -34,18 +35,21 @@ export class MtRPapeletas {
     ]);
 
     const codeStoreEncrypted = localStorage.getItem('keyStore');
+    const oldCodeStoreEncrypted = localStorage.getItem('keyStore_2');
     if (!codeStoreEncrypted) return;
 
     const serieDecrypted = this.storeService.decrypt(codeStoreEncrypted);
     const store = this.storeList.find(s => s.serie === serieDecrypted);
     this.keyStore = store ? store.serie : '';
+    this.keyStore_2 = this.storeService.decrypt(oldCodeStoreEncrypted || '');
 
     this.onAllPapeletas();
   }
 
   onAllPapeletas() {
     const body = {
-      codestore: this.keyStore
+      codestore: this.keyStore,
+      old_codestore: this.keyStore_2
     };
 
     this.storeService.postAllBAllot(body).subscribe((res: any) => {

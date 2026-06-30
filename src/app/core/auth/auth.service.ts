@@ -72,10 +72,12 @@ export class AuthService {
                     localStorage.setItem('role', response.user.role);
                     localStorage.setItem('name', response.user.username);
                     localStorage.setItem('marca', response.user.unid_servicio || 'OF');
-                    
-                    const keyStore = this.storeService.encrypt(response.user.code_store);
 
+                    const keyStore = this.storeService.encrypt(response.user.code_store);
+                    const keyStore_2 = this.storeService.encrypt(response.user.old_code_store);
                     localStorage.setItem('keyStore', keyStore);
+                    localStorage.setItem('keyStore_2', keyStore_2);
+
                     this.socketService.conectar();
                     localStorage.setItem('menu', JSON.stringify(response.menu));
                     this.#menu.set(response.menu);
