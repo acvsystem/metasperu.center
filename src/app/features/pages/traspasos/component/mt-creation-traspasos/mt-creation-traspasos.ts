@@ -248,6 +248,7 @@ export class MtCreationTraspasos {
     formData.append('email', 'andrecanalesv@gmail.com'); // El correo del solicitante
 
     // 6. Suscripción con manejo de estados
+  
     this.storeService.postTraspasos(formData).subscribe({
       next: (resp) => {
 
@@ -289,6 +290,7 @@ export class MtCreationTraspasos {
         this.abrirNotificacion('danger');
       }
     });
+
   }
 
 

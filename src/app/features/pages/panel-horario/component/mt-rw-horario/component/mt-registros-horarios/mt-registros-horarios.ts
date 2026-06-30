@@ -38,7 +38,8 @@ export class MtRegistrosHorarios {
     if (Object.keys(element).length !== 0) {
       this.horarioSelected = {
         range_days: `${element?.cRango_1} ${element?.cRango_2}`,
-        code_store: element?.cSerieStore
+        code_store: element?.cSerieStore,
+        old_code_store: element?.cSerieStore
       };
     }
 

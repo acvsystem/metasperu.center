@@ -49,7 +49,7 @@ export class MtRPapeletas {
   onAllPapeletas() {
     const body = {
       codestore: this.keyStore,
-      old_codestore: this.keyStore_2
+      old_codestore: this.keyStore_2 == 'OF' ? '' : this.keyStore_2
     };
 
     this.storeService.postAllBAllot(body).subscribe((res: any) => {
