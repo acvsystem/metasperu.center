@@ -65,7 +65,6 @@ export class AutorizacionHorasExtras {
   }
 
   async onAuth(row: any) {
-
     if (row.accion != 'marcaciones') {
       this.comentarioModal = "";
       const usuario = localStorage.getItem('name') || "";
@@ -102,7 +101,8 @@ export class AutorizacionHorasExtras {
         "fecha_hasta": row.fecha,
         "documento": row.nro_documento,
         "socket": this.socketService.socketID,
-        "isAsistencia": true
+        "isAsistencia": true,
+        "serie": row.store_code
       };
 
       this.storeService.postHoursWorksEmployes(body).subscribe(() => {
