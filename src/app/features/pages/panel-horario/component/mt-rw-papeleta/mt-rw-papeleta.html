@@ -97,7 +97,7 @@
             </tr>
           </thead>
           <tbody>
-            @for (column of horasExtras; track column) {
+            @for (column of horasExtras; track column.ID_HR_EXTRA) {
             <tr>
               <td>{{column.FECHA}}</td>
               <td>{{column.HR_EXTRA_ACUMULADO}}</td>

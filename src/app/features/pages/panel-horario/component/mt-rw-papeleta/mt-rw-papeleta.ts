@@ -273,12 +273,13 @@ export class MtRwPapeleta implements OnInit {
 
   distribuirHorasSolicitadas() {
     let minutosPorCubrir = this.convertirAMinutos(this.horasSolicitadas);
+
     this.detallesAfectados = []; // Reiniciamos el array de afectados
 
     this.horasExtras = this.horasExtrasOriginal.map(row => ({ ...row }));
 
     this.horasExtras.forEach(row => {
-      if (!row.SELECCIONADO) {
+      if (row.ESTADO == 'correcto') {
         row.HR_EXTRA_SOLICITADO = row.HR_EXTRA_SOLICITADO;
         row.HR_EXTRA_SOBRANTE = row.HR_EXTRA_SOBRANTE;
         row.ESTADO = row.ESTADO; // Estado por defecto
@@ -287,36 +288,36 @@ export class MtRwPapeleta implements OnInit {
 
     for (let row of this.horasExtras) {
 
-      if (row.SELECCIONADO || row.ISAPROBACION == 1) {
-        continue;
-      }
+      if (row.ESTADO == 'correcto') {
+        const minutosDisponibles = this.convertirAMinutos(row.HR_EXTRA_SOBRANTE || row.HR_EXTRA_ACUMULADO);
+        const minutosYaSolicitados = this.convertirAMinutos(row.HR_EXTRA_SOLICITADO || "00:00");
 
-      const minutosDisponibles = this.convertirAMinutos(row.HR_EXTRA_SOBRANTE || row.HR_EXTRA_ACUMULADO);
-      const minutosYaSolicitados = this.convertirAMinutos(row.HR_EXTRA_SOLICITADO || "00:00");
+        if (minutosDisponibles > 0) {
+          const aDescontar = Math.min(minutosPorCubrir, minutosDisponibles);
+          const nuevoTotalSolicitado = minutosYaSolicitados + aDescontar;
 
-      if (minutosDisponibles > 0) {
-        const aDescontar = Math.min(minutosPorCubrir, minutosDisponibles);
-        const nuevoTotalSolicitado = minutosYaSolicitados + aDescontar;
+          // Asignar valores
+          row.HR_EXTRA_SOLICITADO = this.convertirAFormato(nuevoTotalSolicitado);
+          row.HR_EXTRA_SOBRANTE = this.convertirAFormato(minutosDisponibles - aDescontar);
+          row.ESTADO = row.HR_EXTRA_SOBRANTE === '00:00' ? 'utilizado' : row.ESTADO;
 
-        // Asignar valores
-        row.HR_EXTRA_SOLICITADO = this.convertirAFormato(nuevoTotalSolicitado);
-        row.HR_EXTRA_SOBRANTE = this.convertirAFormato(minutosDisponibles - aDescontar);
-        row.ESTADO = row.HR_EXTRA_SOBRANTE === '00:00' ? 'utilizado' : row.ESTADO;
-        if (row.HR_EXTRA_SOLICITADO != '00:00') {
+          if (row.HR_EXTRA_SOLICITADO != '00:00' && row.ESTADO == 'correcto') {
 
-          // AGREGAR AL ARRAY DE AFECTADOS
-          this.detallesAfectados.push({
-            idHrExtra: row.ID_HR_EXTRA,
-            hrExtraAcumulado: row.HR_EXTRA_ACUMULADO,
-            hrExtraSolicitado: row.HR_EXTRA_SOLICITADO,
-            hrExtraSobrante: row.HR_EXTRA_SOBRANTE,
-            fecha: row.FECHA
-          });
+            // AGREGAR AL ARRAY DE AFECTADOS
+            this.detallesAfectados.push({
+              idHrExtra: row.ID_HR_EXTRA,
+              hrExtraAcumulado: row.HR_EXTRA_ACUMULADO,
+              hrExtraSolicitado: row.HR_EXTRA_SOLICITADO,
+              hrExtraSobrante: row.HR_EXTRA_SOBRANTE,
+              fecha: row.FECHA
+            });
 
-          minutosPorCubrir -= aDescontar;
+            minutosPorCubrir -= aDescontar;
+          }
+
         }
-
       }
+
     }
   }
 
