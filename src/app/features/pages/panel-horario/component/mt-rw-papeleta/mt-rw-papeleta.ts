@@ -260,6 +260,7 @@ export class MtRwPapeleta implements OnInit {
     // --- Lógica restante ---
     const totalOriginal = this.convertirAMinutos(this.totalHorasDisponiblesOriginal);
     const totalSolicitado = diffMinutos;
+    console.log(totalOriginal, totalSolicitado);
     this.horasDisponibles = this.convertirAFormato(Math.max(0, totalOriginal - totalSolicitado));
 
 
@@ -301,19 +302,17 @@ export class MtRwPapeleta implements OnInit {
           row.HR_EXTRA_SOBRANTE = this.convertirAFormato(minutosDisponibles - aDescontar);
           row.ESTADO = row.HR_EXTRA_SOBRANTE === '00:00' ? 'utilizado' : row.ESTADO;
 
-          if (row.HR_EXTRA_SOLICITADO != '00:00' && row.ESTADO == 'correcto') {
+          // AGREGAR AL ARRAY DE AFECTADOS
+          this.detallesAfectados.push({
+            idHrExtra: row.ID_HR_EXTRA,
+            hrExtraAcumulado: row.HR_EXTRA_ACUMULADO,
+            hrExtraSolicitado: row.HR_EXTRA_SOLICITADO,
+            hrExtraSobrante: row.HR_EXTRA_SOBRANTE,
+            fecha: row.FECHA
+          });
 
-            // AGREGAR AL ARRAY DE AFECTADOS
-            this.detallesAfectados.push({
-              idHrExtra: row.ID_HR_EXTRA,
-              hrExtraAcumulado: row.HR_EXTRA_ACUMULADO,
-              hrExtraSolicitado: row.HR_EXTRA_SOLICITADO,
-              hrExtraSobrante: row.HR_EXTRA_SOBRANTE,
-              fecha: row.FECHA
-            });
+          minutosPorCubrir -= aDescontar;
 
-            minutosPorCubrir -= aDescontar;
-          }
 
         }
       }
