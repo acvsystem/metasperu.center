@@ -1,7 +1,8 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { SocketResourcesHumanService } from '@metasperu/services/socketResourcesHuman';
 import { StoreService } from '@metasperu/services/store.service';
-import { lastValueFrom, Subscription } from 'rxjs';
+import { EMPTY, from, lastValueFrom, Subscription } from 'rxjs';
+import { catchError, mergeMap } from 'rxjs/operators';
 
 @Component({
   selector: 'mt-r-hrx-consolidado',
@@ -31,12 +32,34 @@ export class MtRHrxConsolidado implements OnInit, OnDestroy {
   // Control de estado para ejecución sincronizada
   private dataReady = { employes: false, socket: false, store: false };
   private subscriptions: Subscription = new Subscription();
+  private requestedDocuments = new Set<string>();
+  private lastHoursRequestKey = '';
   private refreshCallbackEmployes = (data: any) => {
+    this.dataEJB = data || [];
+
+    if (!Object.keys(this.selectedStore).length && this.keyStore === 'OF') {
+      return;
+    }
 
     const serieStore = Object.keys(this.selectedStore).length ? this.selectedStore.key : this.keyStore;
     const store = this.storeList.find(s => s.serie === serieStore);
 
-    this.procesarDataEJB(data, store);
+    this.procesarDataEJB(this.dataEJB, store);
+  };
+  private socketCallback = (_id: any) => {
+    this.dataReady.socket = true;
+    this.checkAndExecute();
+  };
+  private hoursWorksCallback = (hours: any) => {
+    if (!hours?.data) return;
+
+    const documento = String(hours.data.documento || hours.data.NRO_DOCUMENTO_EMPLEADO || '');
+    if (!this.requestedDocuments.has(documento)) return;
+
+    const index = this.dataTable.findIndex(item => String(item.documento) === documento);
+    if (index !== -1) {
+      this.dataTable[index].hora_acumulada = hours.data.totalHorasDecimal == 0 ? '--------' : hours.data.totalHorasFormato;
+    }
   };
 
 
@@ -54,33 +77,17 @@ export class MtRHrxConsolidado implements OnInit, OnDestroy {
     const store = this.storeList.find(s => s.serie === serieDecrypted);
     this.keyStore = store ? store.serie : 'OF';
 
-    this.socketService.onRefreshEmployesEJB((data: any) => {
-      this.dataEJB = data || [];
-
-      if (!Object.keys(this.selectedStore).length && this.keyStore != 'OF') {
-        this.refreshCallbackEmployes(this.dataEJB);
-      }
-
-    });
+    this.socketService.onRefreshEmployesEJB(this.refreshCallbackEmployes);
 
 
 
     // 3. Validar estado del Socket ID
     // Si el socket ya tiene ID, marcamos como listo
-    this.socketService.socket$.subscribe((id) => {
-      this.dataReady.socket = true;
-      this.checkAndExecute();
-    });
+    const socketSub = this.socketService.socket$.subscribe(this.socketCallback);
+    this.subscriptions.add(socketSub);
 
     // 4. Escuchar respuesta de horas (resultado del procesamiento)
-    this.socketService.onHoursWorksEmployes((hours) => {
-      if (hours?.data) {
-        const index = this.dataTable.findIndex(item => item.documento === hours.data.documento);
-        if (index !== -1) {
-          this.dataTable[index].hora_acumulada = hours.data.totalHorasDecimal == 0 ? '--------' : hours.data.totalHorasFormato;
-        }
-      }
-    });
+    this.socketService.onHoursWorksEmployes(this.hoursWorksCallback);
   }
 
   /**
@@ -113,6 +120,7 @@ export class MtRHrxConsolidado implements OnInit, OnDestroy {
     });
 
     this.listaMaestraTrabajadores = [...filtrados];
+    this.requestedDocuments = new Set(this.employeEJBList.map(item => String(item.key)));
 
 
     // Marcar empleados como listos y validar ejecución
@@ -163,21 +171,30 @@ export class MtRHrxConsolidado implements OnInit, OnDestroy {
   }
 
   onHoursWorksEmployes() {
+    if (!this.employeEJBList.length || !this.socketService.socketID) return;
+
     const fechaHasta = this.formatDate(new Date());
     const fechaDesde = this.formatDate(this.substractDays(new Date(), 75));
-    console.log(this.employeEJBList);
-    this.employeEJBList.forEach((item) => {
-      const body = {
-        serie: this.selectedStore.key || this.keyStore,
-        fecha_desde: fechaDesde,
-        fecha_hasta: fechaHasta,
-        documento: item.key,
-        socket: this.socketService.socketID
-      };
+    const requestKey = `${this.selectedStore.key || this.keyStore}|${fechaDesde}|${fechaHasta}|${this.employeEJBList.map(item => item.key).join(',')}`;
+    if (requestKey === this.lastHoursRequestKey) return;
+    this.lastHoursRequestKey = requestKey;
 
-      const sub = this.storeService.postHoursWorksEmployes(body).subscribe();
-      this.subscriptions.add(sub);
-    });
+    const sub = from(this.employeEJBList).pipe(
+      mergeMap((item) => {
+        const body = {
+          serie: this.selectedStore.key || this.keyStore,
+          fecha_desde: fechaDesde,
+          fecha_hasta: fechaHasta,
+          documento: item.key,
+          socket: this.socketService.socketID
+        };
+
+        return this.storeService.postHoursWorksEmployes(body).pipe(
+          catchError(() => EMPTY)
+        );
+      }, 6)
+    ).subscribe();
+    this.subscriptions.add(sub);
   }
 
   // --- Helpers de utilidad ---
@@ -196,11 +213,13 @@ export class MtRHrxConsolidado implements OnInit, OnDestroy {
     // Limpiamos suscripciones para evitar memory leaks
     this.subscriptions.unsubscribe();
     this.socketService.offRefreshEmployesEJB(this.refreshCallbackEmployes);
+    this.socketService.offHoursWorksEmployes(this.hoursWorksCallback);
   }
 
   async onChangeSelect(event: any) {
 
     this.selectedStore = { key: event.key, value: event.value };
+    this.lastHoursRequestKey = '';
 
     this.refreshCallbackEmployes(this.dataEJB);
   }

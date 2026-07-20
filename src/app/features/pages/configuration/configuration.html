@@ -9,16 +9,24 @@
         <ion-col>
             <mat-tab-group (selectedIndexChange)="onTabChange($event)">
                 <mat-tab label="Permisos Tiendas">
-                    <mt-permisos-tiendas *ngIf="tabIndex === 0"></mt-permisos-tiendas>
+                    <ng-template matTabContent>
+                        <mt-permisos-tiendas></mt-permisos-tiendas>
+                    </ng-template>
                 </mat-tab>
                 <mat-tab label="Usuarios sistema" *ngIf="roleUser == 'SISTEMAS'">
-                    <mt-usuarios-sistema *ngIf="tabIndex === 1"></mt-usuarios-sistema>
+                    <ng-template matTabContent>
+                        <mt-usuarios-sistema></mt-usuarios-sistema>
+                    </ng-template>
                 </mat-tab>
                 <mat-tab label="Registro Tiendas" *ngIf="roleUser == 'SISTEMAS'">
-                    <mt-parametros-tienda *ngIf="tabIndex === 2"></mt-parametros-tienda>
+                    <ng-template matTabContent>
+                        <mt-parametros-tienda></mt-parametros-tienda>
+                    </ng-template>
                 </mat-tab>
-                <mat-tab label="Mantenimiento RRHH">
-                    <mt-maintenance-tables *ngIf="tabIndex === 3"></mt-maintenance-tables>
+                <mat-tab label="Mantenimiento RRHH / Horarios">
+                    <ng-template matTabContent>
+                        <mt-maintenance-tables></mt-maintenance-tables>
+                    </ng-template>
                 </mat-tab>
             </mat-tab-group>
         </ion-col>

@@ -113,7 +113,7 @@ export class Dashboard {
     });
 
     this.socketService.onTrafficCounterStatus((response) => {
-      // console.log(response);
+       console.log(response);
       if (!response?.serie || !response?.devices) return;
 
       const tienda = this.dataSource.data.find(t => t.serie === response.serie);

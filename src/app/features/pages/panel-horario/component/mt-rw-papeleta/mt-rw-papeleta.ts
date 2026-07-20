@@ -1,9 +1,9 @@
-import { Component, inject, OnInit, ViewChild } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { StoreService } from '@metasperu/services/store.service';
 import { SocketResourcesHumanService } from '@metasperu/services/socketResourcesHuman';
 import { provideMomentDateAdapter } from '@angular/material-moment-adapter';
 import { FormBuilder } from '@angular/forms';
-import { lastValueFrom } from 'rxjs';
+import { lastValueFrom, Subscription } from 'rxjs';
 export type NotificationType = 'success' | 'warning' | 'danger';
 import { MtViewPapeleta } from '@metasperu/component/mt-view-papeleta/mt-view-papeleta';
 import {
@@ -21,7 +21,7 @@ import { MtMarcacionesEmployes } from '@metasperu/component/mt-datatable/compone
   styleUrl: './mt-rw-papeleta.scss',
   providers: [provideMomentDateAdapter()],
 })
-export class MtRwPapeleta implements OnInit {
+export class MtRwPapeleta implements OnInit, OnDestroy {
 
   // Referencias a componentes hijos para reseteo manual
   @ViewChild('selEmploye') selEmploye!: any;
@@ -95,28 +95,50 @@ export class MtRwPapeleta implements OnInit {
     { key: 'Almacenero', value: 'Almacenero' }
   ];
   marcacionesEmpleado: any[] = [];
+  private subscriptions = new Subscription();
+  private refreshEmployesCallback = (data: any[]) => {
+    if (!data) return;
+    this.allEmplotes = data;
+
+    const store = this.storeList.find(s => s.serie === this.keyStore);
+    const codigo_unid_ejb = store ? store.codigo_ejb : '0001';
+    const filtrados = this.filterEmployesByStore(data, codigo_unid_ejb);
+
+    this.employeEJBList = filtrados.map(ejb => ({ key: ejb.nro_documento, value: ejb.nombre_completo }));
+    this.listaMaestraTrabajadores = [...filtrados];
+  };
+
+  private hoursWorksCallback = (hours: any) => {
+    if (!hours?.data) return;
+
+    const documentoRespuesta = String(hours.data.documento || hours.data.NRO_DOCUMENTO_EMPLEADO || '');
+    const documentoSeleccionado = String(this.selectEmploye?.key || '');
+
+    if (!documentoSeleccionado || (documentoRespuesta && documentoRespuesta !== documentoSeleccionado)) {
+      return;
+    }
+
+    this.horasDisponibles = hours.data.totalHorasFormato || '00:00';
+    this.totalHorasDisponiblesOriginal = hours.data.totalHorasFormato || '00:00';
+    const horasExtrasData = Array.isArray(hours.data.horasExtras) ? hours.data.horasExtras : [];
+    this.marcacionesEmpleado = Array.isArray(hours.data.marcaciones) ? hours.data.marcaciones : [];
+
+    this.horasExtras = Array.from(
+      new Map(horasExtrasData.map((item: any) => [item.ID_HR_EXTRA || item.FECHA, item])).values()
+    );
+
+    this.horasExtrasOriginal = [...this.horasExtras];
+    this.isLoading = false;
+  };
 
   constructor(private storeService: StoreService, private socketService: SocketResourcesHumanService) {
     //this.onEmpleadosList();
-    this.storeService.getTypeBallot().subscribe((data) => {
+    const typeBallotSub = this.storeService.getTypeBallot().subscribe((data) => {
       this.typeBallotList = data?.data.map((ballot: any) => ({ key: ballot.ID_TIPO_PAPELETA, value: ballot.DESCRIPCION }));
     });
+    this.subscriptions.add(typeBallotSub);
 
-    this.socketService.onHoursWorksEmployes((hours) => {
-      console.log(hours);
-      this.horasDisponibles = hours.data.totalHorasFormato;
-      this.totalHorasDisponiblesOriginal = hours.data.totalHorasFormato;
-      const horasExtrasData = hours.data.horasExtras || [];
-      this.marcacionesEmpleado = hours.data.marcaciones || [];
-
-      this.horasExtras = Array.from(
-        new Map(horasExtrasData.map((item: any) => [item.FECHA, item])).values()
-      );
-
-      this.horasExtrasOriginal = [...hours.data.horasExtras];
-      this.isLoading = false;
-    });
-
+    this.socketService.onHoursWorksEmployes(this.hoursWorksCallback);
   }
 
 
@@ -149,26 +171,7 @@ export class MtRwPapeleta implements OnInit {
         //  return;
       }
 
-      // 4. Escuchar el socket con filtrado reactivo
-      this.socketService.onRefreshEmployesEJB((data: any[]) => {
-        console.log(data);
-        if (!data) return;
-        this.allEmplotes = data;
-
-        const codigo_unid_ejb = store ? store.codigo_ejb : '0001';
-
-        let filtrados = data.filter(emp => emp.code_unid_servicio === codigo_unid_ejb);
-
-        if (codigo_unid_ejb === '0016') {
-          filtrados = data.filter(emp => emp.code_unid_servicio === '0016' || emp.code_unid_servicio === '0019');
-        }
-        // Filtramos y asignamo
-
-
-        this.employeEJBList = filtrados.map(ejb => ({ key: ejb.nro_documento, value: ejb.nombre_completo }));
-        this.listaMaestraTrabajadores = [...filtrados]; // Clonamos para evitar problemas de referencia
-
-      });
+      this.socketService.onRefreshEmployesEJB(this.refreshEmployesCallback);
 
     } catch (error) {
       console.error('Error al inicializar datos de tienda:', error);
@@ -176,10 +179,10 @@ export class MtRwPapeleta implements OnInit {
   }
 
   allAtorizacionHoraExtra() {
-    this.storeService.getPermissionStore().subscribe((data) => {
+    const sub = this.storeService.getPermissionStore().subscribe((data) => {
       this.dataPermisions = data;
-      console.log(this.dataPermisions);
     });
+    this.subscriptions.add(sub);
   };
 
   async onStoreList() {
@@ -197,13 +200,15 @@ export class MtRwPapeleta implements OnInit {
   }
 
   onEmpleadosList() {
-    this.socketService.socket$.subscribe((id) => {
+    const sub = this.socketService.socket$.subscribe((id) => {
       if ((id || "").length) {
         const socketId = this.socketService.socketID || '';
-        this.storeService.callRegisterEmployes(socketId).subscribe((data: any) => {
+        const registerSub = this.storeService.callRegisterEmployes(socketId).subscribe((data: any) => {
         });
+        this.subscriptions.add(registerSub);
       }
     });
+    this.subscriptions.add(sub);
   }
 
   onChangeInput(ev: any, property: string) {
@@ -260,13 +265,11 @@ export class MtRwPapeleta implements OnInit {
     // --- Lógica restante ---
     const totalOriginal = this.convertirAMinutos(this.totalHorasDisponiblesOriginal);
     const totalSolicitado = diffMinutos;
-    console.log(totalOriginal, totalSolicitado);
     this.horasDisponibles = this.convertirAFormato(Math.max(0, totalOriginal - totalSolicitado));
 
 
 
     this.excesoPermitido = this.esMayorQueDisponible(this.horasSolicitadas, this.totalHorasDisponiblesOriginal);
-    console.log('Horas solicitadas:', this.horasSolicitadas, 'Horas disponibles:', this.totalHorasDisponiblesOriginal, this.excesoPermitido);
     if (!this.excesoPermitido || this.horasSolicitadas == this.totalHorasDisponiblesOriginal) {
       this.distribuirHorasSolicitadas();
     }
@@ -387,9 +390,20 @@ export class MtRwPapeleta implements OnInit {
       "socket": this.socketService.socketID
     };
 
-    this.storeService.postHoursWorksEmployes(body).subscribe(() => {
+    this.horasExtras = [];
+    this.horasExtrasOriginal = [];
+    this.detallesAfectados = [];
+    this.horasDisponibles = '00:00';
+    this.totalHorasDisponiblesOriginal = '00:00';
 
+    const sub = this.storeService.postHoursWorksEmployes(body).subscribe({
+      error: () => {
+        this.isLoading = false;
+        this.messageNotification = 'No se pudieron cargar las horas extras del empleado.';
+        this.abrirNotificacion('danger');
+      }
     });
+    this.subscriptions.add(sub);
   }
 
   async onChangeSelect(data: any, property: any) {
@@ -438,27 +452,18 @@ export class MtRwPapeleta implements OnInit {
       const store = this.storeList.find(s => s.serie === data.key);
       const codigo_unid_ejb = store ? store.codigo_ejb : '0001';
 
-      const original = [...this.allEmplotes];
-
-      const filtrados = original.filter(emp => {
-        // Si el código seleccionado es 0016, permitimos 0016 Y 0019
-        if (codigo_unid_ejb === '0016') {
-          return emp.code_unid_servicio === '0016' || emp.code_unid_servicio === '0019';
-        }
-
-        // Para cualquier otro código, mantenemos la comparación normal
-        return emp.code_unid_servicio === codigo_unid_ejb;
-      });
+      const filtrados = this.filterEmployesByStore(this.allEmplotes, codigo_unid_ejb);
 
       this.employeEJBList = filtrados.map(ejb => ({
         key: ejb.nro_documento,
         value: ejb.nombre_completo
       }));
+      this.selectEmploye = {};
+      this.resetChangeType();
     }
   }
   onChangeInputComentario(ev: any) {
     const value = ev.target.value;
-    console.log(value);
     this.comentarioPapeleta = value;
   }
 
@@ -509,7 +514,6 @@ export class MtRwPapeleta implements OnInit {
     const [mes, dia, anio] = new Intl.DateTimeFormat('en-US', opciones).format(new Date()).split('/');
     const hoyString = `${anio}-${mes}-${dia}`;
 
-    console.log(hoyString);
     // Comparamos directamente
     const esDesdeHoy = desde.replace(/\//g, '-') === hoyString;
     const esHastaHoy = hasta.replace(/\//g, '-') === hoyString;
@@ -559,7 +563,6 @@ export class MtRwPapeleta implements OnInit {
       this.abrirNotificacion('danger');
       return;
     }
-    console.log(this.detallesAfectados);
     // 5. Validación: Detalles asignados
     if (this.detallesAfectados.length === 0 && this.isCompensacion) {
       this.messageNotification = 'No tiene horas extras asignadas.';
@@ -597,8 +600,7 @@ export class MtRwPapeleta implements OnInit {
       detalles: this.detallesAfectados
     };
 
-    this.storeService.postSaveBallot(body).subscribe((data) => {
-
+    const sub = this.storeService.postSaveBallot(body).subscribe((data) => {
       if ((data?.error || "").length > 0) {
         this.messageNotification = data.error || 'Error al guardar la papeleta.';
         this.abrirNotificacion('danger');
@@ -611,6 +613,8 @@ export class MtRwPapeleta implements OnInit {
       }
       this.isLoading = false;
     });
+
+   this.subscriptions.add(sub);
 
 
   }
@@ -662,11 +666,30 @@ export class MtRwPapeleta implements OnInit {
       comentario: element.OBSERVACION
     }
 
-    this.storeService.postSolicitarAprobacionHextra(body).subscribe((data) => {
+    const sub = this.storeService.postSolicitarAprobacionHextra(body).subscribe((data) => {
       const index = this.horasExtras.findIndex(hr => hr.ID_HR_EXTRA === data.id_hora_extra);
-      this.horasExtras[index].ESTADO = data.estado;
+      if (index >= 0) {
+        this.horasExtras[index].ESTADO = data.estado;
+      }
       this.messageNotification = data.message;
       this.abrirNotificacion('success');
     });
+    this.subscriptions.add(sub);
+  }
+
+  private filterEmployesByStore(employes: any[], codigo_unid_ejb: string) {
+    return (employes || []).filter(emp => {
+      if (codigo_unid_ejb === '0016') {
+        return emp.code_unid_servicio === '0016' || emp.code_unid_servicio === '0019';
+      }
+
+      return emp.code_unid_servicio === codigo_unid_ejb;
+    });
+  }
+
+  ngOnDestroy() {
+    this.subscriptions.unsubscribe();
+    this.socketService.offRefreshEmployesEJB(this.refreshEmployesCallback);
+    this.socketService.offHoursWorksEmployes(this.hoursWorksCallback);
   }
 }

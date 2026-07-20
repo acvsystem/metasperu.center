@@ -100,6 +100,69 @@ export class MtMaintenanceTables implements OnInit {
         { key: 'OBSERVACION', label: 'Observacion', type: 'textarea' },
         { key: 'ISAPROBACION', label: 'Es aprobacion', type: 'checkbox' }
       ]
+    },
+    {
+      key: 'horario-property',
+      title: 'Horario tienda',
+      description: 'Cabecera de horarios configurados por tienda, cargo y rango de dias',
+      primaryKey: 'ID_HORARIO',
+      displayColumns: ['ID_HORARIO', 'FECHA', 'RANGO_DIAS', 'CARGO', 'CODIGO_TIENDA', 'DATETIME', 'ESTADO'],
+      filters: ['FECHA', 'RANGO_DIAS', 'CARGO', 'CODIGO_TIENDA', 'ESTADO'],
+      fields: [
+        { key: 'FECHA', label: 'Fecha', type: 'text', required: true },
+        { key: 'RANGO_DIAS', label: 'Rango dias', type: 'text', required: true },
+        { key: 'CARGO', label: 'Cargo', type: 'text', required: true },
+        { key: 'CODIGO_TIENDA', label: 'Codigo tienda', type: 'text', required: true },
+        { key: 'DATETIME', label: 'Datetime', type: 'text' },
+        { key: 'ESTADO', label: 'Estado', type: 'text' }
+      ]
+    },
+    {
+      key: 'dias-trabajo',
+      title: 'Dias trabajo',
+      description: 'Dias laborales asignados a empleados dentro de un horario',
+      primaryKey: 'ID_DIA_TRB',
+      displayColumns: ['ID_DIA_TRB', 'CODIGO_TIENDA', 'NUMERO_DOCUMENTO', 'NOMBRE_COMPLETO', 'ID_TRB_RANGO_HORA', 'ID_TRB_DIAS', 'ID_TRB_HORARIO'],
+      filters: ['CODIGO_TIENDA', 'NUMERO_DOCUMENTO', 'NOMBRE_COMPLETO', 'ID_TRB_HORARIO'],
+      fields: [
+        { key: 'CODIGO_TIENDA', label: 'Codigo tienda', type: 'text', required: true },
+        { key: 'NUMERO_DOCUMENTO', label: 'Numero documento', type: 'text', required: true },
+        { key: 'NOMBRE_COMPLETO', label: 'Nombre completo', type: 'text', required: true },
+        { key: 'ID_TRB_RANGO_HORA', label: 'ID rango hora', type: 'number', required: true },
+        { key: 'ID_TRB_DIAS', label: 'ID dias', type: 'number', required: true },
+        { key: 'ID_TRB_HORARIO', label: 'ID horario', type: 'number', required: true }
+      ]
+    },
+    {
+      key: 'dias-libre',
+      title: 'Dias libre',
+      description: 'Dias libres asignados a empleados dentro de un horario',
+      primaryKey: 'ID_DIA_LBR',
+      displayColumns: ['ID_DIA_LBR', 'CODIGO_TIENDA', 'NUMERO_DOCUMENTO', 'NOMBRE_COMPLETO', 'ID_TRB_RANGO_HORA', 'ID_TRB_DIAS', 'ID_TRB_HORARIO'],
+      filters: ['CODIGO_TIENDA', 'NUMERO_DOCUMENTO', 'NOMBRE_COMPLETO', 'ID_TRB_HORARIO'],
+      fields: [
+        { key: 'CODIGO_TIENDA', label: 'Codigo tienda', type: 'text', required: true },
+        { key: 'NUMERO_DOCUMENTO', label: 'Numero documento', type: 'text', required: true },
+        { key: 'NOMBRE_COMPLETO', label: 'Nombre completo', type: 'text', required: true },
+        { key: 'ID_TRB_RANGO_HORA', label: 'ID rango hora', type: 'number', required: true },
+        { key: 'ID_TRB_DIAS', label: 'ID dias', type: 'number', required: true },
+        { key: 'ID_TRB_HORARIO', label: 'ID horario', type: 'number', required: true }
+      ]
+    },
+    {
+      key: 'dias-horario',
+      title: 'Dias horario',
+      description: 'Dias calendario relacionados a un horario de tienda',
+      primaryKey: 'ID_DIAS',
+      displayColumns: ['ID_DIAS', 'DIA', 'FECHA', 'ID_DIA_HORARIO', 'POSITION', 'FECHA_NUMBER'],
+      filters: ['DIA', 'FECHA', 'ID_DIA_HORARIO', 'FECHA_NUMBER'],
+      fields: [
+        { key: 'DIA', label: 'Dia', type: 'text', required: true },
+        { key: 'FECHA', label: 'Fecha', type: 'text', required: true },
+        { key: 'ID_DIA_HORARIO', label: 'ID horario', type: 'number', required: true },
+        { key: 'POSITION', label: 'Posicion', type: 'number' },
+        { key: 'FECHA_NUMBER', label: 'Fecha number', type: 'text' }
+      ]
     }
   ];
 
