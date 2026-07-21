@@ -31,7 +31,7 @@ const routes: Routes = [
     path: 'asistencia',
     component: RrhhAsistencia,
     canActivate: [authGuard],
-    data: { roles: ['SISTEMAS', 'RRHH', 'OPERACIONES','FIELDLEADER'] }
+    data: { roles: ['SISTEMAS', 'RRHH', 'OPERACIONES','FIELDLEADER','TIENDA'] }
   },
   {
     path: 'horario',
