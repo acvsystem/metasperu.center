@@ -42,7 +42,7 @@
             <section>
                 <mat-button-toggle-group [(ngModel)]="databaseEmployes" aria-label="Font Style">
                     <mat-button-toggle value="tienda" checked>Tiendas</mat-button-toggle>
-                    <mat-button-toggle value="oficina">Oficina</mat-button-toggle>
+                    <mat-button-toggle value="oficina" *ngIf="!storeSelected">Oficina</mat-button-toggle>
                 </mat-button-toggle-group>
             </section>
         </ion-col>

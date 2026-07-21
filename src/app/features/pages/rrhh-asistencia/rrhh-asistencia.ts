@@ -100,7 +100,8 @@ export class RrhhAsistencia {
     const serieDecrypted = this.storeService.decrypt(codeStoreEncrypted);
 
     this.storeSelected = this.storeList.find(s => s.serie === serieDecrypted);
-    console.log('Tienda encontrada:', this.storeSelected);
+
+    this.cboStoreList = this.storeSelected ? [{ key: 'isDefault', value: 'General' }, { key: 'isDetallado', value: 'Detallado' }] : [{ key: 'isDefault', value: 'General' }, { key: 'isDetallado', value: 'Detallado' }, { key: 'isFeriados', value: 'Feriados' }];
 
     // 4. Escuchar el socket con filtrado reactivo
     this.socketService.onRefreshEmployesEJB((data: any[]) => {
