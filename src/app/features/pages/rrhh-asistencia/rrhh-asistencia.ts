@@ -3,6 +3,7 @@ import { StoreService } from '@metasperu/services/store.service';
 import { SocketResourcesHumanService } from '@metasperu/services/socketResourcesHuman';
 export type NotificationType = 'success' | 'warning' | 'danger';
 import * as XLSX from 'xlsx';
+import { lastValueFrom } from 'rxjs';
 
 @Component({
   selector: 'rrhh-asistencia',
@@ -27,12 +28,13 @@ export class RrhhAsistencia {
   isDetallado: boolean = false;
   isViewFeriados: boolean = false;
   dataEJBFeriado: Array<any> = [];
+  storeList: Array<any> = [];
   typeNotification: NotificationType = 'success';
   isNotification: boolean = false;
   databaseEmployes: string = 'tienda';
   cboStoreList: Array<any> = [{ key: 'isDefault', value: 'General' }, { key: 'isDetallado', value: 'Detallado' }, { key: 'isFeriados', value: 'Feriados' }]
   allEmplotes: Array<any> = [];
-
+  storeSelected: any = null;
   columnsInventory: tableColumns[] = [
     { isSticky: true, matColumnDef: 'tienda', titleColumn: 'Tienda', propertyValue: 'tienda', filterActive: false, isCboFilter: false, cboFilter: [] },
     { isSticky: true, matColumnDef: 'nombre_completo', titleColumn: 'Nombre Completo', propertyValue: 'nombre', filterActive: false, isCboFilter: false, cboFilter: [] },
@@ -83,13 +85,25 @@ export class RrhhAsistencia {
 
   }
 
-  ngOnInit() {
+  async ngOnInit() {
+
+    await Promise.all([
+      this.onStoreList()
+    ]);
 
     this.onEmpleadosList();
 
+    // 3. Obtener y validar tienda
+    const codeStoreEncrypted = localStorage.getItem('keyStore');
+    if (!codeStoreEncrypted) return;
+
+    const serieDecrypted = this.storeService.decrypt(codeStoreEncrypted);
+
+    this.storeSelected = this.storeList.find(s => s.serie === serieDecrypted);
+    console.log('Tienda encontrada:', this.storeSelected);
+
     // 4. Escuchar el socket con filtrado reactivo
     this.socketService.onRefreshEmployesEJB((data: any[]) => {
-      console.log(data);
       if (!data) return;
       this.allEmplotes = data;
     });
@@ -97,7 +111,11 @@ export class RrhhAsistencia {
     this.socketService.onRefreshEmployesAsistence((data: any) => {
       this.storeService.callRefreshAsistenceEmployes(this.propertyCode).subscribe((data: any) => {
         if (data.asistencia.length == 2) {
-          this.dataTable = this.obtenerDataPorPropiedad(data, this.propertyCode);
+          const asistenciaData = this.obtenerDataPorPropiedad(data, this.propertyCode);
+
+          this.dataTable = this.storeSelected ? asistenciaData.filter((item: any) => item.tienda === this.storeSelected.nombre) : asistenciaData;
+
+          console.log('Data de asistencia actualizada:', this.dataTable);
 
           if (this.isViewFeriados) {
             this.dataEJBFeriado = this.obtenerDataPorPropiedad(data, 'ejb');
@@ -112,7 +130,20 @@ export class RrhhAsistencia {
   }
 
 
-  onEmpleadosList() {
+  async onStoreList() {
+    try {
+      // Convertimos el observable en promesa para poder usar 'await'
+      const stores = await lastValueFrom(this.storeService.getStores());
+      this.storeList = stores;
+      return stores; // Ahora sí devuelve los datos
+    } catch (error) {
+      console.error('Error obteniendo tiendas:', error);
+      this.storeList = [];
+      throw error;
+    }
+  }
+
+  async onEmpleadosList() {
     this.socketService.socket$.subscribe((id) => {
       if ((id || "").length) {
         const socketId = this.socketService.socketID || '';
