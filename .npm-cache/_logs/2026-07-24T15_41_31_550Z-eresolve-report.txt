@@ -1,0 +1,135 @@
+'Log files:
+C:\Users\W10\Desktop\PROYECTO_METAS_PERU\metasperu.center\.npm-cache\_logs\2026-07-24T15_41_31_550Z-debug-0.log
+
+# npm resolution error report
+
+While resolving: @angular/material-moment-adapter@21.2.3
+Found: @angular/core@20.3.16
+node_modules/@angular/core
+  peerOptional @angular/core@"^20.0.0" from @angular/build@20.3.15
+  node_modules/@angular/build
+    dev @angular/build@"^20.3.2" from the root project
+  peer @angular/core@"^20.0.0 || ^21.0.0" from @angular/cdk@20.2.14
+  node_modules/@angular/cdk
+    peer @angular/cdk@"20.2.14" from @angular/material@20.2.14
+    node_modules/@angular/material
+      @angular/material@"^20.2.14" from the root project
+    @angular/cdk@"^20.2.14" from the root project
+  peer @angular/core@"20.3.16" from @angular/common@20.3.16
+  node_modules/@angular/common
+    peer @angular/common@"^20.0.0 || ^21.0.0" from @angular/cdk@20.2.14
+    node_modules/@angular/cdk
+      peer @angular/cdk@"20.2.14" from @angular/material@20.2.14
+      node_modules/@angular/material
+        @angular/material@"^20.2.14" from the root project
+      @angular/cdk@"^20.2.14" from the root project
+    peer @angular/common@"20.3.16" from @angular/forms@20.3.16
+    node_modules/@angular/forms
+      peer @angular/forms@"^20.0.0 || ^21.0.0" from @angular/material@20.2.14
+      node_modules/@angular/material
+        @angular/material@"^20.2.14" from the root project
+      peer @angular/forms@">=16.0.0" from @ionic/angular@8.7.17
+      node_modules/@ionic/angular
+        @ionic/angular@"^8.7.17" from the root project
+      @angular/forms@"^20.3.0" from the root project
+    peer @angular/common@"^20.0.0 || ^21.0.0" from @angular/material@20.2.14
+    node_modules/@angular/material
+      @angular/material@"^20.2.14" from the root project
+    peer @angular/common@"20.3.16" from @angular/platform-browser@20.3.16
+    node_modules/@angular/platform-browser
+      peerOptional @angular/platform-browser@"^20.0.0" from @angular/build@20.3.15
+      node_modules/@angular/build
+        dev @angular/build@"^20.3.2" from the root project
+      peer @angular/platform-browser@"20.3.16" from @angular/forms@20.3.16
+      node_modules/@angular/forms
+        peer @angular/forms@"^20.0.0 || ^21.0.0" from @angular/material@20.2.14
+        node_modules/@angular/material
+          @angular/material@"^20.2.14" from the root project
+        peer @angular/forms@">=16.0.0" from @ionic/angular@8.7.17
+        node_modules/@ionic/angular
+          @ionic/angular@"^8.7.17" from the root project
+        @angular/forms@"^20.3.0" from the root project
+      peer @angular/platform-browser@"^20.0.0 || ^21.0.0" from @angular/material@20.2.14
+      node_modules/@angular/material
+        @angular/material@"^20.2.14" from the root project
+      peer @angular/platform-browser@"20.3.16" from @angular/router@20.3.16
+      node_modules/@angular/router
+        peer @angular/router@">=16.0.0" from @ionic/angular@8.7.17
+        node_modules/@ionic/angular
+          @ionic/angular@"^8.7.17" from the root project
+        @angular/router@"^20.3.0" from the root project
+      @angular/platform-browser@"^20.3.0" from the root project
+    peer @angular/common@"20.3.16" from @angular/router@20.3.16
+    node_modules/@angular/router
+      peer @angular/router@">=16.0.0" from @ionic/angular@8.7.17
+      node_modules/@ionic/angular
+        @ionic/angular@"^8.7.17" from the root project
+      @angular/router@"^20.3.0" from the root project
+    @angular/common@"^20.3.0" from the root project
+  peer @angular/core@"20.3.16" from @angular/forms@20.3.16
+  node_modules/@angular/forms
+    peer @angular/forms@"^20.0.0 || ^21.0.0" from @angular/material@20.2.14
+    node_modules/@angular/material
+      @angular/material@"^20.2.14" from the root project
+    peer @angular/forms@">=16.0.0" from @ionic/angular@8.7.17
+    node_modules/@ionic/angular
+      @ionic/angular@"^8.7.17" from the root project
+    @angular/forms@"^20.3.0" from the root project
+  peer @angular/core@"^20.0.0 || ^21.0.0" from @angular/material@20.2.14
+  node_modules/@angular/material
+    @angular/material@"^20.2.14" from the root project
+  peer @angular/core@"20.3.16" from @angular/platform-browser@20.3.16
+  node_modules/@angular/platform-browser
+    peerOptional @angular/platform-browser@"^20.0.0" from @angular/build@20.3.15
+    node_modules/@angular/build
+      dev @angular/build@"^20.3.2" from the root project
+    peer @angular/platform-browser@"20.3.16" from @angular/forms@20.3.16
+    node_modules/@angular/forms
+      peer @angular/forms@"^20.0.0 || ^21.0.0" from @angular/material@20.2.14
+      node_modules/@angular/material
+        @angular/material@"^20.2.14" from the root project
+      peer @angular/forms@">=16.0.0" from @ionic/angular@8.7.17
+      node_modules/@ionic/angular
+        @ionic/angular@"^8.7.17" from the root project
+      @angular/forms@"^20.3.0" from the root project
+    peer @angular/platform-browser@"^20.0.0 || ^21.0.0" from @angular/material@20.2.14
+    node_modules/@angular/material
+      @angular/material@"^20.2.14" from the root project
+    peer @angular/platform-browser@"20.3.16" from @angular/router@20.3.16
+    node_modules/@angular/router
+      peer @angular/router@">=16.0.0" from @ionic/angular@8.7.17
+      node_modules/@ionic/angular
+        @ionic/angular@"^8.7.17" from the root project
+      @angular/router@"^20.3.0" from the root project
+    @angular/platform-browser@"^20.3.0" from the root project
+  peer @angular/core@"20.3.16" from @angular/router@20.3.16
+  node_modules/@angular/router
+    peer @angular/router@">=16.0.0" from @ionic/angular@8.7.17
+    node_modules/@ionic/angular
+      @ionic/angular@"^8.7.17" from the root project
+    @angular/router@"^20.3.0" from the root project
+  peer @angular/core@"20.3.16" from @angular/service-worker@20.3.16
+  node_modules/@angular/service-worker
+    peerOptional @angular/service-worker@"^20.0.0" from @angular/build@20.3.15
+    node_modules/@angular/build
+      dev @angular/build@"^20.3.2" from the root project
+    @angular/service-worker@"^20.3.0" from the root project
+  peer @angular/core@">=16.0.0" from @ionic/angular@8.7.17
+  node_modules/@ionic/angular
+    @ionic/angular@"^8.7.17" from the root project
+  @angular/core@"^20.3.0" from the root project
+
+Could not resolve dependency:
+peer @angular/core@"^21.0.0 || ^22.0.0" from @angular/material-moment-adapter@21.2.3
+node_modules/@angular/material-moment-adapter
+  @angular/material-moment-adapter@"^21.2.3" from the root project
+
+Conflicting peer dependency: @angular/core@21.2.18
+node_modules/@angular/core
+  peer @angular/core@"^21.0.0 || ^22.0.0" from @angular/material-moment-adapter@21.2.3
+  node_modules/@angular/material-moment-adapter
+    @angular/material-moment-adapter@"^21.2.3" from the root project
+
+Fix the upstream dependency conflict, or retry
+this command with --force or --legacy-peer-deps
+to accept an incorrect (and potentially broken) dependency resolution.

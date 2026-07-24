@@ -3,6 +3,7 @@ import { AuthService } from './core/auth/auth.service';
 import { Router } from '@angular/router';
 import { MenuController, NavController } from '@ionic/angular';
 import { SwUpdate } from '@angular/service-worker';
+import { RrwebRecorderService } from '@metasperu/services/rrweb-recorder.service';
 
 @Component({
   selector: 'app-root',
@@ -17,6 +18,7 @@ export class App {
   roleUser: string = "";
   name: string = "";
   authService = inject(AuthService);
+  private rrwebRecorder = inject(RrwebRecorderService);
 
   constructor(private swUpdate: SwUpdate, private nav: NavController, private menu: MenuController) {
     if (this.swUpdate.isEnabled) {
@@ -38,6 +40,8 @@ export class App {
     if (this.menuFiltrado.length == 0 && localStorage.getItem('menu')) {
       this.menuFiltrado = JSON.parse(localStorage.getItem('menu') || '[]');
     }
+
+    this.rrwebRecorder.start();
 
     this.authService.onMenu.subscribe((menu: any) => {
       if (this.menuFiltrado.length == 0) {

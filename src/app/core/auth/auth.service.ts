@@ -5,6 +5,7 @@ import { NavController } from '@ionic/angular';
 import { tap, catchError, of, Observable, map } from 'rxjs';
 import { SocketService } from '@metasperu/services/socket.service';
 import { StoreService } from '@metasperu/services/store.service';
+import { RrwebRecorderService } from '@metasperu/services/rrweb-recorder.service';
 
 // Definimos la interfaz del usuario para tipado fuerte
 export interface User {
@@ -29,6 +30,7 @@ export class AuthService {
     private navCtrl = inject(NavController);
     private socketService = inject(SocketService);
     private storeService = inject(StoreService);
+    private rrwebRecorder = inject(RrwebRecorderService);
     private readonly API_URL = 'https://api.metasperu.net.pe/s2/auth/center'; // Ajusta a tu URL
 
 
@@ -91,13 +93,14 @@ export class AuthService {
                 const initialRoute = response.menu && response.menu.length > 0
                     ? '/' + response.menu[0].ruta
                     : '/login';
-                this.navCtrl.navigateRoot(initialRoute);
+                this.navCtrl.navigateRoot(initialRoute).then(() => this.rrwebRecorder.start());
             })
         );
     }
 
 
     async logout() {
+        this.rrwebRecorder.stop();
         localStorage.clear();
         this.socketService.desconectar();
         localStorage.removeItem('auth_token'); // Limpiar el token
