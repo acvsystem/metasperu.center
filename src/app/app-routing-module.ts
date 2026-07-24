@@ -12,6 +12,7 @@ import { PanelHorario } from './features/pages/panel-horario/panel-horario';
 import { ExchangeRateStore } from './features/pages/exchange-rate-store/exchange-rate-store';
 import { AutorizacionHorasExtras } from '@metasperu/page/features/pages/autorizacion-horas-extras/autorizacion-horas-extras';
 import { Configuration } from '@metasperu/page/features/pages/configuration/configuration';
+import { RrwebSessions } from '@metasperu/page/features/pages/rrweb-sessions/rrweb-sessions';
 const routes: Routes = [
   { path: '', component: Login },
   { path: 'login', component: Login },
@@ -74,6 +75,12 @@ const routes: Routes = [
     component: Configuration,
     canActivate: [authGuard],
     data: { roles: ['SISTEMAS', 'RRHH'] }
+  },
+  {
+    path: 'rrweb',
+    component: RrwebSessions,
+    canActivate: [authGuard],
+    data: { roles: ['SISTEMAS'] }
   }
 ];
 

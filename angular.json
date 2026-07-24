@@ -38,6 +38,7 @@
               }
             ],
             "styles": [
+              "node_modules/rrweb-player/dist/style.css",
               "src/styles.scss"
             ]
           },

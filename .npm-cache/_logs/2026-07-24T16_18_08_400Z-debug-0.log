@@ -1,0 +1,127 @@
+0 verbose cli C:\Program Files\nodejs\node.exe C:\Program Files\nodejs\node_modules\npm\bin\npm-cli.js
+1 info using npm@10.9.3
+2 info using node@v22.19.0
+3 silly config load:file:C:\Program Files\nodejs\node_modules\npm\npmrc
+4 silly config load:file:C:\Users\W10\Desktop\PROYECTO_METAS_PERU\metasperu.center\.npmrc
+5 silly config load:file:C:\Users\W10\.npmrc
+6 silly config load:file:C:\Users\W10\AppData\Roaming\npm\etc\npmrc
+7 verbose title npm install rrweb-player
+8 verbose argv "install" "rrweb-player" "--save" "--cache" ".npm-cache"
+9 verbose logfile logs-max:10 dir:C:\Users\W10\Desktop\PROYECTO_METAS_PERU\metasperu.center\.npm-cache\_logs\2026-07-24T16_18_08_400Z-
+10 verbose logfile C:\Users\W10\Desktop\PROYECTO_METAS_PERU\metasperu.center\.npm-cache\_logs\2026-07-24T16_18_08_400Z-debug-0.log
+11 silly logfile done cleaning log files
+12 silly packumentCache heap:4345298944 maxSize:1086324736 maxEntrySize:543162368
+13 silly idealTree buildDeps
+14 silly fetch manifest rrweb-player@*
+15 silly packumentCache full:https://registry.npmjs.org/rrweb-player cache-miss
+16 http fetch GET 200 https://registry.npmjs.org/rrweb-player 275ms (cache miss)
+17 silly packumentCache full:https://registry.npmjs.org/rrweb-player set size:undefined disposed:false
+18 silly placeDep ROOT rrweb-player@2.1.1 OK for: metasperu.center@0.0.0 want: *
+19 silly fetch manifest @tsconfig/svelte@^1.0.0
+20 silly packumentCache full:https://registry.npmjs.org/@tsconfig%2fsvelte cache-miss
+21 silly fetch manifest @rrweb/replay@^2.1.1
+22 silly packumentCache full:https://registry.npmjs.org/@rrweb%2freplay cache-miss
+23 silly fetch manifest @rrweb/packer@^2.1.1
+24 silly packumentCache full:https://registry.npmjs.org/@rrweb%2fpacker cache-miss
+25 http fetch GET 200 https://registry.npmjs.org/@tsconfig%2fsvelte 446ms (cache miss)
+26 silly packumentCache full:https://registry.npmjs.org/@tsconfig%2fsvelte set size:undefined disposed:false
+27 http fetch GET 200 https://registry.npmjs.org/@rrweb%2freplay 479ms (cache miss)
+28 silly packumentCache full:https://registry.npmjs.org/@rrweb%2freplay set size:undefined disposed:false
+29 http fetch GET 200 https://registry.npmjs.org/@rrweb%2fpacker 701ms (cache miss)
+30 silly packumentCache full:https://registry.npmjs.org/@rrweb%2fpacker set size:undefined disposed:false
+31 silly fetch manifest @angular/core@^21.0.0 || ^22.0.0
+32 silly packumentCache full:https://registry.npmjs.org/@angular%2fcore cache-miss
+33 http fetch GET 200 https://registry.npmjs.org/@angular%2fcore 73ms (cache revalidated)
+34 silly packumentCache full:https://registry.npmjs.org/@angular%2fcore set size:3091284 disposed:false
+35 silly fetch manifest @angular/compiler@21.2.18
+36 silly packumentCache full:https://registry.npmjs.org/@angular%2fcompiler cache-miss
+37 http fetch GET 200 https://registry.npmjs.org/@angular%2fcompiler 56ms (cache revalidated)
+38 silly packumentCache full:https://registry.npmjs.org/@angular%2fcompiler set size:2773618 disposed:false
+39 silly fetch manifest rxjs@^6.5.3 || ^7.4.0
+40 silly packumentCache full:https://registry.npmjs.org/rxjs cache-miss
+41 http fetch GET 200 https://registry.npmjs.org/rxjs 73ms (cache revalidated)
+42 silly packumentCache full:https://registry.npmjs.org/rxjs set size:980097 disposed:false
+43 silly fetch manifest zone.js@~0.15.0 || ~0.16.0
+44 silly packumentCache full:https://registry.npmjs.org/zone.js cache-miss
+45 http fetch GET 200 https://registry.npmjs.org/zone.js 162ms (cache revalidated)
+46 silly packumentCache full:https://registry.npmjs.org/zone.js set size:378576 disposed:false
+47 silly fetch manifest @angular/material@21.2.3
+48 silly packumentCache full:https://registry.npmjs.org/@angular%2fmaterial cache-miss
+49 http fetch GET 200 https://registry.npmjs.org/@angular%2fmaterial 103ms (cache revalidated)
+50 silly packumentCache full:https://registry.npmjs.org/@angular%2fmaterial set size:9425427 disposed:false
+51 silly fetch manifest @angular/cdk@21.2.3
+52 silly packumentCache full:https://registry.npmjs.org/@angular%2fcdk cache-miss
+53 http fetch GET 200 https://registry.npmjs.org/@angular%2fcdk 105ms (cache revalidated)
+54 silly packumentCache full:https://registry.npmjs.org/@angular%2fcdk set size:3760899 disposed:false
+55 silly fetch manifest @angular/common@^21.0.0 || ^22.0.0
+56 silly packumentCache full:https://registry.npmjs.org/@angular%2fcommon cache-miss
+57 http fetch GET 200 https://registry.npmjs.org/@angular%2fcommon 367ms (cache revalidated)
+58 silly packumentCache full:https://registry.npmjs.org/@angular%2fcommon set size:3193251 disposed:false
+59 silly fetch manifest @angular/platform-browser@^21.0.0 || ^22.0.0
+60 silly packumentCache full:https://registry.npmjs.org/@angular%2fplatform-browser cache-miss
+61 http fetch GET 200 https://registry.npmjs.org/@angular%2fplatform-browser 221ms (cache revalidated)
+62 silly packumentCache full:https://registry.npmjs.org/@angular%2fplatform-browser set size:3186244 disposed:false
+63 silly fetch manifest @angular/animations@21.2.18
+64 silly packumentCache full:https://registry.npmjs.org/@angular%2fanimations cache-miss
+65 http fetch GET 200 https://registry.npmjs.org/@angular%2fanimations 79ms (cache revalidated)
+66 silly packumentCache full:https://registry.npmjs.org/@angular%2fanimations set size:2910163 disposed:false
+67 silly fetch manifest @angular/forms@^21.0.0 || ^22.0.0
+68 silly packumentCache full:https://registry.npmjs.org/@angular%2fforms cache-miss
+69 http fetch GET 200 https://registry.npmjs.org/@angular%2fforms 205ms (cache revalidated)
+70 silly packumentCache full:https://registry.npmjs.org/@angular%2fforms set size:2836048 disposed:false
+71 verbose stack Error: could not resolve
+71 verbose stack     at PlaceDep.failPeerConflict (C:\Program Files\nodejs\node_modules\npm\node_modules\@npmcli\arborist\lib\place-dep.js:503:25)
+71 verbose stack     at new PlaceDep (C:\Program Files\nodejs\node_modules\npm\node_modules\@npmcli\arborist\lib\place-dep.js:157:21)
+71 verbose stack     at #buildDepStep (C:\Program Files\nodejs\node_modules\npm\node_modules\@npmcli\arborist\lib\arborist\build-ideal-tree.js:920:18)
+71 verbose stack     at async Arborist.buildIdealTree (C:\Program Files\nodejs\node_modules\npm\node_modules\@npmcli\arborist\lib\arborist\build-ideal-tree.js:181:7)
+71 verbose stack     at async Promise.all (index 1)
+71 verbose stack     at async Arborist.reify (C:\Program Files\nodejs\node_modules\npm\node_modules\@npmcli\arborist\lib\arborist\reify.js:131:5)
+71 verbose stack     at async Install.exec (C:\Program Files\nodejs\node_modules\npm\lib\commands\install.js:150:5)
+71 verbose stack     at async Npm.exec (C:\Program Files\nodejs\node_modules\npm\lib\npm.js:207:9)
+71 verbose stack     at async module.exports (C:\Program Files\nodejs\node_modules\npm\lib\cli\entry.js:74:5)
+72 error code ERESOLVE
+73 error ERESOLVE could not resolve
+74 error
+75 error While resolving: @angular/material-moment-adapter@21.2.3
+75 error Found: @angular/core@20.3.16
+75 error node_modules/@angular/core
+75 error   peerOptional @angular/core@"^20.0.0" from @angular/build@20.3.15
+75 error   node_modules/@angular/build
+75 error     dev @angular/build@"^20.3.2" from the root project
+75 error   peer @angular/core@"^20.0.0 || ^21.0.0" from @angular/cdk@20.2.14
+75 error   node_modules/@angular/cdk
+75 error     peer @angular/cdk@"20.2.14" from @angular/material@20.2.14
+75 error     node_modules/@angular/material
+75 error       @angular/material@"^20.2.14" from the root project
+75 error     @angular/cdk@"^20.2.14" from the root project
+75 error   8 more (@angular/common, @angular/forms, @angular/material, ...)
+75 error
+75 error Could not resolve dependency:
+75 error peer @angular/core@"^21.0.0 || ^22.0.0" from @angular/material-moment-adapter@21.2.3
+75 error node_modules/@angular/material-moment-adapter
+75 error   @angular/material-moment-adapter@"^21.2.3" from the root project
+75 error
+75 error Conflicting peer dependency: @angular/core@21.2.18
+75 error node_modules/@angular/core
+75 error   peer @angular/core@"^21.0.0 || ^22.0.0" from @angular/material-moment-adapter@21.2.3
+75 error   node_modules/@angular/material-moment-adapter
+75 error     @angular/material-moment-adapter@"^21.2.3" from the root project
+75 error
+75 error Fix the upstream dependency conflict, or retry
+75 error this command with --force or --legacy-peer-deps
+75 error to accept an incorrect (and potentially broken) dependency resolution.
+76 error
+76 error
+76 error For a full report see:
+76 error C:\Users\W10\Desktop\PROYECTO_METAS_PERU\metasperu.center\.npm-cache\_logs\2026-07-24T16_18_08_400Z-eresolve-report.txt
+77 silly unfinished npm timer reify 1784909889449
+78 silly unfinished npm timer reify:loadTrees 1784909889450
+79 silly unfinished npm timer idealTree:buildDeps 1784909889715
+80 silly unfinished npm timer idealTree:node_modules/@angular/material-moment-adapter 1784909890712
+81 verbose cwd C:\Users\W10\Desktop\PROYECTO_METAS_PERU\metasperu.center
+82 verbose os Windows_NT 10.0.19045
+83 verbose node v22.19.0
+84 verbose npm  v10.9.3
+85 verbose exit 1
+86 verbose code 1
+87 error A complete log of this run can be found in: C:\Users\W10\Desktop\PROYECTO_METAS_PERU\metasperu.center\.npm-cache\_logs\2026-07-24T16_18_08_400Z-debug-0.log

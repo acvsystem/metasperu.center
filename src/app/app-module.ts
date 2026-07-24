@@ -80,6 +80,7 @@ import {MatButtonToggleModule} from '@angular/material/button-toggle';
 import { MtMaintenanceTables } from './features/pages/configuration/component/mt-maintenance-tables/mt-maintenance-tables';
 import { MdlMaintenanceRecord } from './features/pages/configuration/component/mt-maintenance-tables/component/mdl-maintenance-record/mdl-maintenance-record';
 import { MtPageMantenimiento } from './shared/component/mt-page-mantenimiento/mt-page-mantenimiento';
+import { RrwebSessions } from './features/pages/rrweb-sessions/rrweb-sessions';
 
 registerLocaleData(localeEsPe);
 @NgModule({
@@ -131,7 +132,8 @@ registerLocaleData(localeEsPe);
     MtMdlPapeletas,
     MtMaintenanceTables,
     MdlMaintenanceRecord,
-    MtPageMantenimiento
+    MtPageMantenimiento,
+    RrwebSessions
   ],
   imports: [
     IonicModule.forRoot(),

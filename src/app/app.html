@@ -12,6 +12,11 @@
                         <ion-label>{{menu.nombre}}</ion-label>
                     </ion-item>
                 </ion-menu-toggle>
+                <ion-menu-toggle auto-hide="true" *ngIf="roleUser === 'SISTEMAS'">
+                    <ion-item button (click)="onNavigatorRoute('rrweb')">
+                        <ion-label>Grabaciones rrweb</ion-label>
+                    </ion-item>
+                </ion-menu-toggle>
             </ion-list>
         </ion-content>
     </ion-menu>
