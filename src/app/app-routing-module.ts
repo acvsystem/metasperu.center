@@ -77,7 +77,7 @@ const routes: Routes = [
     data: { roles: ['SISTEMAS', 'RRHH'] }
   },
   {
-    path: 'rrweb',
+    path: 'recoding',
     component: RrwebSessions,
     canActivate: [authGuard],
     data: { roles: ['SISTEMAS'] }

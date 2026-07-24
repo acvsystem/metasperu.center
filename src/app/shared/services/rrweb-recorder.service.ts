@@ -10,6 +10,8 @@ export class RrwebRecorderService {
   private readonly API_URL = 'https://api.metasperu.net.pe/s1/center';
   private readonly batchSize = 25;
   private readonly flushIntervalMs = 10000;
+  private readonly excludedUsers = ['JOHNNY'];
+  private readonly excludedRoles = ['SISTEMAS'];
 
   private sessionId = '';
   private sequenceNumber = 0;
@@ -23,6 +25,7 @@ export class RrwebRecorderService {
 
     const token = localStorage.getItem('auth_token');
     if (!token) return;
+    if (this.isExcludedUser()) return;
 
     this.isStarted = true;
     this.sessionId = this.createSessionId();
@@ -136,5 +139,12 @@ export class RrwebRecorderService {
       role: localStorage.getItem('role'),
       store: localStorage.getItem('marca')
     };
+  }
+
+  private isExcludedUser() {
+    const userName = (localStorage.getItem('name') || '').trim().toUpperCase();
+    const role = (localStorage.getItem('role') || '').trim().toUpperCase();
+
+    return this.excludedUsers.includes(userName) || this.excludedRoles.includes(role);
   }
 }
