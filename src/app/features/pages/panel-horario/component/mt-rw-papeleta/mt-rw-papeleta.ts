@@ -109,6 +109,7 @@ export class MtRwPapeleta implements OnInit, OnDestroy {
   };
 
   private hoursWorksCallback = (hours: any) => {
+    console.log('Datos de horas recibidos:', hours);
     if (!hours?.data) return;
 
     const documentoRespuesta = String(hours.data.documento || hours.data.NRO_DOCUMENTO_EMPLEADO || '');
@@ -124,10 +125,11 @@ export class MtRwPapeleta implements OnInit, OnDestroy {
     this.marcacionesEmpleado = Array.isArray(hours.data.marcaciones) ? hours.data.marcaciones : [];
 
     this.horasExtras = Array.from(
-      new Map(horasExtrasData.map((item: any) => [item.ID_HR_EXTRA || item.FECHA, item])).values()
+      new Map(horasExtrasData.map((item: any) => [item.FECHA, item])).values()
     );
 
-    this.horasExtrasOriginal = [...this.horasExtras];
+     
+    this.horasExtrasOriginal = [...new Map(this.horasExtras.map(item => [item.FECHA, item])).values()];
     this.isLoading = false;
   };
 
