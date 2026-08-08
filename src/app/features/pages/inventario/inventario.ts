@@ -31,7 +31,7 @@ export class Inventario {
   dataStoreOnline: Array<any> = [];
   storeList: Array<any> = [];
   datosExportar: Array<any> = [];
-  dataSelectStore: Array<any> = [{ key: 'BBW', value: 'BATH & BODY WORKS' }, { key: 'VS', value: 'VICTORIA SECRET' }, { key: 'TM', value: 'TUMI' }];
+  dataSelectStore: Array<any> = [{ key: 'BBW', value: 'BATH & BODY WORKS' }, { key: 'VS', value: 'VICTORIA SECRET' }, { key: 'MT', value: 'TUMI' }];
   cboStoreList: Array<any> = [];
   storesSelected: Array<any> = [];
   selectedStore: any = null;
