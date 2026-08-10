@@ -21,8 +21,7 @@ export class Inventario {
     { isSticky: false, matColumnDef: 'familia', titleColumn: 'Familia', propertyValue: 'cFamilia', filterActive: false, isCboFilter: false, cboFilter: [] },
     { isSticky: false, matColumnDef: 'subFamilia', titleColumn: 'Subfamilia', propertyValue: 'cSubFamilia', filterActive: false, isCboFilter: false, cboFilter: [] },
     { isSticky: false, matColumnDef: 'talla', titleColumn: 'Talla', propertyValue: 'cTalla', filterActive: false, isCboFilter: false, cboFilter: [] },
-    { isSticky: false, matColumnDef: 'color', titleColumn: 'Color', propertyValue: 'cColor', filterActive: false, isCboFilter: false, cboFilter: [] },
-    { isSticky: false, matColumnDef: 'temporada', titleColumn: 'Temporada', propertyValue: 'cTemporada', filterActive: false, isCboFilter: false, cboFilter: [] }];
+    { isSticky: false, matColumnDef: 'color', titleColumn: 'Color', propertyValue: 'cColor', filterActive: false, isCboFilter: false, cboFilter: [] }];
 
   expColumnsInventory = [...this.columnsInventory]
   displayedColumnsInventory = this.columnsInventory.map(col => col.matColumnDef);
@@ -132,27 +131,25 @@ export class Inventario {
 
   onAlmacenarDatosExportar() {
 
-    // 1. Creamos un mapa de búsqueda rápida: { "7A": "Tienda Miraflores", ... }
     const nombresTiendas = this.storeList.reduce((acc, t: any) => {
       acc[t.serie] = t.nombre;
       return acc;
     }, {} as { [key: string]: string });
 
-    // 2. Transformamos el array de artículos
     const articulosAplanados = this.dataInventory.map(item => {
-      const { cStock, ...resto } = item;
+      // Desestructuramos cStock, cMarca y cTemporada fuera del objeto
+      const { cStock, marca, cTemporada, ...resto } = item;
 
-      // Creamos un nuevo objeto de stock pero con los NOMBRES como llaves
       const stockConNombres: any = {};
 
       Object.keys(cStock).forEach(key => {
-        const nombreTienda = nombresTiendas[key] || key; // Si no encuentra el nombre, deja el código
+        const nombreTienda = nombresTiendas[key] || key;
         stockConNombres[nombreTienda] = cStock[key];
       });
 
       return {
-        ...resto,
-        ...stockConNombres
+        ...resto,           // todo lo demás excepto cStock, cMarca y cTemporada
+        ...stockConNombres  // stock con nombres de tienda como columnas
       };
     });
 
