@@ -113,7 +113,7 @@ export class Dashboard {
     });
 
     this.socketService.onTrafficCounterStatus((response) => {
-       console.log(response);
+      console.log(response);
       if (!response?.serie || !response?.devices) return;
 
       const tienda = this.dataSource.data.find(t => t.serie === response.serie);
@@ -238,16 +238,6 @@ export class Dashboard {
     });
 
     this.storeService.callDocumentsMissing().subscribe({
-      next: (result) => {
-        console.log(result);
-        this.onNotification({ message: result?.message });
-      },
-      error: (err) => {
-        this.onNotification({ error: 'error', message: err?.message });
-      }
-    });
-
-        this.storeService.callDocumentsMissing().subscribe({
       next: (result) => {
         console.log(result);
         this.onNotification({ message: result?.message });
