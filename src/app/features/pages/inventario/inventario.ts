@@ -21,7 +21,9 @@ export class Inventario {
     { isSticky: false, matColumnDef: 'familia', titleColumn: 'Familia', propertyValue: 'cFamilia', filterActive: false, isCboFilter: false, cboFilter: [] },
     { isSticky: false, matColumnDef: 'subFamilia', titleColumn: 'Subfamilia', propertyValue: 'cSubFamilia', filterActive: false, isCboFilter: false, cboFilter: [] },
     { isSticky: false, matColumnDef: 'talla', titleColumn: 'Talla', propertyValue: 'cTalla', filterActive: false, isCboFilter: false, cboFilter: [] },
-    { isSticky: false, matColumnDef: 'color', titleColumn: 'Color', propertyValue: 'cColor', filterActive: false, isCboFilter: false, cboFilter: [] }];
+    { isSticky: false, matColumnDef: 'color', titleColumn: 'Color', propertyValue: 'cColor', filterActive: false, isCboFilter: false, cboFilter: [] },
+    { isSticky: false, matColumnDef: 'esencia', titleColumn: 'Esnencia', propertyValue: 'cEsnencia', filterActive: false, isCboFilter: false, cboFilter: [] },
+    { isSticky: false, matColumnDef: 'styleDesc', titleColumn: 'Style Description', propertyValue: 'cStyleDesc', filterActive: false, isCboFilter: false, cboFilter: [] }];
 
   expColumnsInventory = [...this.columnsInventory]
   displayedColumnsInventory = this.columnsInventory.map(col => col.matColumnDef);
@@ -135,7 +137,7 @@ export class Inventario {
       acc[t.serie] = t.nombre;
       return acc;
     }, {} as { [key: string]: string });
-
+    
     const articulosAplanados = this.dataInventory.map(item => {
       // Desestructuramos cStock, cMarca y cTemporada fuera del objeto
       const { cStock, marca, cTemporada, ...resto } = item;
