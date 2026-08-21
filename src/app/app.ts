@@ -39,6 +39,7 @@ export class App {
     this.name = localStorage.getItem('name') || "";
     if (this.menuFiltrado.length == 0 && localStorage.getItem('menu')) {
       this.menuFiltrado = JSON.parse(localStorage.getItem('menu') || '[]');
+      this.ensureSystemApiLogsMenu();
     }
 
     this.rrwebRecorder.start();
@@ -48,6 +49,7 @@ export class App {
         this.menuFiltrado = menu;
       }
 
+      this.ensureSystemApiLogsMenu();
     });
   }
 
@@ -66,5 +68,15 @@ export class App {
 
 
     this.menu.close();
+  }
+
+  private ensureSystemApiLogsMenu(): void {
+    if (this.roleUser !== 'SISTEMAS') return;
+    const exists = this.menuFiltrado.some((menu) => menu.ruta === 'api-logs' || menu.ruta === '/api-logs');
+    if (!exists) {
+      this.menuFiltrado = [
+        ...this.menuFiltrado
+      ];
+    }
   }
 }

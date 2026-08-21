@@ -1,0 +1,125 @@
+.panel-reporte {
+  min-height: 100vh;
+  background: #f4f6f9;
+  font-family: 'Segoe UI', system-ui, sans-serif;
+}
+
+/* ========== SELECCIÓN DE REPORTES ========== */
+.seleccion-reportes {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 40px 24px;
+
+  .header {
+    text-align: center;
+    margin-bottom: 40px;
+
+    h2 {
+      margin: 0 0 8px 0;
+      font-size: 1.8rem;
+      color: #1a1a2e;
+      font-weight: 600;
+    }
+
+    p {
+      margin: 0;
+      color: #6b7280;
+      font-size: 1rem;
+    }
+  }
+}
+
+.lista-reportes {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.reporte-card {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  background: white;
+  padding: 22px 24px;
+  border-radius: 14px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: 2px solid transparent;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+    border-color: #3b82f6;
+  }
+
+  .icono {
+    font-size: 2.2rem;
+    width: 60px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #eff6ff;
+    border-radius: 12px;
+    flex-shrink: 0;
+  }
+
+  .info {
+    flex: 1;
+
+    h3 {
+      margin: 0 0 4px 0;
+      font-size: 1.15rem;
+      color: #1a1a2e;
+      font-weight: 600;
+    }
+
+    p {
+      margin: 0;
+      color: #6b7280;
+      font-size: 0.9rem;
+    }
+  }
+
+  .flecha {
+    font-size: 1.4rem;
+    color: #94a3b8;
+    transition: transform 0.2s;
+  }
+
+  &:hover .flecha {
+    transform: translateX(4px);
+    color: #3b82f6;
+  }
+}
+
+/* ========== REPORTE ACTIVO ========== */
+.reporte-activo {
+  .barra-superior {
+    background: white;
+    padding: 14px 24px;
+    border-bottom: 1px solid #e5e7eb;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+
+  .btn-volver {
+    background: none;
+    border: none;
+    color: #3b82f6;
+    font-size: 0.95rem;
+    font-weight: 500;
+    cursor: pointer;
+    padding: 6px 0;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: color 0.2s;
+
+    &:hover {
+      color: #2563eb;
+    }
+  }
+}

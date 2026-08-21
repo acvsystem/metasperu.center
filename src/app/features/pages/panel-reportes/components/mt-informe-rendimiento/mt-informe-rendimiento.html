@@ -1,0 +1,94 @@
+<div class="reporte-container">
+
+  <!-- CABECERA -->
+  <div class="header">
+    <div class="title">
+      <h2>Informe de Rendimiento</h2>
+      <p class="subtitle">Reporte consolidado de todas las tiendas</p>
+    </div>
+
+    <div class="filters">
+      <div class="date-group">
+        <label>Desde</label>
+        <input type="date" [(ngModel)]="fechaDesde">
+      </div>
+      <div class="date-group">
+        <label>Hasta</label>
+        <input type="date" [(ngModel)]="fechaHasta">
+      </div>
+      <button class="btn-primary" (click)="solicitarReporte()" [disabled]="loading">
+        <span *ngIf="!loading">Generar Reporte</span>
+        <span *ngIf="loading">Cargando...</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- LOADING -->
+  <div class="loading-bar" *ngIf="loading">
+    <div class="spinner"></div>
+    <span>Esperando respuesta de las tiendas...</span>
+  </div>
+
+  <!-- RESUMEN RÁPIDO -->
+  <div class="summary" *ngIf="seriesRecibidas.length > 0">
+    <div class="summary-card">
+      <span class="label">Tiendas respondidas</span>
+      <span class="value">{{ seriesRecibidas.length }} / 21</span>
+    </div>
+  </div>
+
+  <!-- REPORTES POR TIENDA -->
+  <div class="tiendas-list" *ngIf="seriesRecibidas.length > 0">
+
+    <div class="tienda-card" *ngFor="let serie of seriesRecibidas; trackBy: trackBySerie">
+
+      <!-- Cabecera de la tienda -->
+      <div class="tienda-header">
+        <div class="tienda-info">
+          <span class="serie-badge">{{ serie }}</span>
+          <h3>Tienda {{ serie }}</h3>
+        </div>
+        <span class="fecha" *ngIf="reportes[serie]?.[0]?.Fecha">
+          {{ reportes[serie][0].Fecha | date:'dd/MM/yyyy' }}
+        </span>
+      </div>
+
+      <!-- Tabla -->
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Departamento</th>
+              <th class="text-right">Cantidad</th>
+              <th class="text-right">Venta S/</th>
+              <th class="text-right">Venta $</th>
+              <th class="text-right">T.C.</th>
+              <th class="text-right">Stock</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let item of reportes[serie]"
+                [class.total-row]="esTotal(item)">
+              <td class="depto-name">
+                {{ item.NombreDepartamento }}
+              </td>
+              <td class="text-right">{{ formatNumber(item.CantidadVendida, 0) }}</td>
+              <td class="text-right">{{ formatNumber(item.VentaSoles) }}</td>
+              <td class="text-right">{{ formatNumber(item.VentaDolares) }}</td>
+              <td class="text-right">{{ item.TipoCambio ? formatNumber(item.TipoCambio, 3) : '-' }}</td>
+              <td class="text-right stock">{{ formatNumber(item.Stock, 0) }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ESTADO VACÍO -->
+  <div class="empty-state" *ngIf="!loading && seriesRecibidas.length === 0">
+    <div class="empty-icon">📊</div>
+    <h3>Sin datos</h3>
+    <p>Selecciona un rango de fechas y genera el reporte</p>
+  </div>
+
+</div>

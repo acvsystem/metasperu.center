@@ -1,0 +1,202 @@
+<ion-grid class="api-logs-page">
+  <ion-row class="api-logs-header ion-align-items-center">
+    <ion-col size="12" size-md="7">
+      <h3 class="title-page">Auditoria de APIs</h3>
+      <p>Requests, usuarios, headers, body y errores registrados por el backend</p>
+    </ion-col>
+    <ion-col size="12" size-md="5" class="actions">
+      <button mat-stroked-button type="button" (click)="resetFilters()" [disabled]="isLoading">
+        <mat-icon>filter_alt_off</mat-icon>
+        Limpiar
+      </button>
+      <button mat-raised-button color="primary" type="button" (click)="loadLogs(1)" [disabled]="isLoading">
+        <mat-icon>search</mat-icon>
+        Buscar
+      </button>
+    </ion-col>
+  </ion-row>
+
+  <section class="filters-panel">
+    <mat-form-field appearance="outline">
+      <mat-label>Servicio</mat-label>
+      <mat-select [(ngModel)]="filters.service">
+        <mat-option value="">Todos</mat-option>
+        <mat-option *ngFor="let service of services" [value]="service">{{ service }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Metodo</mat-label>
+      <mat-select [(ngModel)]="filters.method">
+        <mat-option value="">Todos</mat-option>
+        <mat-option *ngFor="let method of methods" [value]="method">{{ method }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Resultado</mat-label>
+      <mat-select [(ngModel)]="filters.success">
+        <mat-option value="">Todos</mat-option>
+        <mat-option value="1">Correcto</mat-option>
+        <mat-option value="0">Error</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Status</mat-label>
+      <input matInput type="number" [(ngModel)]="filters.status" placeholder="500">
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Usuario</mat-label>
+      <input matInput [(ngModel)]="filters.usuario" placeholder="Nombre, rol o id">
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>URL o error</mat-label>
+      <input matInput [(ngModel)]="filters.q" placeholder="/api/consulta">
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Desde</mat-label>
+      <input matInput type="datetime-local" [(ngModel)]="filters.desde">
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Hasta</mat-label>
+      <input matInput type="datetime-local" [(ngModel)]="filters.hasta">
+    </mat-form-field>
+  </section>
+
+  <ion-row>
+    <ion-col size="12" size-xl="8">
+      <section class="logs-panel">
+        <div class="panel-title">
+          <span>Registros</span>
+          <div class="panel-actions">
+            <mat-spinner *ngIf="isLoading" diameter="22"></mat-spinner>
+            <span>{{ pageSummary }}</span>
+            <button mat-icon-button type="button" matTooltip="Pagina anterior" (click)="previousPage()"
+              [disabled]="filters.page <= 1 || isLoading">
+              <mat-icon>chevron_left</mat-icon>
+            </button>
+            <button mat-icon-button type="button" matTooltip="Pagina siguiente" (click)="nextPage()"
+              [disabled]="!hasNextPage || isLoading">
+              <mat-icon>chevron_right</mat-icon>
+            </button>
+          </div>
+        </div>
+
+        <div class="table-wrap">
+          <table mat-table [dataSource]="logs">
+            <ng-container matColumnDef="created_at">
+              <th mat-header-cell *matHeaderCellDef>Fecha</th>
+              <td mat-cell *matCellDef="let row">{{ row.created_at | date:'dd/MM/yyyy HH:mm:ss' }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="service_name">
+              <th mat-header-cell *matHeaderCellDef>Servicio</th>
+              <td mat-cell *matCellDef="let row">{{ row.service_name }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="method">
+              <th mat-header-cell *matHeaderCellDef>Metodo</th>
+              <td mat-cell *matCellDef="let row">
+                <span class="method">{{ row.method }}</span>
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="original_url">
+              <th mat-header-cell *matHeaderCellDef>API</th>
+              <td mat-cell *matCellDef="let row" class="url-cell" [matTooltip]="row.original_url">
+                {{ row.original_url }}
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="status_code">
+              <th mat-header-cell *matHeaderCellDef>Status</th>
+              <td mat-cell *matCellDef="let row">
+                <span class="status" [class.error]="row.status_code >= 400">{{ row.status_code || '-' }}</span>
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="duration_ms">
+              <th mat-header-cell *matHeaderCellDef>Tiempo</th>
+              <td mat-cell *matCellDef="let row">{{ row.duration_ms || 0 }} ms</td>
+            </ng-container>
+
+            <ng-container matColumnDef="user_name">
+              <th mat-header-cell *matHeaderCellDef>Usuario</th>
+              <td mat-cell *matCellDef="let row">
+                <span>{{ row.user_name || row.user_id || 'Sin usuario' }}</span>
+                <small>{{ row.user_role || '-' }}</small>
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="actions">
+              <th mat-header-cell *matHeaderCellDef></th>
+              <td mat-cell *matCellDef="let row">
+                <button mat-icon-button type="button" matTooltip="Ver detalle" (click)="viewDetail(row)">
+                  <mat-icon>visibility</mat-icon>
+                </button>
+              </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;"
+              [class.selected]="selectedLog?.id === row.id"
+              [class.row-error]="row.status_code >= 400"
+              (click)="viewDetail(row)">
+            </tr>
+          </table>
+
+          <div class="empty-state" *ngIf="!isLoading && !logs.length">
+            <mat-icon>manage_search</mat-icon>
+            <span>No hay logs con los filtros actuales</span>
+          </div>
+        </div>
+      </section>
+    </ion-col>
+
+    <ion-col size="12" size-xl="4">
+      <section class="detail-panel">
+        <div class="panel-title">
+          <span>{{ selectedLog ? 'Detalle del request' : 'Selecciona un registro' }}</span>
+          <mat-spinner *ngIf="isLoadingDetail" diameter="22"></mat-spinner>
+        </div>
+
+        <div class="empty-state detail-empty" *ngIf="!selectedLog && !isLoadingDetail">
+          <mat-icon>article</mat-icon>
+          <span>El detalle mostrara header, body, query y error</span>
+        </div>
+
+        <div class="detail-content" *ngIf="selectedLog">
+          <div class="detail-summary">
+            <strong>{{ selectedLog.method }} {{ selectedLog.original_url }}</strong>
+            <span>{{ selectedLog.service_name }} - {{ selectedLog.created_at | date:'dd/MM/yyyy HH:mm:ss' }}</span>
+            <span>{{ selectedLog.user_name || selectedLog.user_id || 'Sin usuario' }} / {{ selectedLog.user_role || '-' }}</span>
+            <span>{{ selectedLog.ip || '-' }} / {{ selectedLog.duration_ms || 0 }} ms</span>
+          </div>
+
+          <mat-tab-group>
+            <mat-tab label="Headers">
+              <pre>{{ formatJson(selectedLog.request_headers) }}</pre>
+            </mat-tab>
+            <mat-tab label="Body">
+              <pre>{{ formatJson(selectedLog.request_body) }}</pre>
+            </mat-tab>
+            <mat-tab label="Query">
+              <pre>{{ formatJson(selectedLog.request_query) }}</pre>
+            </mat-tab>
+            <mat-tab label="Usuario">
+              <pre>{{ formatJson(selectedLog.user_payload) }}</pre>
+            </mat-tab>
+            <mat-tab label="Error">
+              <pre>{{ formatJson(selectedLog.response_error || selectedLog.error_message) }}</pre>
+            </mat-tab>
+          </mat-tab-group>
+        </div>
+      </section>
+    </ion-col>
+  </ion-row>
+</ion-grid>

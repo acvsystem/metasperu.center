@@ -29,7 +29,7 @@ export class SocketService {
         });
 
         this.socket.on('connect', () => {
-            console.log('Conectado al servidor de monitoreo');
+            console.log('Conectado al servidor de monitoreo', this.socket?.id);
             this.socket?.emit('registrar_dashboard');
             this.socketID = this.socket?.id;
         });
@@ -95,5 +95,9 @@ export class SocketService {
 
     onRefreshColaPanama(callback: (data: any) => void) {
         this.socket?.on('transaction_refresh_dashboard', callback);
+    }
+
+    onInformeRendimiento(callback: (data: any) => void) {
+        this.socket?.on('response_informe_rendimiento', callback);
     }
 }

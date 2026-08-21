@@ -81,6 +81,9 @@ import { MtMaintenanceTables } from './features/pages/configuration/component/mt
 import { MdlMaintenanceRecord } from './features/pages/configuration/component/mt-maintenance-tables/component/mdl-maintenance-record/mdl-maintenance-record';
 import { MtPageMantenimiento } from './shared/component/mt-page-mantenimiento/mt-page-mantenimiento';
 import { RrwebSessions } from './features/pages/rrweb-sessions/rrweb-sessions';
+import { ApiLogs } from './features/pages/api-logs/api-logs';
+import { PanelReportes } from './features/pages/panel-reportes/panel-reportes';
+import { MtInformeRendimiento } from './features/pages/panel-reportes/components/mt-informe-rendimiento/mt-informe-rendimiento';
 
 registerLocaleData(localeEsPe);
 @NgModule({
@@ -133,7 +136,10 @@ registerLocaleData(localeEsPe);
     MtMaintenanceTables,
     MdlMaintenanceRecord,
     MtPageMantenimiento,
-    RrwebSessions
+    RrwebSessions,
+    ApiLogs,
+    PanelReportes,
+    MtInformeRendimiento
   ],
   imports: [
     IonicModule.forRoot(),

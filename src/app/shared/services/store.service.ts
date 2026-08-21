@@ -585,6 +585,37 @@ export class StoreService {
         return this.http.delete<any>(`${this.API_URL}/api/maintenance/${resource}/${id}`)
             .pipe(catchError(this.handleError));
     }
+
+    getApiLogs(params: any): Observable<any> {
+        let httpParams = new HttpParams();
+        Object.keys(params || {}).forEach((key) => {
+            const value = params[key];
+            if (value !== undefined && value !== null && value !== '') {
+                httpParams = httpParams.set(key, String(value));
+            }
+        });
+
+        return this.http.get<any>(`${this.API_URL}/api/logs`, { params: httpParams })
+            .pipe(catchError(this.handleError));
+    }
+
+    getApiLog(id: number | string): Observable<any> {
+        return this.http.get<any>(`${this.API_URL}/api/logs/${id}`)
+            .pipe(catchError(this.handleError));
+    }
+
+    getInformeRendimiento(queryParams: any): Observable<any> {
+        let httpParams = new HttpParams();
+        Object.keys(queryParams || {}).forEach((key) => {
+            const value = queryParams[key];
+            if (value !== undefined && value !== null && value !== '') {
+                httpParams = httpParams.set(key, String(value));
+            }
+        });
+
+        return this.http.get<any>(`${this.API_URL}/api/reports/informe-rendimiento`, { params: httpParams })
+            .pipe(catchError(this.handleError));
+    }
 }
 
 export interface Ballot {

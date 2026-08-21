@@ -13,6 +13,9 @@ import { ExchangeRateStore } from './features/pages/exchange-rate-store/exchange
 import { AutorizacionHorasExtras } from '@metasperu/page/features/pages/autorizacion-horas-extras/autorizacion-horas-extras';
 import { Configuration } from '@metasperu/page/features/pages/configuration/configuration';
 import { RrwebSessions } from '@metasperu/page/features/pages/rrweb-sessions/rrweb-sessions';
+import { ApiLogs } from '@metasperu/page/features/pages/api-logs/api-logs';
+import { PanelReportes } from '@metasperu/page/features/pages/panel-reportes/panel-reportes';
+
 const routes: Routes = [
   { path: '', component: Login },
   { path: 'login', component: Login },
@@ -79,6 +82,18 @@ const routes: Routes = [
   {
     path: 'recoding',
     component: RrwebSessions,
+    canActivate: [authGuard],
+    data: { roles: ['SISTEMAS'] }
+  },
+  {
+    path: 'api-logs',
+    component: ApiLogs,
+    canActivate: [authGuard],
+    data: { roles: ['SISTEMAS'] }
+  },
+  {
+    path: 'reportes',
+    component: PanelReportes,
     canActivate: [authGuard],
     data: { roles: ['SISTEMAS'] }
   }

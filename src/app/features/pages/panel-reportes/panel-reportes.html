@@ -1,0 +1,43 @@
+<div class="panel-reporte">
+
+    <!-- ===================== VISTA DE SELECCIÓN ===================== -->
+    <div class="seleccion-reportes" *ngIf="!reporteSeleccionado">
+
+        <div class="header">
+            <h2>Panel de Reportes</h2>
+            <p>Selecciona el tipo de reporte que deseas generar</p>
+        </div>
+
+        <div class="lista-reportes">
+            <div class="reporte-card" *ngFor="let reporte of reportes" (click)="seleccionarReporte(reporte.id)">
+
+                <div class="icono">{{ reporte.icono }}</div>
+
+                <div class="info">
+                    <h3>{{ reporte.nombre }}</h3>
+                    <p>{{ reporte.descripcion }}</p>
+                </div>
+
+                <div class="flecha">→</div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- ===================== VISTA DEL REPORTE SELECCIONADO ===================== -->
+    <div class="reporte-activo" *ngIf="reporteSeleccionado">
+
+        <!-- Botón volver -->
+        <div class="barra-superior">
+            <button class="btn-volver" (click)="volver()">
+                ← Volver a reportes
+            </button>
+        </div>
+
+        <!-- Aquí se muestra el componente hijo según el reporte seleccionado -->
+        <mt-informe-rendimiento *ngIf="reporteSeleccionado === 'informe-rendimiento'">
+        </mt-informe-rendimiento>
+
+    </div>
+
+</div>
