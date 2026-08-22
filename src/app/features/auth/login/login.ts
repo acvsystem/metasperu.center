@@ -30,7 +30,7 @@ export class Login {
     // 3. REGISTRAR LOS ICONOS QUE USASTE
     addIcons({ eyeOutline, eyeOffOutline });
 
-    console.log("LOGIN");
+    console.log("V1.0.3");
   }
 
   togglePassword() {
