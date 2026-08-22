@@ -29,13 +29,13 @@ const routes: Routes = [
     path: 'inventario',
     component: Inventario,
     canActivate: [authGuard],
-    data: { roles: ['SISTEMAS', 'RRHH', 'INVENTARIO', 'OPERACIONES', 'TIENDA', 'MARKETING','FIELDLEADER'] }
+    data: { roles: ['SISTEMAS', 'RRHH', 'INVENTARIO', 'OPERACIONES', 'TIENDA', 'MARKETING', 'FIELDLEADER'] }
   },
   {
     path: 'asistencia',
     component: RrhhAsistencia,
     canActivate: [authGuard],
-    data: { roles: ['SISTEMAS', 'RRHH', 'OPERACIONES','FIELDLEADER','TIENDA'] }
+    data: { roles: ['SISTEMAS', 'RRHH', 'OPERACIONES', 'FIELDLEADER', 'TIENDA'] }
   },
   {
     path: 'horario',
@@ -59,7 +59,7 @@ const routes: Routes = [
     path: 'panel-horario',
     component: PanelHorario,
     canActivate: [authGuard],
-    data: { roles: ['SISTEMAS', 'OPERACIONES', 'TIENDA', 'RRHH', 'MARKETING','FIELDLEADER'] }
+    data: { roles: ['SISTEMAS', 'OPERACIONES', 'TIENDA', 'RRHH', 'MARKETING', 'FIELDLEADER'] }
   },
   {
     path: 'tipo-cambio',
@@ -95,7 +95,7 @@ const routes: Routes = [
     path: 'reportes',
     component: PanelReportes,
     canActivate: [authGuard],
-    data: { roles: ['SISTEMAS'] }
+    data: { roles: ['SISTEMAS', 'OPERACIONES', 'FIELDLEADER'] }
   }
 ];
 

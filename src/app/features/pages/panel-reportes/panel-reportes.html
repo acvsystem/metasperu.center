@@ -35,8 +35,10 @@
         </div>
 
         <!-- Aquí se muestra el componente hijo según el reporte seleccionado -->
-        <mt-informe-rendimiento *ngIf="reporteSeleccionado === 'informe-rendimiento'">
-        </mt-informe-rendimiento>
+        <div class="contenido-reporte">
+            <mt-informe-rendimiento [tiendas]="listaTiendas" *ngIf="reporteSeleccionado === 'informe-rendimiento'">
+            </mt-informe-rendimiento>
+        </div>
 
     </div>
 

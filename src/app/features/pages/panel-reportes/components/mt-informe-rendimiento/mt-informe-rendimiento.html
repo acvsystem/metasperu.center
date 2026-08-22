@@ -23,37 +23,105 @@
     </div>
   </div>
 
+  <!-- FILTROS -->
+  <div class="filtros-bar" *ngIf="seriesRecibidas.length > 0">
+
+    <div class="filtro-item">
+      <input type="text"
+             [(ngModel)]="filtroTexto"
+             (ngModelChange)="aplicarFiltros()"
+             placeholder="Buscar tienda o serie...">
+    </div>
+
+    <div class="filtro-item">
+      <select [(ngModel)]="filtroMarca" (ngModelChange)="aplicarFiltros()">
+        <option value="">Todas las marcas</option>
+        <option *ngFor="let marca of marcasDisponibles" [value]="marca">
+          {{ marca }}
+        </option>
+      </select>
+    </div>
+
+    <div class="filtro-item">
+      <select [(ngModel)]="filtroSerie" (ngModelChange)="aplicarFiltros()">
+        <option value="">Todas las tiendas</option>
+        <option *ngFor="let serie of seriesRecibidas" [value]="serie">
+          {{ getNombreTienda(serie) }} ({{ serie }})
+        </option>
+      </select>
+    </div>
+
+    <button class="btn-limpiar"
+            (click)="limpiarFiltros()"
+            *ngIf="filtroTexto || filtroMarca || filtroSerie">
+      Limpiar
+    </button>
+
+    <button class="btn-excel"
+            (click)="exportarExcel()"
+            [disabled]="seriesFiltradas.length === 0">
+      📥 Exportar Excel
+    </button>
+
+  </div>
+
   <!-- LOADING -->
   <div class="loading-bar" *ngIf="loading">
     <div class="spinner"></div>
-    <span>Esperando respuesta de las tiendas...</span>
+    <span>Esperando respuesta de las tiendas... ({{ seriesRecibidas.length }}/21)</span>
   </div>
 
-  <!-- RESUMEN RÁPIDO -->
+  <!-- RESUMEN -->
   <div class="summary" *ngIf="seriesRecibidas.length > 0">
     <div class="summary-card">
-      <span class="label">Tiendas respondidas</span>
-      <span class="value">{{ seriesRecibidas.length }} / 21</span>
+      <span class="label">Mostrando</span>
+      <div class="value-row">
+        <span class="value">{{ seriesFiltradas.length }} / {{ seriesRecibidas.length }}</span>
+
+        <!-- Icono de advertencia -->
+        <button class="btn-warning"
+                *ngIf="tiendasPendientes.length > 0"
+                (click)="abrirPendientes()"
+                [attr.title]="'Sin respuesta (' + tiendasPendientes.length + ')'"
+                [attr.aria-label]="'Sin respuesta'">
+          ⚠️
+          <span class="badge-count">{{ tiendasPendientes.length }}</span>
+        </button>
+      </div>
     </div>
   </div>
 
-  <!-- REPORTES POR TIENDA -->
-  <div class="tiendas-list" *ngIf="seriesRecibidas.length > 0">
+  <!-- GRÁFICOS -->
+  <div class="graficos-section" *ngIf="seriesFiltradas.length > 0">
+    <div class="grafico-card">
+      <div class="chart-container">
+        <canvas id="chartVentas"></canvas>
+      </div>
+    </div>
+    <div class="grafico-card">
+      <div class="chart-container">
+        <canvas id="chartStock"></canvas>
+      </div>
+    </div>
+  </div>
 
-    <div class="tienda-card" *ngFor="let serie of seriesRecibidas; trackBy: trackBySerie">
+  <!-- LISTA DE TIENDAS -->
+  <div class="tiendas-list" *ngIf="seriesFiltradas.length > 0">
+    <div class="tienda-card" *ngFor="let serie of seriesFiltradas; trackBy: trackBySerie">
 
-      <!-- Cabecera de la tienda -->
       <div class="tienda-header">
         <div class="tienda-info">
           <span class="serie-badge">{{ serie }}</span>
-          <h3>Tienda {{ serie }}</h3>
+          <div class="nombre-wrap">
+            <h3>{{ getNombreTienda(serie) }}</h3>
+            <span class="marca-tag">{{ getMarcaTienda(serie) }}</span>
+          </div>
         </div>
         <span class="fecha" *ngIf="reportes[serie]?.[0]?.Fecha">
           {{ reportes[serie][0].Fecha | date:'dd/MM/yyyy' }}
         </span>
       </div>
 
-      <!-- Tabla -->
       <div class="table-wrapper">
         <table>
           <thead>
@@ -67,11 +135,8 @@
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let item of reportes[serie]"
-                [class.total-row]="esTotal(item)">
-              <td class="depto-name">
-                {{ item.NombreDepartamento }}
-              </td>
+            <tr *ngFor="let item of reportes[serie]" [class.total-row]="esTotal(item)">
+              <td class="depto-name">{{ item.NombreDepartamento }}</td>
               <td class="text-right">{{ formatNumber(item.CantidadVendida, 0) }}</td>
               <td class="text-right">{{ formatNumber(item.VentaSoles) }}</td>
               <td class="text-right">{{ formatNumber(item.VentaDolares) }}</td>
@@ -84,11 +149,53 @@
     </div>
   </div>
 
-  <!-- ESTADO VACÍO -->
+  <!-- Sin resultados del filtro -->
+  <div class="empty-state" *ngIf="!loading && seriesRecibidas.length > 0 && seriesFiltradas.length === 0">
+    <div class="empty-icon">🔍</div>
+    <h3>Sin resultados</h3>
+    <p>Ninguna tienda coincide con los filtros</p>
+    <button class="btn-limpiar" (click)="limpiarFiltros()">Limpiar filtros</button>
+  </div>
+
+  <!-- Sin datos -->
   <div class="empty-state" *ngIf="!loading && seriesRecibidas.length === 0">
     <div class="empty-icon">📊</div>
     <h3>Sin datos</h3>
     <p>Selecciona un rango de fechas y genera el reporte</p>
   </div>
 
+</div>
+
+<!-- Botón flotante -->
+<button class="btn-scroll-top"
+        *ngIf="mostrarBotonArriba"
+        (click)="irArriba()"
+        title="Volver arriba">
+  ↑
+</button>
+
+<!-- ===================== POPUP PENDIENTES ===================== -->
+<div class="popup-overlay" *ngIf="mostrarPopupPendientes" (click)="cerrarPendientes()">
+  <div class="popup-box" (click)="$event.stopPropagation()">
+
+    <div class="popup-header">
+      <h3>⚠️ Sin respuesta ({{ tiendasPendientes.length }})</h3>
+      <button class="popup-close" (click)="cerrarPendientes()">✕</button>
+    </div>
+
+    <div class="popup-body">
+      <div class="popup-item" *ngFor="let t of tiendasPendientes">
+        <span class="popup-serie">{{ t.serie }}</span>
+        <div class="popup-info">
+          <span class="popup-nombre">{{ t.nombre }}</span>
+          <span class="popup-marca">{{ t.marca }}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="popup-footer">
+      <button class="btn-cerrar-popup" (click)="cerrarPendientes()">Cerrar</button>
+    </div>
+
+  </div>
 </div>
