@@ -223,7 +223,8 @@ export class MtRwHorario implements CanComponentDeactivate {
       'Recursos humanos',
       'Contabilidad',
       'Sistemas',
-      'Recepción'
+      'Recepción',
+      'Vacaciones'
     ]
 
     const diasSemana = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
