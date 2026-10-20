@@ -19,7 +19,7 @@
         placeholder="Buscar codigo barra"></mt-input>
     </ion-col>
     <ion-col size="12" size-md="4" size-lg="1" style="display: flex;align-items: center;">
-      <button (click)="onSendInventory()" type="button" matTooltip="Verificar"
+      <button (click)="onSendInventory()" [disabled]="isCollectingInventory" type="button" matTooltip="Verificar"
         style="display: flex;justify-content: center;align-items: center;"
         class="btn btn-primary btn-sm mobil-margin-button"><mat-icon>inventory_2</mat-icon><span>Consultar Inv</span>
       </button>
@@ -57,6 +57,21 @@
     </ion-col>
   </ion-row>
 
+  <ion-row *ngIf="hasInventoryQuery && !isCollectingInventory">
+    <ion-col size="12">
+      <div class="inventory-status" role="status">
+        <span>
+          Inventario recibido: <strong>{{ countOnlienStore }}/{{ dataStoreOnline.length }}</strong> tiendas conectadas.
+          <span *ngIf="inventoryTimedOut">Se muestran los datos recibidos tras 1 minuto y medio sin nuevas respuestas.</span>
+        </span>
+        <button mat-stroked-button type="button" (click)="isPendingStoresOpen = true">
+          <mat-icon>store</mat-icon>
+          Tiendas sin enviar ({{ pendingInventoryStores.length }})
+        </button>
+      </div>
+    </ion-col>
+  </ion-row>
+
   <ion-row>
     <ion-col size="12">
       <div class="table-card">
@@ -67,6 +82,32 @@
     </ion-col>
   </ion-row>
 </ion-grid>
+
+<ion-modal [isOpen]="isPendingStoresOpen" class="pending-inventory-modal"
+  (didDismiss)="isPendingStoresOpen = false">
+  <ng-template>
+    <div class="pending-dialog">
+      <div class="pending-dialog-header">
+        <h2>Tiendas sin enviar inventario</h2>
+        <button mat-icon-button type="button" aria-label="Cerrar tiendas pendientes"
+          (click)="isPendingStoresOpen = false"><mat-icon>close</mat-icon></button>
+      </div>
+      <p class="pending-summary">{{ pendingInventoryStores.length }} tiendas pendientes de la marca consultada.</p>
+      <div class="pending-dialog-body">
+        <ul *ngIf="pendingInventoryStores.length; else allStoresReceived" class="pending-store-list">
+          <li *ngFor="let store of pendingInventoryStores">
+            <div><strong>{{ store.nombre }}</strong><small>{{ store.serie }}</small></div>
+            <span>{{ store.online ? 'Sin inventario recibido' : 'Desconectada al consultar' }}</span>
+          </li>
+        </ul>
+        <ng-template #allStoresReceived><p>Todas las tiendas enviaron su inventario.</p></ng-template>
+      </div>
+      <div class="pending-dialog-footer">
+        <button mat-raised-button color="primary" type="button" (click)="isPendingStoresOpen = false">Cerrar</button>
+      </div>
+    </div>
+  </ng-template>
+</ion-modal>
 
 @if (isNotification) {
 <mt-notification [type]="typeNotification" [message]="messageNotification"

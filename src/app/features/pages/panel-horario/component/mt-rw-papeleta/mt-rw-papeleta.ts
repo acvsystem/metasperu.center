@@ -373,7 +373,7 @@ export class MtRwPapeleta implements OnInit, OnDestroy {
 
     // Restamos 75 días (2.5 meses)
     fechaInicio.setDate(hoy.getDate() - 75);
-
+    console.log('Fecha de inicio para horas trabajadas:', fechaInicio);
     // Función auxiliar para formato YYYY-MM-DD
     const formatearFecha = (fecha: any) => {
       const anio = fecha.getFullYear();

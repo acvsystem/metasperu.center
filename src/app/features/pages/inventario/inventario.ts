@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy } from '@angular/core';
+import { EMPTY, Subject, Subscription, catchError, concatMap, takeUntil, tap } from 'rxjs';
 import { SocketInventoryService } from '@metasperu/page/shared/services/socketInvetory';
 import { StoreService } from '@metasperu/services/store.service';
 export type NotificationType = 'success' | 'warning' | 'danger';
@@ -10,7 +11,7 @@ import * as XLSX from 'xlsx';
   templateUrl: './inventario.html',
   styleUrl: './inventario.scss',
 })
-export class Inventario {
+export class Inventario implements OnDestroy {
 
   columnsInventory: tableColumns[] = [
     { isSticky: true, matColumnDef: 'codigoBarra', titleColumn: 'Codigo Barra', propertyValue: 'cCodigoBarra', filterActive: false, isCboFilter: false, cboFilter: [] },
@@ -46,17 +47,42 @@ export class Inventario {
   emailInvetorySend: string = '';
   marcaSelected: string = '';
   searchCodigoBarra: string = '';
+  isPendingStoresOpen = false;
+  hasInventoryQuery = false;
+  inventoryTimedOut = false;
+  private readonly inventoryWaitMs = 90 * 1000;
+  private inventoryTimer?: ReturnType<typeof setTimeout>;
+  private readonly cancelInventory = new Subject<void>();
+  private readonly destroy = new Subject<void>();
+  private readonly inventoryUpdates = new Subject<string>();
+  private readonly receivedStores = new Set<string>();
+  private readonly requestedStores = new Set<string>();
+  private readonly announcedStores = new Set<string>();
+  private inventorySubscription?: Subscription;
+  private removeInventoryListener?: () => void;
+  private inventoryBrand = '';
+  private inventoryBarcode = '';
+  private latestInventory: any[] = [];
+  private rosterLoaded = false;
+  isCollectingInventory = false;
+
+  get pendingInventoryStores(): Array<{ serie: string; nombre: string; online: boolean }> {
+    const stores = new Map<string, { serie: string; nombre: string; online: boolean }>();
+    this.storeList.filter(store => store.marca === this.inventoryBrand).forEach(store => {
+      const serie = String(store.serie);
+      stores.set(serie, { serie, nombre: store.nombre, online: this.dataStoreOnline.includes(serie) });
+    });
+    this.dataStoreOnline.forEach(serie => {
+      if (!stores.has(serie)) stores.set(serie, { serie, nombre: serie, online: true });
+    });
+    return [...stores.values()].filter(store => !this.receivedStores.has(store.serie));
+  }
   constructor(private socketInventoryService: SocketInventoryService, private storeService: StoreService) { }
 
   ngOnInit() {
 
 
-    this.socketInventoryService.onOneInvenrotyStore((data: any) => {
-      //this.dataInventory = data.dataCode;
-    });
-
-
-    this.storeService.getStores().subscribe(
+    this.storeService.getStores().pipe(takeUntil(this.destroy)).subscribe(
       response => {
         this.storeList = response;
         this.cboStoreList = this.storeList.map(store => ({ key: store.serie, value: store.nombre }));
@@ -70,41 +96,73 @@ export class Inventario {
       }
     );
 
-    this.socketInventoryService.onUpdateInventory((data: any) => {
-      this.serieStore = data.serieStore;
-      this.storeService.callUpdateInventory(this.selectedStore.key, `${this.serieStore}`).subscribe(
-        response => {
-          console.log('Inventario actualizado:', response);
-          this.countOnlienStore += 1;
-          this.titleLoader = `Obteniendo Inventario ${this.countOnlienStore}/${this.dataStoreOnline.length}`;
-
-          if (this.countOnlienStore === this.dataStoreOnline.length) {
-            if (this.searchCodigoBarra.length) {
-              const filteredInventory = response.inventory.filter((item: any) => item.cCodigoBarra === this.searchCodigoBarra);
-              this.dataInventory = response.inventory.filter((item: any) => item.cSubFamilia === filteredInventory[0]?.cSubFamilia
-                && item.cColor === filteredInventory[0]?.cColor);
-              // Copia el arreglo, lo ordena y asigna la nueva referencia
-              this.dataInventory = [...this.dataInventory].sort((a, b) => a.cTalla.localeCompare(b.cTalla));
-            } else {
-              this.dataInventory = response.inventory;
-            }
-
-            this.onAlmacenarDatosExportar();
-            this.onAddUpdateColumn(this.selectedStore.key);
-
-            setTimeout(() => {
-              this.isLoading = false;
-            }, 500); // Pequeña pausa para asegurar que el usuario vea el 100%
-          }
-
-
-        },
-        error => {
-          console.error('Error al actualizar el inventario:', error);
-        }
-      );
-      // Aquí puedes actualizar tu UI con los nuevos datos de inventario
+    this.removeInventoryListener = this.socketInventoryService.onUpdateInventory((data: any) => {
+      if (!this.hasInventoryQuery || data?.serieStore == null) return;
+      const serie = String(data.serieStore);
+      this.announcedStores.add(serie);
+      this.requestStoreInventory(serie);
     });
+  }
+
+  private requestStoreInventory(serie: string) {
+    if (!this.rosterLoaded || !this.dataStoreOnline.includes(serie) || this.requestedStores.has(serie)) return;
+    this.requestedStores.add(serie);
+    this.inventoryUpdates.next(serie);
+  }
+
+  private restartInventoryTimer() {
+    this.clearInventoryTimer();
+    this.inventoryTimer = setTimeout(() => this.finishInventory(true), this.inventoryWaitMs);
+  }
+
+  private clearInventoryTimer() {
+    if (this.inventoryTimer !== undefined) clearTimeout(this.inventoryTimer);
+    this.inventoryTimer = undefined;
+  }
+
+  private displayInventory() {
+    // El consolidado puede contener stock anterior de tiendas que aún no respondieron.
+    this.dataInventory = this.latestInventory.map(item => ({
+      ...item,
+      cStock: Object.fromEntries(Object.entries(item.cStock || {})
+        .filter(([serie]) => this.receivedStores.has(serie)))
+    }));
+    if (this.inventoryBarcode) {
+      const match = this.dataInventory.find(item => item.cCodigoBarra === this.inventoryBarcode);
+      this.dataInventory = match ? this.dataInventory
+        .filter(item => item.cSubFamilia === match.cSubFamilia && item.cColor === match.cColor)
+        .sort((a, b) => String(a.cTalla).localeCompare(String(b.cTalla))) : [];
+    }
+    this.onAlmacenarDatosExportar();
+    this.onAddUpdateColumn(this.inventoryBrand);
+    this.expColumnsInventory = this.expColumnsInventory.filter(column =>
+      column.extraProperty !== 'cStock' || this.receivedStores.has(column.propertyValue));
+    this.expDisplayedColumnsInventory = this.expColumnsInventory.map(column => column.matColumnDef);
+  }
+
+  private finishInventory(timedOut: boolean) {
+    this.clearInventoryTimer();
+    this.isCollectingInventory = false;
+    this.inventoryTimedOut = timedOut;
+    this.displayInventory();
+    this.isLoading = false;
+    if (timedOut) {
+      this.messageNotification = this.countOnlienStore
+        ? `Han pasado 1 minuto y medio sin nuevas respuestas. Se muestra el inventario de ${this.countOnlienStore}/${this.dataStoreOnline.length} tiendas conectadas. Consulte las tiendas pendientes.`
+        : 'Han pasado 1 minuto y medio sin respuestas. No se recibió inventario; consulte las tiendas pendientes.';
+      this.abrirNotificacion('warning');
+    }
+  }
+
+  ngOnDestroy() {
+    this.clearInventoryTimer();
+    this.cancelInventory.next();
+    this.cancelInventory.complete();
+    this.inventorySubscription?.unsubscribe();
+    this.inventoryUpdates.complete();
+    this.removeInventoryListener?.();
+    this.destroy.next();
+    this.destroy.complete();
   }
 
   async onChangeSelect(data: any) {
@@ -121,7 +179,7 @@ export class Inventario {
 
     if (this.searchCodigoBarra.length >= 12) {
 
-      if (this.selectedStore.length === 0) {
+      if (!this.selectedStore?.key) {
         this.messageNotification = 'Seleccione Unidad de Servicio.';
         this.abrirNotificacion('danger');
         return;
@@ -208,27 +266,85 @@ export class Inventario {
   }
 
   onSendInventory() {
-    console.log("onSendInventory");
+    if (this.isCollectingInventory) return;
+    if (!this.selectedStore?.key) {
+      this.messageNotification = 'Seleccione Unidad de Servicio.';
+      this.abrirNotificacion('danger');
+      return;
+    }
+    this.cancelInventory.next();
+    this.inventorySubscription?.unsubscribe();
+    this.clearInventoryTimer();
+    this.inventoryBrand = this.selectedStore.key;
+    this.inventoryBarcode = this.searchCodigoBarra;
+    this.receivedStores.clear();
+    this.requestedStores.clear();
+    this.announcedStores.clear();
+    this.latestInventory = [];
+    this.dataInventory = [];
+    this.datosExportar = [];
+    this.dataStoreOnline = [];
+    this.rosterLoaded = false;
+    this.hasInventoryQuery = true;
+    this.inventoryTimedOut = false;
+    this.isPendingStoresOpen = false;
+    this.isNotification = false;
+    this.isCollectingInventory = true;
     this.isLoading = true;
-    this.titleLoader = `Obteniendo Inventario...`;
+    this.titleLoader = 'Obteniendo Inventario...';
     this.countOnlienStore = 0;
 
-    this.storeService.callInventory(`${this.selectedStore.key}`, this.socketInventoryService.socketID).subscribe(
-      response => {
-
-        if (!response.online.length) {
-          this.isLoading = false;
-          this.messageNotification = 'No hay tiendas online para mostrar el inventario';
+    // Procesar los consolidados en orden evita que una respuesta antigua reemplace datos nuevos.
+    this.inventorySubscription = this.inventoryUpdates.pipe(
+      concatMap(serie => this.storeService.callUpdateInventory(this.inventoryBrand, serie).pipe(
+        catchError(error => {
+          console.error('Error al actualizar el inventario:', error);
+          this.requestedStores.delete(serie);
+          return EMPTY;
+        }),
+        tap(response => {
+          if (!Array.isArray(response?.inventory)) {
+            this.requestedStores.delete(serie);
+            return;
+          }
+          this.latestInventory = response.inventory;
+          this.receivedStores.add(serie);
+          this.countOnlienStore = this.receivedStores.size;
+          this.titleLoader = `Obteniendo Inventario ${this.countOnlienStore}/${this.dataStoreOnline.length}`;
+          if (this.countOnlienStore === this.dataStoreOnline.length) {
+            this.finishInventory(false);
+          } else if (this.isCollectingInventory) {
+            this.restartInventoryTimer();
+          } else {
+            // Las respuestas tardías de esta consulta también actualizan la tabla y el modal.
+            this.displayInventory();
+          }
+        })
+      ))
+    ).subscribe();
+    this.restartInventoryTimer();
+    this.storeService.callInventory(this.inventoryBrand, this.socketInventoryService.socketID)
+      .pipe(takeUntil(this.cancelInventory), takeUntil(this.destroy)).subscribe({
+        next: response => {
+          this.dataStoreOnline = [...new Set<string>((response.online || [])
+            .map((store: any) => String(store.tiendaId)))];
+          this.rosterLoaded = true;
+          if (!this.dataStoreOnline.length) {
+            this.finishInventory(false);
+            this.messageNotification = 'No hay tiendas online para mostrar el inventario';
+            this.abrirNotificacion('warning');
+            return;
+          }
+          this.titleLoader = `Obteniendo Inventario 0/${this.dataStoreOnline.length}`;
+          this.announcedStores.forEach(serie => this.requestStoreInventory(serie));
+        },
+        error: error => {
+          console.error('Error al obtener el inventario:', error);
+          this.finishInventory(false);
+          this.messageNotification = 'Error al obtener el inventario. Intente consultar nuevamente.';
           this.abrirNotificacion('danger');
-        } else {
-          this.dataStoreOnline = response.online.map((store: any) => store.tiendaId);
-          this.titleLoader = `Obteniendo Inventario 0/${response.online.length}`;
         }
-      },
-      error => {
-        console.error('Error al obtener el inventario:', error);
-      }
-    );
+      });
   }
 
   abrirNotificacion(type: NotificationType) {

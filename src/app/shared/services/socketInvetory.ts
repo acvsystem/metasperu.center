@@ -41,6 +41,7 @@ export class SocketInventoryService {
 
     onUpdateInventory(callback: (data: any) => void) {
         this.socket?.on('update_inventory', callback);
+        return () => this.socket?.off('update_inventory', callback);
     }
 
     onOneInvenrotyStore(callback: (data: any) => void) {
