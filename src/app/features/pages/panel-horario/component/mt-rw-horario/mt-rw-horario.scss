@@ -478,3 +478,17 @@
     transform: scale(1);
   }
 }
+.schedule-heading { display:flex; width:100%; flex-wrap:wrap; gap:12px; }
+.schedule-warning { flex:1; min-width:0; }
+.schedule-toolbar-row { display:flex; align-items:center; min-width:0; flex-wrap:wrap; }
+.toolbar-container { min-width:0; margin-left:0; flex-wrap:wrap; white-space:normal; }
+.main-schedule-wrapper { background:var(--center-bg); }
+.empty-schedule-container { background:var(--center-surface); color:var(--center-muted); border-color:var(--center-line); height:auto; min-height:260px; padding:24px; }
+.empty-schedule-container h3 { color:var(--center-ink); }
+@media(max-width:600px) {
+  .toolbar-container .calendar-wrapper { flex:1 1 200px; min-width:0; }
+  .toolbar-container .content-button-save { flex-basis:100%; }
+  .toolbar-container .btn-text { display:inline; }
+  .schedule-warning { flex-basis:100%; }
+  .empty-schedule-container { margin:12px 0; }
+}

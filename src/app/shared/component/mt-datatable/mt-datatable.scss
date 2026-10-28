@@ -365,8 +365,8 @@ tr.example-element-row:not(.example-expanded-row):active {
 }
 
 .example-container {
-  height: 800px;
-  overflow: auto;
+  height: auto;
+  min-width: 0;
 }
 
 .mobile-only {

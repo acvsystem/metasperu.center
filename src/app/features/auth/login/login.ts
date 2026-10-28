@@ -4,6 +4,7 @@ import { AuthService } from '../../../core/auth/auth.service';
 import { ToastController } from '@ionic/angular';
 import { addIcons } from 'ionicons';
 import { eyeOutline, eyeOffOutline } from 'ionicons/icons';
+import { ThemeService } from '../../../shared/services/theme.service';
 
 @Component({
   selector: 'app-login',
@@ -12,6 +13,8 @@ import { eyeOutline, eyeOffOutline } from 'ionicons/icons';
   styleUrl: './login.scss',
 })
 export class Login {
+  readonly theme = inject(ThemeService);
+  readonly loginError = signal('');
   private fb = inject(NonNullableFormBuilder);
   private authService = inject(AuthService);
   private toastCtrl = inject(ToastController);
@@ -30,7 +33,6 @@ export class Login {
     // 3. REGISTRAR LOS ICONOS QUE USASTE
     addIcons({ eyeOutline, eyeOffOutline });
 
-    console.log("V1.0.3");
   }
 
   togglePassword() {
@@ -39,14 +41,16 @@ export class Login {
 
   async onSubmit() {
     if (this.loginForm.invalid) return;
+    this.loginError.set('');
     this.isLoading.set(true);
     this.authService.login(this.loginForm.getRawValue()).subscribe({
       next: () => {
-        this.presentToast('Bienvenido al sistema', 'success');
+        this.presentToast('Ya puedes consultar tus tiendas y operaciones.', 'success');
         this.isLoading.set(false);
       },
       error: (err) => {
-        this.presentToast('Usuario o contraseña incorrectos', 'danger');
+        this.loginError.set(err.status === 0 ? 'No se pudo conectar. Revisa tu conexión e intenta de nuevo.' :
+          err.status === 429 ? 'Demasiados intentos. Espera unos minutos antes de ingresar.' : 'Usuario o contraseña incorrectos.');
         this.isLoading.set(false);
       }
     });
@@ -55,8 +59,10 @@ export class Login {
   async presentToast(message: string, color: 'success' | 'danger') {
     const toast = await this.toastCtrl.create({
       message,
-      duration: 2000,
-      color,
+      header: color === 'success' ? 'Sesión iniciada' : 'Revisa tus datos',
+      duration: 3200,
+      cssClass: 'center-welcome-toast',
+      buttons: [{ text: 'Cerrar', role: 'cancel' }],
       position: 'bottom'
     });
     toast.present();

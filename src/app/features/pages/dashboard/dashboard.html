@@ -41,7 +41,7 @@
 
         </div>
         <section>
-          <mt-datatable [dataSource]="dataSourceServer" [dataColumnsIn]="columnsServer"
+          <mt-datatable [dataIn]="dataSourceServer.data" [dataColumnsIn]="columnsServer"
             [extraColumns]="displayedColumnsServer"></mt-datatable>
         </section>
       </mat-tab>
@@ -84,7 +84,7 @@
 
         </div>
         <section>
-          <mt-datatable [dataSource]="dataSourceServer_2" [dataColumnsIn]="columnsServer_2"
+          <mt-datatable [dataIn]="dataSourceServer_2.data" [dataColumnsIn]="columnsServer_2"
             [extraColumns]="displayedColumnsServer_2"></mt-datatable>
         </section>
       </mat-tab>
@@ -97,7 +97,7 @@
         <div class="card-content">
           <ion-row>
             <ion-col sizeXs="12" sizeSm="12" sizeMd="9" sizeLg="9" style="display: flex;align-items: center;">
-              <div style="display: flex;align-items: center;">
+              <div class="dashboard-actions">
                 <button (click)="onMissingDocuments()" type="button" matTooltip="Verificar comprobantes"
                   style="display: flex;justify-content: center;align-items: center;margin-right: 10px;"
                   class="btn btn-primary btn-sm mobil-margin-button"><mat-icon

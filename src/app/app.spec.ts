@@ -1,44 +1,36 @@
 import { TestBed } from '@angular/core/testing';
-import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { RouterModule } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
+import { CUSTOM_ELEMENTS_SCHEMA, EventEmitter } from '@angular/core';
+import { SwUpdate } from '@angular/service-worker';
 import { App } from './app';
-import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { AuthService } from './core/auth/auth.service';
+import { RrwebRecorderService } from './shared/services/rrweb-recorder.service';
 
-describe('App', () => {
-  let authServiceSpy: jasmine.SpyObj<AuthService>;
-
+describe('Center workspace', () => {
+  let auth: any;
   beforeEach(async () => {
-    authServiceSpy = jasmine.createSpyObj('AuthService', ['isAuthenticated']);
-
-    await TestBed.configureTestingModule({
-      imports: [
-        RouterModule.forRoot([]),
-        HttpClientTestingModule,
-        IonicModule.forRoot()
-      ],
-      declarations: [
-        App
-      ],
-      schemas: [CUSTOM_ELEMENTS_SCHEMA],
-      providers: [
-        { provide: AuthService, useValue: authServiceSpy }
-      ]
-    }).compileComponents();
+    auth = { isAuthenticated: jasmine.createSpy().and.returnValue(false), onMenu: new EventEmitter(), logout: jasmine.createSpy().and.resolveTo() };
+    await TestBed.configureTestingModule({ imports:[RouterModule.forRoot([]),IonicModule.forRoot()],
+      declarations:[App], schemas:[CUSTOM_ELEMENTS_SCHEMA], providers:[
+        {provide:AuthService,useValue:auth}, {provide:SwUpdate,useValue:{isEnabled:false}},
+        {provide:RrwebRecorderService,useValue:{start:jasmine.createSpy(),stop:jasmine.createSpy()}},
+      ] }).overrideComponent(App, { set: { template: '' } }).compileComponents();
   });
-
-  it('should create the app', () => {
-    const fixture = TestBed.createComponent(App);
-    const app = fixture.componentInstance;
-    expect(app).toBeTruthy();
+  it('creates the workspace and keeps server menu options grouped without adding permissions', () => {
+    const app=TestBed.createComponent(App).componentInstance;
+    app.menuFiltrado=[{nombre:'Usuarios',ruta:'configuracion'},{nombre:'Ventas',ruta:'/reportes'},{nombre:'Área especial',ruta:'custom-area'}];
+    expect(app.menuGroups.map(group=>group.name)).toEqual(['Operaciones','Reportes','Administración']);
+    expect(app.menuGroups.flatMap(group=>group.items).length).toBe(3);
   });
-
-  it('should render title', () => {
-    authServiceSpy.isAuthenticated.and.returnValue(true);
-    const fixture = TestBed.createComponent(App);
-    fixture.detectChanges();
-    const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('#main-content ion-title')?.textContent).toContain('METAS PERU');
+  it('marks the active route even when its server menu uses a leading slash', () => {
+    const app=TestBed.createComponent(App).componentInstance;
+    app.currentRoute.set('/reportes?periodo=mes');expect(app.isActive('/reportes')).toBeTrue();expect(app.isActive('configuracion')).toBeFalse();
+  });
+  it('dismisses the account overlay before starting logout', async () => {
+    const app=TestBed.createComponent(App).componentInstance;
+    let finish!: (value:boolean)=>void;
+    app.accountPopover={dismiss:()=>new Promise<boolean>(resolve=>finish=resolve)} as any;
+    const pending=app.logout();expect(auth.logout).not.toHaveBeenCalled();finish(true);await pending;expect(auth.logout).toHaveBeenCalledTimes(1);
   });
 });

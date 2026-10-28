@@ -1,13 +1,13 @@
 <ion-row>
     <ion-col size="12">
-        <div class="custom-item " (click)="openStoreModal()">
-            <div class="selector-content" style="padding-left: 10px">
-                <span class="selector-label" style="font-weight: 300;color: #1e1e1e;">{{ label }}</span><br>
-                <span class="selector-value" style="color: black;">
-                    {{ selectedText || 'Seleccione items'}}
+        <button type="button" class="custom-item" (click)="openStoreModal()" [attr.aria-label]="label" aria-haspopup="dialog" [attr.aria-expanded]="isModalOpen">
+            <span class="selector-content">
+                <span class="selector-label">{{ label }}</span>
+                <span class="selector-value">
+                    {{ selectedText || 'Seleccionar'}}
                 </span>
-            </div>
-        </div>
+            </span><span class="selector-chevron" aria-hidden="true">⌄</span>
+        </button>
     </ion-col>
 </ion-row>
 

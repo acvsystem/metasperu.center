@@ -4,7 +4,7 @@
 @if(isCreatePapeleta){
 <ion-row class="ion-align-items-center" style="margin-left: 10px;">
     <ion-col size="12" size-md="12">
-        <div style="display: flex;width: 100%;">
+        <div class="schedule-heading">
             <button matIconButton aria-label="expand row" (click)="onCreateBallot();" class="example-toggle-button">
                 <mat-icon>chevron_left</mat-icon>
             </button>
@@ -29,12 +29,12 @@
     style="border-bottom: 2px solid #f4f4f4; margin-bottom: 20px;margin-top: 20px;margin-left: 10px;"
     *ngIf="!isReadOnly">
     <ion-col size="12" size-md="12">
-        <div style="display: flex;width: 100%;">
+        <div class="schedule-heading">
             <div>
                 <h3 class="title-page" style="margin: 0; font-weight: 700; color: #2c3e50;">Gestión de Horario</h3>
                 <p style="color: #7f8c8d; margin: 4px 0 15px 0;">Gestion de horarios, papeletas y horas extras</p>
             </div>
-            <div style="width: 78%;">
+            <div class="schedule-warning">
                 <div *ngIf="hayCambios" class="alert alert-warning d-flex align-items-center justify-content-between"
                     style="margin: 0 10px 15px 10px; border-left: 5px solid #ffc107;height: 50px !important;">
                     <span style="display: flex;align-items: center;">
@@ -47,7 +47,7 @@
     </ion-col>
 </ion-row>
 <ion-row *ngIf="!isReadOnly">
-    <ion-col size="12" size-md="12" size-lg="12" style="display: flex;">
+    <ion-col size="12" size-md="12" size-lg="12" class="schedule-toolbar-row">
         <div class="toolbar-container">
             <button (click)="onVerificarHorario()" type="button" matTooltip="Inicializar horario"
                 class="btn btn-primary btn-sm btn-action">
