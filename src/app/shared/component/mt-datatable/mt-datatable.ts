@@ -52,7 +52,8 @@ export class MtDatatable implements OnInit, OnChanges, AfterViewInit {
     // 1. Cambio en los datos de las filas
     if (changes['dataIn'] && this.dataIn) {
 
-      this.dataSource = new MatTableDataSource(this.dataIn);
+      // Keep the active filter and sort when a live update replaces the rows.
+      this.dataSource.data = this.dataIn;
 
       this.dataSource.paginator = this.paginator;
       this.dataSource.sort = this.sort;
@@ -147,6 +148,7 @@ export class MtDatatable implements OnInit, OnChanges, AfterViewInit {
     this.dataSource.filter = '';
     // Trigger de filtrado
     this.dataSource.filter = JSON.stringify(this.filterValues);
+    this.dataSource.paginator?.firstPage();
     // Notificamos al padre
     this.currentDataFilter.emit(this.dataSource.filteredData);
     this.cdr.detectChanges();

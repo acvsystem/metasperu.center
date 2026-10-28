@@ -101,12 +101,11 @@ export class AuthService {
 
     async logout() {
         this.rrwebRecorder.stop();
-        localStorage.clear();
+        // Preserve device preferences and unrelated local work.
+        for (const key of ['auth_token', 'menu', 'name', 'role', 'marca', 'keyStore', 'keyStore_2']) {
+            localStorage.removeItem(key);
+        }
         this.socketService.desconectar();
-        localStorage.removeItem('auth_token'); // Limpiar el token
-        localStorage.removeItem('menu');
-        localStorage.removeItem('name');
-        localStorage.removeItem('role');
         this.#user.set(null);                  // Limpiar el estado
         this.#menu.set([]);                    // Limpiar el menú
         this.navCtrl.navigateRoot('/login');      // Redirigir

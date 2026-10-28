@@ -45,8 +45,8 @@ export class ExchangeRateStore {
 
     this.socketAccountingService.onResponseExchangeRate((data: any) => {
       this.isLoading = false;
-      this.dataExchangeRate = data;
-      this.tcActual = data[0]['cCotiActual'];
+      this.dataExchangeRate = Array.isArray(data) ? data : [];
+      this.tcActual = this.dataExchangeRate[0]?.cCotiActual ?? '';
     });
 
     this.storeService.getStores().subscribe(
@@ -67,8 +67,15 @@ export class ExchangeRateStore {
   }
 
   async cargarTipoCambio(fecha: string) {
-    const res = await lastValueFrom(this.storeService.postTipoCambioSunat({ fecha }));
-    this.tcSunat = res.data.venta; // Aquí el texto ya está asignado
+    try {
+      const res = await lastValueFrom(this.storeService.postTipoCambioSunat({ fecha }));
+      if (res?.data?.venta == null) throw new Error('Rate unavailable');
+      this.tcSunat = String(res.data.venta);
+    } catch {
+      this.tcSunat = '';
+      this.messageNotification = 'No se pudo obtener el tipo de cambio de SUNAT. Intenta de nuevo más tarde.';
+      this.abrirNotificacion('warning');
+    }
   }
 
   async onSincronizarSunat() {
