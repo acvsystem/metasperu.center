@@ -6,6 +6,7 @@ import { ToastController } from '@ionic/angular';
 import { addIcons } from 'ionicons';
 import { eyeOutline, eyeOffOutline } from 'ionicons/icons';
 import { ThemeService } from '../../../shared/services/theme.service';
+import { loginErrorMessage } from './login-error';
 
 @Component({
   selector: 'app-login',
@@ -53,8 +54,7 @@ export class Login {
         this.isLoading.set(false);
       },
       error: (err) => {
-        this.loginError.set(err.status === 0 ? 'No se pudo conectar. Revisa tu conexión e intenta de nuevo.' :
-          err.status === 429 ? 'Demasiados intentos. Espera unos minutos antes de ingresar.' : 'Usuario o contraseña incorrectos.');
+        this.loginError.set(loginErrorMessage(err.status));
         this.isLoading.set(false);
       }
     }));
