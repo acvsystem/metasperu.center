@@ -1,6 +1,7 @@
+import { UiFeedbackService } from './ui-feedback.service';
 import { EventEmitter, Injectable, Output, inject, signal } from '@angular/core';
 import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http';
-import { Observable, catchError, tap, throwError } from 'rxjs';
+import { Observable, catchError, tap, throwError, timeout } from 'rxjs';
 import { SocketService } from '@metasperu/services/socket.service';
 import * as CryptoJS from 'crypto-js';
 export interface Store {
@@ -22,7 +23,14 @@ export class StoreService {
     @Output() onNotification: EventEmitter<any> = new EventEmitter();
     private readonly secretKey = 'D3SP4RANCUT1R1M1CU4R0';
 
-    constructor(private socketService: SocketService) { }
+    private readonly feedback=inject(UiFeedbackService);
+    constructor(private socketService: SocketService) {
+        this.onNotification.subscribe(notifications=>{
+            for(const item of (Array.isArray(notifications)?notifications:[notifications])) {
+                if(item?.bodyNotification) void this.feedback.show(String(item.bodyNotification),Boolean(item.isError));
+            }
+        });
+    }
 
     private http = inject(HttpClient);
 
@@ -134,8 +142,8 @@ export class StoreService {
     }
 
     callClientDelete(): Observable<any> {
-        return this.http.get(
-            `${this.API_URL}/api/delete/client/${this.socketService.socketID}`
+        return this.http.post(
+            `${this.API_URL}/api/delete/client/${this.socketService.socketID}`, {}
         ).pipe(
             catchError(this.handleError)
         );
@@ -164,8 +172,8 @@ export class StoreService {
     }
 
     callDeleteColaPanama(): Observable<any> {
-        return this.http.get(
-            `${this.API_URL}/api/delete/cola/panama/${this.socketService.socketID}`
+        return this.http.post(
+            `${this.API_URL}/api/delete/cola/panama/${this.socketService.socketID}`, {}
         ).pipe(
             catchError(this.handleError)
         );
@@ -316,9 +324,9 @@ export class StoreService {
         );
     }
 
-    getTraspasos(): Observable<any> {
+    getTraspasos(page=1,limit=25,q=''): Observable<any> {
         return this.http.get(
-            `${this.API_URL_INVENTORY}/api/inventory/traspasos`
+            `${this.API_URL_INVENTORY}/api/inventory/traspasos`,{params:{page,limit,q}}
         ).pipe(
             catchError(this.handleError)
         );
@@ -479,20 +487,20 @@ export class StoreService {
         return this.http.get<[]>(`${this.API_URL}/api/configuration/permissions/menu/${nivel}`);
     }
 
-    getUsuarios(): Observable<[]> {
-        return this.http.get<[]>(`${this.API_URL}/api/configuration/usuarios`);
+    getUsuarios(page=1,limit=25,q=''): Observable<{rows:any[];total:number}> {
+        return this.http.get<{rows:any[];total:number}>(`${this.API_URL}/api/configuration/usuarios`,{params:{page,limit,q}});
     }
 
     deleteUsuario(body: any): Observable<any> {
-        return this.http.post<[]>(`${this.API_URL}/api/configuration/usuario/delete`, body);
+        return this.http.post<[]>(`${this.API_URL}/api/configuration/usuario/delete`, body).pipe(timeout(20000));
     }
 
     updateUsuario(body: any): Observable<any> {
-        return this.http.post<[]>(`${this.API_URL}/api/configuration/usuario/update`, body);
+        return this.http.post<[]>(`${this.API_URL}/api/configuration/usuario/update`, body).pipe(timeout(20000));
     }
 
     createUsuario(body: any): Observable<any> {
-        return this.http.post<[]>(`${this.API_URL}/api/configuration/usuario/create`, body);
+        return this.http.post<[]>(`${this.API_URL}/api/configuration/usuario/create`, body).pipe(timeout(20000));
     }
 
     postPermissionUserStore(body: any): Observable<[]> {
@@ -500,11 +508,11 @@ export class StoreService {
     }
 
     postAsingPermissionUserStore(body: any): Observable<[]> {
-        return this.http.post<[]>(`${this.API_URL}/api/configuration/usuarios/asing/permissions/store`, body);
+        return this.http.post<[]>(`${this.API_URL}/api/configuration/usuarios/asing/permissions/store`, body).pipe(timeout(20000));
     }
 
     postAsingPermissionMenuUser(body: any): Observable<[]> {
-        return this.http.post<[]>(`${this.API_URL}/api/configuration/usuarios/asing/menu`, body);
+        return this.http.post<[]>(`${this.API_URL}/api/configuration/usuarios/asing/menu`, body).pipe(timeout(20000));
     }
 
     getTiendaParametros(): Observable<[]> {

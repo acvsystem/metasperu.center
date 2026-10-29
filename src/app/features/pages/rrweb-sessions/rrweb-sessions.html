@@ -71,6 +71,8 @@
               (click)="playSession(row)">
             </tr>
           </table>
+          <mat-paginator [length]="totalSessions" [pageSize]="pageSize" [pageSizeOptions]="[25,50,100]"
+            (page)="loadSessions($event.pageIndex+1,$event.pageSize)" aria-label="Paginas de grabaciones"></mat-paginator>
         </div>
       </section>
     </ion-col>

@@ -1,8 +1,9 @@
+import { Subscription as ViewSubscriptions } from 'rxjs';
 import { Component } from '@angular/core';
 import { StoreService } from '@metasperu/services/store.service';
 import { SocketResourcesHumanService } from '@metasperu/services/socketResourcesHuman';
 export type NotificationType = 'success' | 'warning' | 'danger';
-import * as XLSX from 'xlsx';
+import { SpreadsheetService } from '@metasperu/page/core/spreadsheets/spreadsheet.service';
 import { lastValueFrom } from 'rxjs';
 
 @Component({
@@ -12,6 +13,9 @@ import { lastValueFrom } from 'rxjs';
   styleUrl: './rrhh-asistencia.scss',
 })
 export class RrhhAsistencia {
+  private readonly viewSubscriptions = new ViewSubscriptions();
+  private readonly socketCleanup: Array<() => void> = [];
+
 
   dataEmployes: any = {};
   dataTable: Array<any> = [];
@@ -81,7 +85,7 @@ export class RrhhAsistencia {
   displayedColumnsFeriado = this.columnsFeriado.map(col => col.matColumnDef);
   displayedColumnsOficina = this.columnsOficina.map(col => col.matColumnDef);
 
-  constructor(private storeService: StoreService, private socketService: SocketResourcesHumanService) {
+  constructor(private storeService: StoreService, private socketService: SocketResourcesHumanService, private sheets:SpreadsheetService) {
 
   }
 
@@ -104,13 +108,15 @@ export class RrhhAsistencia {
     this.cboStoreList = this.storeSelected ? [{ key: 'isDefault', value: 'General' }, { key: 'isDetallado', value: 'Detallado' }] : [{ key: 'isDefault', value: 'General' }, { key: 'isDetallado', value: 'Detallado' }, { key: 'isFeriados', value: 'Feriados' }];
 
     // 4. Escuchar el socket con filtrado reactivo
-    this.socketService.onRefreshEmployesEJB((data: any[]) => {
+    this.socketCleanup.push(this.socketService.onRefreshEmployesEJB((data: any[]) => {
       if (!data) return;
       this.allEmplotes = data;
-    });
+    }));
 
-    this.socketService.onRefreshEmployesAsistence((data: any) => {
-      this.storeService.callRefreshAsistenceEmployes(this.propertyCode).subscribe((data: any) => {
+    this.socketCleanup.push(this.socketService.onRefreshEmployesAsistence((data: any) => {
+      if(!data?.property||(this.propertyCode&&data.property!==this.propertyCode))return;
+      this.propertyCode=data.property;
+      this.viewSubscriptions.add(this.storeService.callRefreshAsistenceEmployes(this.propertyCode).subscribe({next:(data: any) => {
         if (data.asistencia.length == 2) {
           const asistenciaData = this.obtenerDataPorPropiedad(data, this.propertyCode);
 
@@ -125,8 +131,8 @@ export class RrhhAsistencia {
         }
 
         this.isLoading = false;
-      });
-    });
+      },error:()=>{this.isLoading=false;this.messageNotification='No se pudo recuperar la asistencia. Vuelve a consultar.';this.abrirNotificacion('danger');}}));
+    }));
 
   }
 
@@ -145,13 +151,13 @@ export class RrhhAsistencia {
   }
 
   async onEmpleadosList() {
-    this.socketService.socket$.subscribe((id) => {
+    this.viewSubscriptions.add(this.socketService.socket$.subscribe((id) => {
       if ((id || "").length) {
         const socketId = this.socketService.socketID || '';
-        this.storeService.callRegisterEmployes(socketId).subscribe((data: any) => {
-        });
+        this.viewSubscriptions.add(this.storeService.callRegisterEmployes(socketId).subscribe((data: any) => {
+        }));
       }
-    });
+    }));
   }
 
   exportFeriados() {
@@ -194,22 +200,11 @@ export class RrhhAsistencia {
     this.exportarAExcel(datosParaExcel);
   }
 
-  exportarAExcel(datosParaExcel: Array<any>) {
-    const worksheet = XLSX.utils.json_to_sheet(datosParaExcel);
-    const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, 'Reporte Feriados');
-
-    // Generar el archivo y descargarlo
-    XLSX.writeFile(workbook, `Reporte_Feriados_${new Date().getTime()}.xlsx`);
+  async exportarAExcel(datosParaExcel:Array<any>){
+    await this.sheets.exportFile({rows:datosParaExcel,sheetName:'Reporte Feriados'},'Reporte_Feriados_'+Date.now());
   }
-
-  exportData() {
-    const worksheet = XLSX.utils.json_to_sheet(this.dataTable);
-    const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, 'Reporte Asistencia');
-
-    // Generar el archivo y descargarlo
-    XLSX.writeFile(workbook, `Reporte_Asistencia_${new Date().getTime()}.xlsx`);
+  async exportData(){
+    await this.sheets.exportFile({rows:this.dataTable,sheetName:'Reporte Asistencia'},'Reporte_Asistencia_'+Date.now());
   }
 
   obtenerFeriado(dataAsistence: any) {
@@ -342,7 +337,7 @@ export class RrhhAsistencia {
       return;
     }
 
-    this.storeService.callAccessCheckinout(
+    this.viewSubscriptions.add(this.storeService.callAccessCheckinout(
       fechas.fechaDesde,
       fechas.fechaHasta,
       '',
@@ -358,7 +353,7 @@ export class RrhhAsistencia {
         this.abrirNotificacion('danger');
         this.isLoading = false;
       }
-    });
+    }));
   }
 
   onSearchAsistence() {
@@ -390,13 +385,10 @@ export class RrhhAsistencia {
 
     const socketId = this.socketService.socketID;
 
-    this.storeService.callRegisterEmployes(socketId).subscribe((data: any) => {
-    });
-
-
-    this.storeService.callAsistenceEmployes(this.dateCalendar, this.typeCalendar, socketId).subscribe((data: any) => {
+    this.propertyCode='';
+    this.viewSubscriptions.add(this.storeService.callAsistenceEmployes(this.dateCalendar, this.typeCalendar, socketId).subscribe({next:(data: any) => {
       this.propertyCode = data.property;
-    });
+    },error:(error:any)=>{this.isLoading=false;this.messageNotification=error.message||'No se pudo iniciar la consulta de asistencia.';this.abrirNotificacion('danger');}}));
 
 
   }
@@ -468,6 +460,11 @@ export class RrhhAsistencia {
 
 
 
+
+  ngOnDestroy() {
+    this.viewSubscriptions.unsubscribe();
+    this.socketCleanup.forEach(remove => remove());
+  }
 }
 
 

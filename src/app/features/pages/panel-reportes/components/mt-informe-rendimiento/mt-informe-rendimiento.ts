@@ -1,7 +1,8 @@
+import { Subscription as ViewSubscriptions } from 'rxjs';
 import { Component, OnInit, OnDestroy, Input } from '@angular/core';
 import { SocketService } from '@metasperu/services/socket.service';
 import { StoreService } from '@metasperu/services/store.service';
-import * as XLSX from 'xlsx';
+import { SpreadsheetService } from '@metasperu/page/core/spreadsheets/spreadsheet.service';
 import { Chart, registerables } from 'chart.js';
 
 Chart.register(...registerables);
@@ -40,6 +41,9 @@ interface Tienda {
   styleUrl: './mt-informe-rendimiento.scss',
 })
 export class MtInformeRendimiento implements OnInit, OnDestroy {
+  private readonly viewSubscriptions = new ViewSubscriptions();
+  private readonly socketCleanup: Array<() => void> = [];
+
 
   @Input() tiendas: Tienda[] = [];
 
@@ -65,7 +69,8 @@ export class MtInformeRendimiento implements OnInit, OnDestroy {
 
   constructor(
     private socketService: SocketService,
-    private storeService: StoreService
+    private storeService: StoreService,
+    private sheets:SpreadsheetService
   ) { }
 
   ngOnInit(): void {
@@ -75,6 +80,9 @@ export class MtInformeRendimiento implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    this.viewSubscriptions.unsubscribe();
+    this.socketCleanup.forEach(remove => remove());
+
     const container = document.querySelector('.reporte-container');
     if (container) {
       container.removeEventListener('scroll', this.onScroll);
@@ -277,7 +285,6 @@ export class MtInformeRendimiento implements OnInit, OnDestroy {
       return;
     }
 
-    const wb = XLSX.utils.book_new();
 
     // ===== Determinar TYPE según nombre/tipo =====
     const getType = (tienda: Tienda): string => {
@@ -310,42 +317,14 @@ export class MtInformeRendimiento implements OnInit, OnDestroy {
       });
     });
 
-    const ws = XLSX.utils.json_to_sheet(rows);
-
-    // Anchos de columna
-    ws['!cols'] = [
-      { wch: 16 },  // ORDEN DE TIENDA
-      { wch: 12 },  // BRAND
-      { wch: 28 },  // NAME
-      { wch: 12 },  // TYPE
-      { wch: 16 },  // DAILY SALES S/
-      { wch: 16 },  // DAILY SALES $
-      { wch: 14 },  // DAILY UNITS
-      { wch: 12 }   // STOCK
-    ];
-
-    XLSX.utils.book_append_sheet(wb, ws, 'Daily Report');
-
-    const excelBuffer = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
-    const fileName = `Informe_Rendimiento_${this.fechaDesde}_${this.fechaHasta}`;
-    this.saveAsExcelFile(excelBuffer, fileName);
+    void this.sheets.exportFile({rows,sheetName:'Daily Report',widths:[16,12,28,12,16,16,14,12]},`Informe_Rendimiento_${this.fechaDesde}_${this.fechaHasta}`);
   }
 
-  private saveAsExcelFile(buffer: any, fileName: string): void {
-    const data: Blob = new Blob([buffer], {
-      type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8'
-    });
-    const url = window.URL.createObjectURL(data);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = `${fileName}.xlsx`;
-    link.click();
-    window.URL.revokeObjectURL(url);
-  }
+
 
   // ===================== SOCKET =====================
   escucharRespuestas(): void {
-    this.socketService.onInformeRendimiento((data: RespuestaTienda) => {
+    this.socketCleanup.push(this.socketService.onInformeRendimiento((data: RespuestaTienda) => {
       if (data.error) {
         console.error(`Error en tienda ${data.serie}:`, data.error);
         return;
@@ -363,7 +342,7 @@ export class MtInformeRendimiento implements OnInit, OnDestroy {
         this.loading = false;
         this.generarGraficos();
       }
-    });
+    }));
   }
 
   // ===================== HTTP =====================
@@ -389,7 +368,7 @@ export class MtInformeRendimiento implements OnInit, OnDestroy {
       fecha_hasta: this.fechaHasta
     };
 
-    this.storeService.getInformeRendimiento(queryParams).subscribe({
+    this.viewSubscriptions.add(this.storeService.getInformeRendimiento(queryParams).subscribe({
       next: (res) => {
         console.log('Solicitud enviada correctamente:', res);
       },
@@ -397,7 +376,7 @@ export class MtInformeRendimiento implements OnInit, OnDestroy {
         console.error('Error al solicitar el informe:', err);
         this.loading = false;
       }
-    });
+    }));
 
     setTimeout(() => {
       this.loading = false;

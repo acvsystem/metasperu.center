@@ -2,6 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { RouterModule } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
 import { CUSTOM_ELEMENTS_SCHEMA, EventEmitter } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { SwUpdate } from '@angular/service-worker';
 import { App } from './app';
 import { AuthService } from './core/auth/auth.service';
@@ -12,7 +13,7 @@ describe('Center workspace', () => {
   beforeEach(async () => {
     auth = { isAuthenticated: jasmine.createSpy().and.returnValue(false), onMenu: new EventEmitter(), logout: jasmine.createSpy().and.resolveTo() };
     await TestBed.configureTestingModule({ imports:[RouterModule.forRoot([]),IonicModule.forRoot()],
-      declarations:[App], schemas:[CUSTOM_ELEMENTS_SCHEMA], providers:[
+      declarations:[App], schemas:[CUSTOM_ELEMENTS_SCHEMA], providers:[{provide:MatDialog,useValue:{openDialogs:[]}},
         {provide:AuthService,useValue:auth}, {provide:SwUpdate,useValue:{isEnabled:false}},
         {provide:RrwebRecorderService,useValue:{start:jasmine.createSpy(),stop:jasmine.createSpy()}},
       ] }).overrideComponent(App, { set: { template: '' } }).compileComponents();

@@ -1,3 +1,4 @@
+import { Subscription as ViewSubscriptions } from 'rxjs';
 import { Component, Input, ViewChild } from '@angular/core';
 import { SocketAccountingService } from '@metasperu/services/socketAccounting';
 import { StoreService } from '@metasperu/services/store.service';
@@ -12,6 +13,9 @@ import { MatPaginator } from '@angular/material/paginator';
   styleUrl: './mt-cuo.scss',
 })
 export class MtCuo {
+  private readonly viewSubscriptions = new ViewSubscriptions();
+  private readonly socketCleanup: Array<() => void> = [];
+
   @Input() cboStore: Array<any> = [];
   @Input() storeOnline: Array<any> = [];
   messageNotification: string = '';
@@ -76,9 +80,9 @@ export class MtCuo {
         init: this.dateCalendar[0],
         end: this.dateCalendar[1]
       };
-      this.storeService.postCuo(body).subscribe((data: any) => {
+      this.viewSubscriptions.add(this.storeService.postCuo(body).subscribe((data: any) => {
         //console.log(data);
-      });
+      }));
     }
   }
 
@@ -93,9 +97,9 @@ export class MtCuo {
       "data": bodyCuo
     }
 
-    this.storeService.postInsertCuo(body).subscribe((data: any) => {
+    this.viewSubscriptions.add(this.storeService.postInsertCuo(body).subscribe((data: any) => {
       //console.log(data);
-    });
+    }));
   }
 
   abrirNotificacion(type: NotificationType) {
@@ -108,4 +112,9 @@ export class MtCuo {
     this.isNotification = false;
   }
 
+
+  ngOnDestroy() {
+    this.viewSubscriptions.unsubscribe();
+    this.socketCleanup.forEach(remove => remove());
+  }
 }

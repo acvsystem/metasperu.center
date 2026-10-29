@@ -1,0 +1,13 @@
+// Generated from release.json by scripts/prepare-release.mjs.
+export const CURRENT_RELEASE={
+  "version": "2026.10.29-rc.2",
+  "notes": [
+    "Inicio de sesion con permisos vigentes por tienda.",
+    "Formularios de usuarios que conservan los datos cuando falla el guardado.",
+    "Historial de traspasos y usuarios con paginacion desde el servidor.",
+    "Carga inicial mas ligera y conexiones que se limpian al salir.",
+    "Exportaciones en segundo plano con progreso y descarga protegida.",
+    "Borradores de horarios separados por cuenta y tienda.",
+    "Consulta de asistencia con solicitudes independientes y resultados recuperables."
+  ]
+} as const;

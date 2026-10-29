@@ -1,3 +1,4 @@
+import { Subscription as ViewSubscriptions } from 'rxjs';
 import { Component } from '@angular/core';
 import { tableColumns } from '../rrhh-asistencia/rrhh-asistencia';
 import { StoreService } from '@metasperu/services/store.service';
@@ -5,7 +6,7 @@ import { SocketAccountingService } from '@metasperu/services/socketAccounting';
 export type NotificationType = 'success' | 'warning' | 'danger';
 import { map, catchError } from 'rxjs/operators';
 import { Observable, of, lastValueFrom } from 'rxjs';
-import * as XLSX from 'xlsx';
+import { SpreadsheetService } from '@metasperu/page/core/spreadsheets/spreadsheet.service';
 
 @Component({
   selector: 'exchange-rate-store',
@@ -14,6 +15,9 @@ import * as XLSX from 'xlsx';
   styleUrl: './exchange-rate-store.scss',
 })
 export class ExchangeRateStore {
+  private readonly viewSubscriptions = new ViewSubscriptions();
+  private readonly socketCleanup: Array<() => void> = [];
+
 
   dataExchangeRate: Array<any> = [];
   dateCalendar: Array<any> = [];
@@ -38,23 +42,23 @@ export class ExchangeRateStore {
 
   displayedColumnsExchangeRate = this.columnsExchangeRate.map(col => col.matColumnDef);
 
-  constructor(private storeService: StoreService, private socketAccountingService: SocketAccountingService) { }
+  constructor(private storeService: StoreService, private socketAccountingService: SocketAccountingService, private sheets:SpreadsheetService) { }
 
   ngOnInit() {
     this.cargarTipoCambio(new Date().toISOString().split('T')[0]);
 
-    this.socketAccountingService.onResponseExchangeRate((data: any) => {
+    this.socketCleanup.push(this.socketAccountingService.onResponseExchangeRate((data: any) => {
       this.isLoading = false;
       this.dataExchangeRate = Array.isArray(data) ? data : [];
       this.tcActual = this.dataExchangeRate[0]?.cCotiActual ?? '';
-    });
+    }));
 
-    this.storeService.getStores().subscribe(
+    this.viewSubscriptions.add(this.storeService.getStores().subscribe(
       response => {
         this.storeList = response;
         this.cboStoreList = this.storeList.map(store => ({ key: store.serie, value: store.nombre }));
       }
-    );
+    ));
   }
 
   onCalendar(event: any): void {
@@ -136,9 +140,9 @@ export class ExchangeRateStore {
       end: this.dateCalendar[1]
     };
 
-    this.storeService.postExchangeRate(body).subscribe((response) => {
+    this.viewSubscriptions.add(this.storeService.postExchangeRate(body).subscribe((response) => {
 
-    });
+    }));
   }
 
   exportarAExcel() {
@@ -148,12 +152,7 @@ export class ExchangeRateStore {
       return;
     }
 
-    const worksheet = XLSX.utils.json_to_sheet(this.dataExchangeRate);
-    const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, 'Reporte Feriados');
-
-    // Generar el archivo y descargarlo
-    XLSX.writeFile(workbook, `Reporte_exchange_rate_${new Date().getTime()}.xlsx`);
+    void this.sheets.exportFile({rows:this.dataExchangeRate,sheetName:'Tipo de cambio'},'Reporte_tipo_cambio_'+Date.now());
   }
 
 
@@ -167,4 +166,9 @@ export class ExchangeRateStore {
     this.isNotification = false;
   }
 
+
+  ngOnDestroy() {
+    this.viewSubscriptions.unsubscribe();
+    this.socketCleanup.forEach(remove => remove());
+  }
 }

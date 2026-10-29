@@ -1,3 +1,4 @@
+import { Subscription as ViewSubscriptions } from 'rxjs';
 import { Component } from '@angular/core';
 import { StoreService } from '@metasperu/services/store.service';
 
@@ -8,6 +9,9 @@ import { StoreService } from '@metasperu/services/store.service';
   styleUrl: './kardex.scss',
 })
 export class Kardex {
+  private readonly viewSubscriptions = new ViewSubscriptions();
+  private readonly socketCleanup: Array<() => void> = [];
+
   storeList: Array<any> = [];
   cboStoreList: Array<any> = [];
   onlineStores: Array<any> = [];
@@ -15,21 +19,26 @@ export class Kardex {
 
   ngOnInit() {
     this.onOnlineStores();
-    this.storeService.getStores().subscribe(
+    this.viewSubscriptions.add(this.storeService.getStores().subscribe(
       response => {
         this.storeList = response;
         this.cboStoreList = this.storeList.map(store => ({ key: store.serie, value: store.nombre }));
       }
-    );
+    ));
   }
 
   onOnlineStores() {
-    this.storeService.getAccoutingSokectOnline().subscribe(
+    this.viewSubscriptions.add(this.storeService.getAccoutingSokectOnline().subscribe(
       (response: any) => {
         this.onlineStores = response?.tiendasOnline || [];
         ;
       }
-    );
+    ));
   }
 
+
+  ngOnDestroy() {
+    this.viewSubscriptions.unsubscribe();
+    this.socketCleanup.forEach(remove => remove());
+  }
 }

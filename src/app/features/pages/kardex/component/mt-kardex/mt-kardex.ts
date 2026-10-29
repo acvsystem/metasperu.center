@@ -1,3 +1,4 @@
+import { Subscription as ViewSubscriptions } from 'rxjs';
 import { Component, inject, Input, SimpleChanges } from '@angular/core';
 import { SocketAccountingService } from '@metasperu/services/socketAccounting';
 import { StoreService } from '@metasperu/services/store.service';
@@ -16,6 +17,9 @@ import moment from 'moment';
   styleUrl: './mt-kardex.scss',
 })
 export class MtKardex {
+  private readonly viewSubscriptions = new ViewSubscriptions();
+  private readonly socketCleanup: Array<() => void> = [];
+
   @Input() cboStore: Array<any> = [];
   @Input() storeOnline: Array<any> = [];
 
@@ -154,9 +158,9 @@ export class MtKardex {
         init: this.dateCalendar[0],
         end: this.dateCalendar[1]
       };
-      this.storeService.postKardex(body).subscribe((data: any) => {
+      this.viewSubscriptions.add(this.storeService.postKardex(body).subscribe((data: any) => {
         //console.log(data);
-      });
+      }));
     }
   }
 
@@ -217,9 +221,9 @@ export class MtKardex {
       }
 
       this.bodyRegisterCpl = body;
-      this.storeService.postKardexCamposLibres(body).subscribe((data: any) => {
+      this.viewSubscriptions.add(this.storeService.postKardexCamposLibres(body).subscribe((data: any) => {
         // console.log(data);
-      });
+      }));
     } else {
       this.messageNotification = 'Seleccione un albaran.';
       this.abrirNotificacion('danger');
@@ -239,4 +243,9 @@ export class MtKardex {
   }
 
 
+
+  ngOnDestroy() {
+    this.viewSubscriptions.unsubscribe();
+    this.socketCleanup.forEach(remove => remove());
+  }
 }

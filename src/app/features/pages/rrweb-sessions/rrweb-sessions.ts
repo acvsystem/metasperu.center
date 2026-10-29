@@ -1,3 +1,4 @@
+import { Subscription as ViewSubscriptions } from 'rxjs';
 import { AfterViewInit, Component, ElementRef, OnDestroy, ViewChild, inject } from '@angular/core';
 import rrwebPlayer from 'rrweb-player';
 import { RrwebPlayerService, RrwebSession } from '@metasperu/services/rrweb-player.service';
@@ -11,6 +12,9 @@ import { RrwebRecorderService } from '@metasperu/services/rrweb-recorder.service
   styleUrl: './rrweb-sessions.scss'
 })
 export class RrwebSessions implements AfterViewInit, OnDestroy {
+  private readonly viewSubscriptions = new ViewSubscriptions();
+  private readonly socketCleanup: Array<() => void> = [];
+
   @ViewChild('playerContainer') playerContainer?: ElementRef<HTMLDivElement>;
 
   private rrwebPlayerService = inject(RrwebPlayerService);
@@ -19,6 +23,8 @@ export class RrwebSessions implements AfterViewInit, OnDestroy {
   private player?: any;
 
   sessions: RrwebSession[] = [];
+  totalSessions = 0;
+  pageSize = 25;
   selectedSession?: RrwebSession;
   displayedColumns = ['user_name', 'user_store', 'page_url', 'event_count', 'status', 'started_at', 'actions'];
   isLoadingSessions = false;
@@ -33,22 +39,27 @@ export class RrwebSessions implements AfterViewInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    this.viewSubscriptions.unsubscribe();
+    this.socketCleanup.forEach(remove => remove());
+
     this.destroyPlayer();
     this.rrwebRecorder.start();
   }
 
-  loadSessions(): void {
+  loadSessions(page=1,limit=this.pageSize): void {
     this.isLoadingSessions = true;
-    this.rrwebPlayerService.listSessions().subscribe({
+    this.viewSubscriptions.add(this.rrwebPlayerService.listSessions(page,limit).subscribe({
       next: (sessions) => {
-        this.sessions = sessions;
+        this.sessions = sessions.rows;
+        this.totalSessions = sessions.total;
+        this.pageSize = sessions.limit;
         this.isLoadingSessions = false;
       },
       error: (err) => {
         this.isLoadingSessions = false;
         this.notifyError(err?.message || 'No se pudieron cargar las grabaciones');
       }
-    });
+    }));
   }
 
   playSession(session: RrwebSession): void {
@@ -59,7 +70,7 @@ export class RrwebSessions implements AfterViewInit, OnDestroy {
     this.isLoadingEvents = true;
     this.destroyPlayer();
 
-    this.rrwebPlayerService.getSessionEvents(session.session_id).subscribe({
+    this.viewSubscriptions.add(this.rrwebPlayerService.getSessionEvents(session.session_id).subscribe({
       next: ({ events }) => {
         this.isLoadingEvents = false;
 
@@ -74,7 +85,7 @@ export class RrwebSessions implements AfterViewInit, OnDestroy {
         this.isLoadingEvents = false;
         this.notifyError(err?.message || 'No se pudo cargar la grabacion');
       }
-    });
+    }));
   }
 
   private renderPlayer(events: any[]): void {

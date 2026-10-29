@@ -1,3 +1,4 @@
+import { Subscription as ViewSubscriptions } from 'rxjs';
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -31,6 +32,9 @@ export interface MaintenanceResource {
   styleUrl: './mt-maintenance-tables.scss',
 })
 export class MtMaintenanceTables implements OnInit {
+  private readonly viewSubscriptions = new ViewSubscriptions();
+  private readonly socketCleanup: Array<() => void> = [];
+
   resources: MaintenanceResource[] = [
     {
       key: 'head-papeleta',
@@ -205,7 +209,7 @@ export class MtMaintenanceTables implements OnInit {
 
   loadData(): void {
     this.loading = true;
-    this.storeService.getMaintenanceRecords(this.activeResource.key, {
+    this.viewSubscriptions.add(this.storeService.getMaintenanceRecords(this.activeResource.key, {
       page: this.page,
       limit: this.limit,
       ...this.filterValues
@@ -219,7 +223,7 @@ export class MtMaintenanceTables implements OnInit {
         this.loading = false;
         this.showMessage(error.message || 'Error al cargar registros');
       }
-    });
+    }));
   }
 
   search(): void {
@@ -243,22 +247,22 @@ export class MtMaintenanceTables implements OnInit {
       }
     });
 
-    dialogRef.afterClosed().subscribe((saved: boolean) => {
+    this.viewSubscriptions.add(dialogRef.afterClosed().subscribe((saved: boolean) => {
       if (saved) this.loadData();
-    });
+    }));
   }
 
   delete(record: any): void {
     const id = record[this.activeResource.primaryKey];
     if (!id || !confirm('Seguro que desea eliminar este registro?')) return;
 
-    this.storeService.deleteMaintenanceRecord(this.activeResource.key, id).subscribe({
+    this.viewSubscriptions.add(this.storeService.deleteMaintenanceRecord(this.activeResource.key, id).subscribe({
       next: () => {
         this.showMessage('Registro eliminado correctamente');
         this.loadData();
       },
       error: (error: Error) => this.showMessage(error.message || 'Error al eliminar registro')
-    });
+    }));
   }
 
   nextPage(): void {
@@ -299,5 +303,10 @@ export class MtMaintenanceTables implements OnInit {
 
   private hasActiveFilters(): boolean {
     return Object.values(this.filterValues).some((value) => String(value || '').trim() !== '');
+  }
+
+  ngOnDestroy() {
+    this.viewSubscriptions.unsubscribe();
+    this.socketCleanup.forEach(remove => remove());
   }
 }

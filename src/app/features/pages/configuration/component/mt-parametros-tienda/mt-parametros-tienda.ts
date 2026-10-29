@@ -1,3 +1,4 @@
+import { Subscription as ViewSubscriptions } from 'rxjs';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatDialog } from '@angular/material/dialog';
@@ -12,6 +13,9 @@ import { MdlExtraParametros } from './component/mdl-extra-parametros/mdl-extra-p
   styleUrl: './mt-parametros-tienda.scss',
 })
 export class MtParametrosTienda {
+  private readonly viewSubscriptions = new ViewSubscriptions();
+  private readonly socketCleanup: Array<() => void> = [];
+
   // Columnas a mostrar en la tabla (las más relevantes)
   displayedColumns: string[] = ['nro_caja', 'mac', 'serie_tienda', 'database_instance', 'database_name', 'cod_tipo_factura', 'cod_tipo_boleta', 'acciones'];
   dataSource = new MatTableDataSource<any>([]);
@@ -27,10 +31,10 @@ export class MtParametrosTienda {
   }
 
   listarParametros() {
-    this.storeService.getTiendaParametros().subscribe({
+    this.viewSubscriptions.add(this.storeService.getTiendaParametros().subscribe({
       next: (data: any) => this.dataSource.data = data,
       error: (err: any) => this.mostrarNotificacion('Error al cargar datos')
-    });
+    }));
   }
 
   abrirDialogo(data?: any) {
@@ -41,9 +45,9 @@ export class MtParametrosTienda {
       data: data || null // Si data existe es edición, si no, es creación
     });
 
-    dialogRef.afterClosed().subscribe((result: any) => {
+    this.viewSubscriptions.add(dialogRef.afterClosed().subscribe((result: any) => {
       if (result) this.listarParametros();
-    });
+    }));
   }
 
   extraParametro() {
@@ -55,12 +59,12 @@ export class MtParametrosTienda {
 
   eliminar(id: number) {
     if (confirm('¿Está seguro de eliminar esta configuración?')) {
-      this.storeService.deleteTiendaParametro(id).subscribe({
+      this.viewSubscriptions.add(this.storeService.deleteTiendaParametro(id).subscribe({
         next: () => {
           this.mostrarNotificacion('Eliminado correctamente');
           this.listarParametros();
         }
-      });
+      }));
     }
   }
 
@@ -68,5 +72,10 @@ export class MtParametrosTienda {
 
   mostrarNotificacion(msg: string) {
     this.snackBar.open(msg, 'Cerrar', { duration: 3000 });
+  }
+
+  ngOnDestroy() {
+    this.viewSubscriptions.unsubscribe();
+    this.socketCleanup.forEach(remove => remove());
   }
 }

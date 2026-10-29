@@ -1,3 +1,5 @@
+import { Subscription as ViewSubscriptions, Subject, debounceTime, distinctUntilChanged, switchMap, startWith, catchError, of, finalize } from 'rxjs';
+import { PageEvent } from '@angular/material/paginator';
 import { Component } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatDialog } from '@angular/material/dialog';
@@ -16,9 +18,15 @@ export type NotificationType = 'success' | 'warning' | 'danger';
   styleUrl: './mt-usuarios-sistema.scss',
 })
 export class MtUsuariosSistema {
+  private readonly viewSubscriptions = new ViewSubscriptions();
+  private readonly socketCleanup: Array<() => void> = [];
+
 
   displayedColumns: string[] = ['usuario', 'nivel', 'accesos', 'acciones'];
   dataSource = new MatTableDataSource<any>([]);
+  total=0;pageIndex=0;pageSize=25;loading=false;loadError='';
+  private search='';private readonly reload=new Subject<void>();
+  private readonly searches=new Subject<string>();
   messageNotification: string = '';
   typeNotification: NotificationType = 'success';
   isNotification: boolean = false;
@@ -26,19 +34,19 @@ export class MtUsuariosSistema {
   constructor(private dialog: MatDialog, private storeService: StoreService, private snackBar: MatSnackBar) { }
 
   ngOnInit() {
-    this.cargarUsuarios();
+    this.viewSubscriptions.add(this.searches.pipe(debounceTime(300),distinctUntilChanged()).subscribe(q=>{
+      this.search=q;this.pageIndex=0;this.cargarUsuarios();
+    }));
+    this.viewSubscriptions.add(this.reload.pipe(startWith(undefined),switchMap(()=>{
+      this.loading=true;this.loadError='';
+      return this.storeService.getUsuarios(this.pageIndex+1,this.pageSize,this.search).pipe(
+        catchError(()=>{this.loadError='No se pudieron cargar los usuarios.';return of({rows:[],total:0});}),
+        finalize(()=>this.loading=false));
+    })).subscribe(result=>{this.dataSource.data=result.rows;this.total=result.total;}));
   }
-
-  cargarUsuarios() {
-    this.storeService.getUsuarios().subscribe((usuarios: any) => {
-      this.dataSource.data = usuarios;
-    });
-  }
-
-  applyFilter(event: Event) {
-    const filterValue = (event.target as HTMLInputElement).value;
-    this.dataSource.filter = filterValue.trim().toLowerCase();
-  }
+  cargarUsuarios(){this.reload.next();}
+  applyFilter(event:Event){this.searches.next((event.target as HTMLInputElement).value.trim());}
+  changePage(event:PageEvent){this.pageIndex=event.pageIndex;this.pageSize=event.pageSize;this.cargarUsuarios();}
 
   getNivelClass(nivel: string): string {
     switch (nivel) {
@@ -49,14 +57,14 @@ export class MtUsuariosSistema {
   }
 
   gestionarTiendas(usuario: any) {
-    this.dialog.open(MdlUsuarioTienda, {
+    this.viewSubscriptions.add(this.dialog.open(MdlUsuarioTienda, {
       width: '500px',
       data: { usuario: usuario },
       panelClass: 'modal-grande',
     }).afterClosed().subscribe(result => {
-      console.log('Resultado del modal de tiendas:', result);
+
       if (result) this.cargarUsuarios();
-    });
+    }));
   }
 
   gestionarPermisosMenu(usuario: any) {
@@ -74,25 +82,22 @@ export class MtUsuariosSistema {
       panelClass: 'modal-mediano'
     });
 
-    dialogRef.afterClosed().subscribe(result => {
+    this.viewSubscriptions.add(dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        console.log('Datos a enviar al API:', result);
-        this.storeService.updateUsuario(result).subscribe((response) => {
-          this.mostrarNotificacion((response || {})['message']);
-          this.cargarUsuarios();
-        });
+        this.mostrarNotificacion(result.message || 'Usuario actualizado.');
+        this.cargarUsuarios();
       }
-    });
+    }));
   }
 
   eliminarUsuario(id: number) {
     const body = { id: id };
 
     if (confirm('¿Está seguro de eliminar este usuario?')) {
-      this.storeService.deleteUsuario(body).subscribe((response) => {
+      this.viewSubscriptions.add(this.storeService.deleteUsuario(body).subscribe((response) => {
         this.mostrarNotificacion((response || {})['message']);
         this.cargarUsuarios();
-      });
+      }));
     }
   }
 
@@ -102,14 +107,12 @@ export class MtUsuariosSistema {
       panelClass: 'modal-grande'
     });
 
-    dialogRef.afterClosed().subscribe(nuevoUsuario => {
+    this.viewSubscriptions.add(dialogRef.afterClosed().subscribe(nuevoUsuario => {
       if (nuevoUsuario) {
-        this.storeService.createUsuario(nuevoUsuario).subscribe((response) => {
-          this.mostrarNotificacion((response || {})['message']);
-          this.cargarUsuarios();
-        });
+        this.mostrarNotificacion(nuevoUsuario.message || 'Usuario creado.');
+        this.cargarUsuarios();
       }
-    });
+    }));
   }
 
   abrirNotificacion(type: NotificationType) {
@@ -126,4 +129,9 @@ export class MtUsuariosSistema {
     this.snackBar.open(msg, 'Cerrar', { duration: 3000 });
   }
 
+
+  ngOnDestroy() {
+    this.viewSubscriptions.unsubscribe();
+    this.socketCleanup.forEach(remove => remove());
+  }
 }

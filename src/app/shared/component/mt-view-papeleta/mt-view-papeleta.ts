@@ -22,7 +22,7 @@ export class MtViewPapeleta {
   isLoading: boolean = false;
   idTipoPap: number = 0;
   isPermisionEdit: boolean = false;
-  selectedDate: Date | null = null;
+  selectedDate = '';
   isNotification: boolean = false;
   messageNotification: string = '';
   typeNotification: NotificationType = 'success';
@@ -57,7 +57,14 @@ export class MtViewPapeleta {
   }
 
   updateDateBallot() {
-    this.service.updateDateBallot({ codeBallot: this.dataBallot.head_ballot.CODIGO_PAPELETA, id_papeleta: this.dataBallot.head_ballot.ID_HEAD_PAPELETA, nueva_fecha: this.selectedDate }).subscribe((response) => {
+    if(this.isLoading)return;
+    const date=this.selectedDate.replace(/\//g,'-');
+    if(!/^\d{4}-\d{2}-\d{2}$/.test(date)){
+      this.messageNotification='Seleccione una fecha valida.';this.abrirNotificacion('danger');return;
+    }
+    this.isLoading=true;
+    this.service.updateDateBallot({ codeBallot: this.dataBallot.head_ballot.CODIGO_PAPELETA, id_papeleta: this.dataBallot.head_ballot.ID_HEAD_PAPELETA, nueva_fecha: date }).subscribe({next:(response) => {
+      this.isLoading=false;
       this.dataBallot = {
         head_ballot: response.head_ballot,
         detail_ballot: response.detail_ballot
@@ -65,7 +72,7 @@ export class MtViewPapeleta {
 
       this.messageNotification = response.message || 'Fecha de papeleta actualizada';
       this.abrirNotificacion(response.success ? 'success' : 'danger');
-    });
+    },error:()=>{this.isLoading=false;this.messageNotification='No se pudo actualizar la fecha. Intenta nuevamente.';this.abrirNotificacion('danger');}});
   }
 
   abrirNotificacion(type: NotificationType) {
@@ -80,7 +87,7 @@ export class MtViewPapeleta {
 
   onCalendarDesde(event: any): void {
     const { isPeriodo, isMultiSelect, isDefault, isRange, value } = event;
-    this.selectedDate = value;
+    this.selectedDate = typeof value==='string'?value:'';
   }
 
 }

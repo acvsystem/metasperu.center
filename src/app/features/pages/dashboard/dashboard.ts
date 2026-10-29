@@ -1,3 +1,4 @@
+import { Subscription as ViewSubscriptions } from 'rxjs';
 import { Component } from '@angular/core';
 import { SocketService } from '@metasperu/services/socket.service';
 import { StoreService } from '@metasperu/services/store.service';
@@ -11,6 +12,9 @@ import { MatTableDataSource } from '@angular/material/table';
   styleUrl: './dashboard.scss',
 })
 export class Dashboard {
+  private readonly viewSubscriptions = new ViewSubscriptions();
+  private readonly socketCleanup: Array<() => void> = [];
+
   dataSource = new MatTableDataSource<any>([]);
   columnsToDisplay = [
     { matColumnDef: 'serie', titleColumn: 'Serie', propertyValue: 'serie' },
@@ -83,7 +87,7 @@ export class Dashboard {
     await this.onListarTiendas();
 
 
-    this.socketService.tiendas$.subscribe(data => {
+    this.viewSubscriptions.add(this.socketService.tiendas$.subscribe(data => {
       console.log(data);
 
       // 1. Extraemos solo las series que vienen en el nuevo paquete 'data'
@@ -105,14 +109,14 @@ export class Dashboard {
 
       // 3. Actualizamos el origen de datos para que la UI se refresque
       this.dataSource.data = dataActualizada;
-    });
+    }));
 
-    this.socketService.onRefreshColaPanama((response) => {
+    this.socketCleanup.push(this.socketService.onRefreshColaPanama((response) => {
       console.log(response);
       this.onTransactions();
-    });
+    }));
 
-    this.socketService.onTrafficCounterStatus((response) => {
+    this.socketCleanup.push(this.socketService.onTrafficCounterStatus((response) => {
       console.log(response);
       if (!response?.serie || !response?.devices) return;
 
@@ -136,30 +140,30 @@ export class Dashboard {
         this.dataSource._updateChangeSubscription();
       }
 
-    });
+    }));
 
-    this.socketService.onStatusServerBackup((response) => {
+    this.socketCleanup.push(this.socketService.onStatusServerBackup((response) => {
       this.statusServer = response;
-    });
+    }));
 
-    this.socketService.onResponseDeleteColaPnm((response) => {
+    this.socketCleanup.push(this.socketService.onResponseDeleteColaPnm((response) => {
       console.log(response);
-    });
+    }));
 
-    this.socketService.onResponseDeleteClient((response) => {
+    this.socketCleanup.push(this.socketService.onResponseDeleteClient((response) => {
       console.log(response);
 
-    });
+    }));
 
-    this.socketService.onDocumentosRecibidos((response) => {
+    this.socketCleanup.push(this.socketService.onDocumentosRecibidos((response) => {
       const index = this.dataSource.data.findIndex((t) => t.serie == response?.serie);
       if (index != -1) {
         this.dataSource.data[index].comprobantes = response['length'];
         this.dataSource.data[index].comprobantesLoading = false;
       }
-    });
+    }));
 
-    this.socketService.onTransactionsFrontRetail((response) => {
+    this.socketCleanup.push(this.socketService.onTransactionsFrontRetail((response) => {
       const index = this.dataSource.data.findIndex((t) => t.serie == response?.serie);
       if (index != -1) {
         this.dataSource.data[index].transacciones = response['transactions'];
@@ -174,9 +178,9 @@ export class Dashboard {
           this.dataSource.data[index].terminales[idxTerminal]['cantidad'] = t.cantidad || 0;
         });
       }
-    });
+    }));
 
-    this.socketService.onClientBlank((response) => {
+    this.socketCleanup.push(this.socketService.onClientBlank((response) => {
       const index = this.dataSource.data.findIndex((t) => t.serie == response?.serie);
       if (index != -1) {
         this.dataSource.data[index].clientes = response['clients'];
@@ -186,13 +190,13 @@ export class Dashboard {
         }
 
       }
-    });
+    }));
 
-    this.socketService.onResponseTransfer((response) => {
+    this.socketCleanup.push(this.socketService.onResponseTransfer((response) => {
       console.log(response);
       this.onTransactions();
       this.onNotification({ message: response?.status });
-    });
+    }));
   }
 
   isExpanded(element: any) {
@@ -209,15 +213,15 @@ export class Dashboard {
   }
 
   onListarTiendas() {
-    this.storeService.getStores().subscribe({
+    this.viewSubscriptions.add(this.storeService.getStores().subscribe({
       next: (result) => {
         this.dataSource.data = result;
-        this.storeService.callRefreshDashboard().subscribe((response) => { });
+        this.viewSubscriptions.add(this.storeService.callRefreshDashboard().subscribe((response) => { }));
       },
       error: (err) => {
         this.onNotification({ error: 'error', message: err?.message });
       }
-    });
+    }));
   }
 
   onNotification(result: any) {
@@ -237,7 +241,7 @@ export class Dashboard {
       }
     });
 
-    this.storeService.callDocumentsMissing().subscribe({
+    this.viewSubscriptions.add(this.storeService.callDocumentsMissing().subscribe({
       next: (result) => {
         console.log(result);
         this.onNotification({ message: result?.message });
@@ -245,7 +249,7 @@ export class Dashboard {
       error: (err) => {
         this.onNotification({ error: 'error', message: err?.message });
       }
-    });
+    }));
   }
 
   onTransactions() {
@@ -255,7 +259,7 @@ export class Dashboard {
       }
     });
 
-    this.storeService.callTransactions().subscribe({
+    this.viewSubscriptions.add(this.storeService.callTransactions().subscribe({
       next: (result) => {
         console.log(result);
         this.onNotification({ message: result?.message });
@@ -263,7 +267,7 @@ export class Dashboard {
       error: (err) => {
         this.onNotification({ error: 'error', message: err?.message });
       }
-    });
+    }));
   }
 
   onClientBlank() {
@@ -274,7 +278,7 @@ export class Dashboard {
       }
     });
 
-    this.storeService.callClientBlank().subscribe({
+    this.viewSubscriptions.add(this.storeService.callClientBlank().subscribe({
       next: (result) => {
         console.log(result);
         this.onNotification({ message: result?.message });
@@ -282,7 +286,7 @@ export class Dashboard {
       error: (err) => {
         this.onNotification({ error: 'error', message: err?.message });
       }
-    });
+    }));
   }
 
   onClientDelete() {
@@ -291,7 +295,7 @@ export class Dashboard {
         this.dataSource.data[i].clientesLoading = true;
       }
     });
-    this.storeService.callClientDelete().subscribe({
+    this.viewSubscriptions.add(this.storeService.callClientDelete().subscribe({
       next: (result) => {
         console.log(result);
         this.onNotification({ message: result?.message });
@@ -299,11 +303,11 @@ export class Dashboard {
       error: (err) => {
         this.onNotification({ error: 'error', message: err?.message });
       }
-    });
+    }));
   }
 
   onDeleteColaPanama() {
-    this.storeService.callDeleteColaPanama().subscribe({
+    this.viewSubscriptions.add(this.storeService.callDeleteColaPanama().subscribe({
       next: (result) => {
         console.log(result);
         this.onNotification({ message: result?.message });
@@ -311,7 +315,7 @@ export class Dashboard {
       error: (err) => {
         this.onNotification({ error: 'error', message: err?.message });
       }
-    });
+    }));
   }
 
   onSelectedTranferencia(ev: any, dataOne: any, dataTwo?: any) {
@@ -351,7 +355,7 @@ export class Dashboard {
     };
 
     //this.onTransactions();
-    this.storeService.callTransferTerminal(transfer).subscribe({
+    this.viewSubscriptions.add(this.storeService.callTransferTerminal(transfer).subscribe({
       next: (result) => {
         console.log(result);
 
@@ -366,7 +370,7 @@ export class Dashboard {
       error: (err) => {
         this.onNotification({ error: 'error', message: err?.message });
       }
-    });
+    }));
   }
 
   onTrafficCounterStatus() {
@@ -376,9 +380,14 @@ export class Dashboard {
       }
     });
 
-    this.storeService.callTrafficCounterStatus().subscribe((a) => { });
+    this.viewSubscriptions.add(this.storeService.callTrafficCounterStatus().subscribe((a) => { }));
   }
 
+
+  ngOnDestroy() {
+    this.viewSubscriptions.unsubscribe();
+    this.socketCleanup.forEach(remove => remove());
+  }
 }
 
 export interface tableColumns {

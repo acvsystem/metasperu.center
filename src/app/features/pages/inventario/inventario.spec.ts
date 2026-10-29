@@ -28,7 +28,7 @@ describe('Inventario: respuestas de tiendas', () => {
       callInventory: jasmine.createSpy().and.returnValue(of({ online: [{ tiendaId: 'A' }, { tiendaId: 'B' }] })),
       callUpdateInventory: jasmine.createSpy().and.returnValue(of({ inventory }))
     };
-    component = new Inventario(socket, service);
+    component = new Inventario(socket, service, {exportFile:()=>Promise.resolve(true)} as any);
     component.ngOnInit();
     component.selectedStore = { key: 'BBW' };
   });

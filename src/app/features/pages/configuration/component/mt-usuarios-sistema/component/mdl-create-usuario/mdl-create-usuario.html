@@ -2,7 +2,7 @@
     <header mat-dialog-title class="modal-header">
         <mat-icon>person_add</mat-icon>
         <span>Registrar Nuevo Usuario</span>
-        <button mat-icon-button mat-dialog-close type="button" aria-label="Cerrar formulario de usuario"><mat-icon>close</mat-icon></button>
+        <button mat-icon-button mat-dialog-close type="button" [disabled]="saving" aria-label="Cerrar formulario de usuario"><mat-icon>close</mat-icon></button>
     </header>
 
     <mat-dialog-content class="modal-body">
@@ -18,6 +18,7 @@
             <mat-form-field appearance="outline">
                 <mat-label>Contraseña</mat-label>
                 <input matInput [type]="hidePassword ? 'password' : 'text'" formControlName="PASSWORD" autocomplete="new-password">
+                <mat-hint>Minimo 12 caracteres.</mat-hint>
                 <button mat-icon-button matSuffix type="button" (click)="hidePassword = !hidePassword" [attr.aria-label]="hidePassword ? 'Mostrar contraseña del nuevo usuario' : 'Ocultar contraseña del nuevo usuario'"><mat-icon>{{ hidePassword ? 'visibility' : 'visibility_off' }}</mat-icon></button>
             </mat-form-field>
 
@@ -60,14 +61,15 @@
             </mat-form-field>
 
         </div>
-    </mat-dialog-content>
+    <p *ngIf="saveError" role="alert" class="text-danger px-3">{{saveError}}</p>
+</mat-dialog-content>
 
     <mat-dialog-actions align="end" class="modal-footer">
-        <button mat-button mat-dialog-close type="button">Cancelar</button>
+        <button mat-button mat-dialog-close type="button" [disabled]="saving">Cancelar</button>
         <div style="display: flex; justify-content: end; padding-bottom: 12px; padding-top: 10px;">
-            <button [disabled]="form.invalid" (click)="crear()" type="button" class="btn btn-primary btn-sm" style="padding: 0 2px; margin-right: 3px; display: flex;
+            <button [disabled]="form.invalid || saving" (click)="crear()" type="button" class="btn btn-primary btn-sm" style="padding: 0 2px; margin-right: 3px; display: flex;
         justify-content: center; align-items: center; height: 34px; width: 164px;">
-                <mat-icon>save</mat-icon> <span>Guardar usuario</span>
+                <mat-icon>save</mat-icon> <span>{{saving ? 'Guardando…' : 'Guardar usuario'}}</span>
             </button>
         </div>
     </mat-dialog-actions>

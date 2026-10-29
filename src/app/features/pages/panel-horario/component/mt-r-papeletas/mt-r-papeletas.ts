@@ -1,3 +1,4 @@
+import { Subscription as ViewSubscriptions } from 'rxjs';
 import { Component } from '@angular/core';
 import { StoreService } from '@metasperu/services/store.service';
 import { lastValueFrom } from 'rxjs';
@@ -9,6 +10,9 @@ import { lastValueFrom } from 'rxjs';
   styleUrl: './mt-r-papeletas.scss',
 })
 export class MtRPapeletas {
+  private readonly viewSubscriptions = new ViewSubscriptions();
+  private readonly socketCleanup: Array<() => void> = [];
+
   storeList: Array<any> = [];
   keyStore: string = "";
   keyStore_2: string = "";
@@ -52,9 +56,9 @@ export class MtRPapeletas {
       old_codestore: this.keyStore_2 == 'OF' ? '' : this.keyStore_2
     };
 
-    this.storeService.postAllBAllot(body).subscribe((res: any) => {
+    this.viewSubscriptions.add(this.storeService.postAllBAllot(body).subscribe((res: any) => {
       this.dataTable = res.data;
-    });
+    }));
   }
 
   async onStoreList() {
@@ -70,6 +74,11 @@ export class MtRPapeletas {
     }
   }
 
+
+  ngOnDestroy() {
+    this.viewSubscriptions.unsubscribe();
+    this.socketCleanup.forEach(remove => remove());
+  }
 }
 
 export interface tableColumns {

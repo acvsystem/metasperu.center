@@ -1,20 +1,19 @@
 // auth.interceptor.ts
-import { HttpInterceptorFn, HttpRequest, HttpHandlerFn } from '@angular/common/http';
+import { HttpInterceptorFn } from '@angular/common/http';
+import { inject } from '@angular/core';
+import { catchError, throwError } from 'rxjs';
+import { SessionState } from '../../core/auth/session-state';
+import { isCenterApi } from '../../core/auth/api-policy';
 
-export const authInterceptor: HttpInterceptorFn = (req: HttpRequest<unknown>, next: HttpHandlerFn) => {
-  // 1. Obtener el token de localStorage
-  const token = localStorage.getItem('auth_token');
-
-  // 2. Si existe, clonar la petición y añadir el header Authorization
-  if (token) {
-    const cloned = req.clone({
-      setHeaders: {
-        Authorization: `Bearer ${token}`
-      }
-    });
-    return next(cloned); // <-- Aquí es donde estaba el error, se llama como función
-  }
-
-  // 3. Si no hay token, pasar la petición original
-  return next(req);
+export const authInterceptor: HttpInterceptorFn = (req, next) => {
+  if (!isCenterApi(req.url)) return next(req);
+  const session = inject(SessionState);
+  const login = req.url.endsWith('/login');
+  const token = session.token();
+  const request = req.clone({ withCredentials: true,
+    ...(token && !login ? { setHeaders: { Authorization: `Bearer ${token}` } } : {}) });
+  return next(request).pipe(catchError(error => {
+    if (error.status === 401 && !login) session.expire();
+    return throwError(() => error);
+  }));
 };

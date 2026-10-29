@@ -173,8 +173,14 @@
             <tr mat-row *matRowDef="let row; columns: displayedColumns;" class="example-element-row"></tr>
         </table>
 
+        @if(serverTotal !== null) {
+        <mat-paginator [length]="serverTotal" [pageIndex]="serverPageIndex" [pageSize]="serverPageSize"
+            [pageSizeOptions]="[25,50,100]" (page)="serverPage.emit($event)" showFirstLastButtons
+            aria-label="Paginas del historial" class="mat-mdc-paginator-sticky"></mat-paginator>
+        } @else {
         <mat-paginator [pageSizeOptions]="[10, 20, 50, 100]" showFirstLastButtons class="mat-mdc-paginator-sticky">
         </mat-paginator>
+        }
     </div>
 
     <div class="mobile-only" *ngIf="isTableMobile">

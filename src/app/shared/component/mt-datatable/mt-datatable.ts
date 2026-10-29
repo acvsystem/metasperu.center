@@ -1,6 +1,6 @@
 import { Component, inject, EventEmitter, Input, Output, SimpleChanges, ViewChild, ChangeDetectorRef, OnInit, OnChanges, AfterViewInit } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
-import { MatPaginator } from '@angular/material/paginator';
+import { PageEvent, MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import {
   MatDialog,
@@ -18,6 +18,10 @@ import { MtViewPapeleta } from '@metasperu/component/mt-view-papeleta/mt-view-pa
   styleUrl: './mt-datatable.scss',
 })
 export class MtDatatable implements OnInit, OnChanges, AfterViewInit {
+  @Input() serverTotal: number | null = null;
+  @Input() serverPageIndex=0;
+  @Input() serverPageSize=25;
+  @Output() serverPage=new EventEmitter<PageEvent>();
   @Input() dataIn: any[] = [];
   @Input() dataColumnsIn: columnsTable[] = [];
   @Input() extraColumns: string[] = [];
@@ -44,7 +48,7 @@ export class MtDatatable implements OnInit, OnChanges, AfterViewInit {
   }
 
   ngAfterViewInit() {
-    this.dataSource.paginator = this.paginator;
+    this.dataSource.paginator = this.serverTotal === null ? this.paginator : null;
     this.dataSource.sort = this.sort;
   }
 
@@ -55,7 +59,7 @@ export class MtDatatable implements OnInit, OnChanges, AfterViewInit {
       // Keep the active filter and sort when a live update replaces the rows.
       this.dataSource.data = this.dataIn;
 
-      this.dataSource.paginator = this.paginator;
+      this.dataSource.paginator = this.serverTotal === null ? this.paginator : null;
       this.dataSource.sort = this.sort;
       this.onParserFilterCbo();
       this.setupFilterPredicate();

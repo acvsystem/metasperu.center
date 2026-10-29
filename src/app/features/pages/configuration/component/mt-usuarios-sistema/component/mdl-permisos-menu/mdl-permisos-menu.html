@@ -14,6 +14,7 @@
         <p class="text-muted mt-2">Sincronizando permisos...</p>
     </div>
 
+    <p *ngIf="error" role="alert" class="text-danger">{{error}}</p>
     <div class="row" *ngIf="!loading">
         <div class="col-12 mb-2" *ngFor="let menu of listaMenus">
             <div
@@ -27,20 +28,14 @@
                     </div>
                 </div>
 
-                <mat-slide-toggle color="primary" [checked]="menuActivo(menu.id)" (change)="toggleMenu(menu.id)">
+                <mat-slide-toggle color="primary" [disabled]="loading || !ready" [checked]="menuActivo(menu.id)" (change)="toggleMenu(menu.id)">
                 </mat-slide-toggle>
             </div>
         </div>
     </div>
 </mat-dialog-content>
 
-<!--
-<mat-dialog-actions align="end" class="p-3 bg-light border-top">
-  <button mat-button mat-dialog-close [disabled]="loading">
-    <mat-icon>close</mat-icon> Cancelar
-  </button>
-  <button mat-raised-button color="accent" (click)="guardarPermisos()" [disabled]="loading">
-    <mat-icon>save</mat-icon> Actualizar Perfil
-  </button>
+<mat-dialog-actions align="end" class="p-3 border-top">
+  <button mat-button type="button" [disabled]="loading" (click)="cerrar()">Cancelar</button>
+  <button mat-raised-button type="button" color="primary" (click)="guardarPermisos()" [disabled]="loading || !ready || !dirty">{{loading?'Guardando…':'Guardar cambios'}}</button>
 </mat-dialog-actions>
--->

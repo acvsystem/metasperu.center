@@ -2,7 +2,7 @@
   "$schema": "./node_modules/@angular/service-worker/config/schema.json",
   "index": "/index.html",
   "navigationUrls": [
-    "/**", 
+    "/**",
     "!/**/*.*",
     "!/**/*__*"
   ],
@@ -30,6 +30,29 @@
           "/**/*.(svg|cur|jpg|jpeg|png|apng|webp|avif|gif|otf|ttf|woff|woff2)"
         ]
       }
+    },
+    {
+      "name": "spreadsheets",
+      "installMode": "lazy",
+      "updateMode": "prefetch",
+      "resources": {
+        "files": [
+          "/workers/*.js",
+          "/vendor/*.js"
+        ]
+      }
     }
-  ]
+  ],
+  "appData": {
+    "version": "2026.10.29-rc.2",
+    "notes": [
+      "Inicio de sesion con permisos vigentes por tienda.",
+      "Formularios de usuarios que conservan los datos cuando falla el guardado.",
+      "Historial de traspasos y usuarios con paginacion desde el servidor.",
+      "Carga inicial mas ligera y conexiones que se limpian al salir.",
+      "Exportaciones en segundo plano con progreso y descarga protegida.",
+      "Borradores de horarios separados por cuenta y tienda.",
+      "Consulta de asistencia con solicitudes independientes y resultados recuperables."
+    ]
+  }
 }

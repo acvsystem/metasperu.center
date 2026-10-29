@@ -1,3 +1,4 @@
+import { Subscription as ViewSubscriptions } from 'rxjs';
 import { Component, Inject } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
@@ -17,6 +18,9 @@ export interface MaintenanceDialogData {
   styleUrl: './mdl-maintenance-record.scss',
 })
 export class MdlMaintenanceRecord {
+  private readonly viewSubscriptions = new ViewSubscriptions();
+  private readonly socketCleanup: Array<() => void> = [];
+
   form: FormGroup;
   isEdit = false;
 
@@ -64,13 +68,13 @@ export class MdlMaintenanceRecord {
       )
       : this.storeService.createMaintenanceRecord(this.data.resource.key, body);
 
-    request.subscribe({
+    this.viewSubscriptions.add(request.subscribe({
       next: () => {
         this.snackBar.open('Registro guardado correctamente', 'OK', { duration: 2200 });
         this.dialogRef.close(true);
       },
       error: (error: Error) => this.snackBar.open(error.message || 'Error al guardar registro', 'Cerrar', { duration: 3000 })
-    });
+    }));
   }
 
   private toApiBody(): Record<string, any> {
@@ -84,5 +88,10 @@ export class MdlMaintenanceRecord {
     });
 
     return body;
+  }
+
+  ngOnDestroy() {
+    this.viewSubscriptions.unsubscribe();
+    this.socketCleanup.forEach(remove => remove());
   }
 }

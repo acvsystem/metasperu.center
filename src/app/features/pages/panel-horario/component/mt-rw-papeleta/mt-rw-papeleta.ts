@@ -1,3 +1,4 @@
+import { Subscription as ViewSubscriptions } from 'rxjs';
 import { Component, inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { StoreService } from '@metasperu/services/store.service';
 import { SocketResourcesHumanService } from '@metasperu/services/socketResourcesHuman';
@@ -22,6 +23,9 @@ import { MtMarcacionesEmployes } from '@metasperu/component/mt-datatable/compone
   providers: [provideMomentDateAdapter()],
 })
 export class MtRwPapeleta implements OnInit, OnDestroy {
+  private readonly viewSubscriptions = new ViewSubscriptions();
+  private readonly socketCleanup: Array<() => void> = [];
+
 
   // Referencias a componentes hijos para reseteo manual
   @ViewChild('selEmploye') selEmploye!: any;
@@ -140,7 +144,7 @@ export class MtRwPapeleta implements OnInit, OnDestroy {
     });
     this.subscriptions.add(typeBallotSub);
 
-    this.socketService.onHoursWorksEmployes(this.hoursWorksCallback);
+    this.socketCleanup.push(this.socketService.onHoursWorksEmployes(this.hoursWorksCallback));
   }
 
 
@@ -173,7 +177,7 @@ export class MtRwPapeleta implements OnInit, OnDestroy {
         //  return;
       }
 
-      this.socketService.onRefreshEmployesEJB(this.refreshEmployesCallback);
+      this.socketCleanup.push(this.socketService.onRefreshEmployesEJB(this.refreshEmployesCallback));
 
     } catch (error) {
       console.error('Error al inicializar datos de tienda:', error);
@@ -690,6 +694,9 @@ export class MtRwPapeleta implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
+    this.viewSubscriptions.unsubscribe();
+    this.socketCleanup.forEach(remove => remove());
+
     this.subscriptions.unsubscribe();
     this.socketService.offRefreshEmployesEJB(this.refreshEmployesCallback);
     this.socketService.offHoursWorksEmployes(this.hoursWorksCallback);

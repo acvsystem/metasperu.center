@@ -1,3 +1,4 @@
+import { Subscription as ViewSubscriptions } from 'rxjs';
 import { Component, inject } from '@angular/core';
 import { StoreService } from '@metasperu/services/store.service';
 export type NotificationType = 'success' | 'warning' | 'danger';
@@ -13,6 +14,9 @@ import { MtMarcacionesEmployes } from '@metasperu/component/mt-datatable/compone
   styleUrl: './autorizacion-horas-extras.scss',
 })
 export class AutorizacionHorasExtras {
+  private readonly viewSubscriptions = new ViewSubscriptions();
+  private readonly socketCleanup: Array<() => void> = [];
+
   dialog = inject(MatDialog);
   dataTable: Array<any> = [];
   columnsInventory: tableColumns[] = [
@@ -40,28 +44,28 @@ export class AutorizacionHorasExtras {
 
   ngOnInit() {
     this.allAtorizacionHoraExtra();
-    this.socketService.onAsistenceOneEmploye((response: any) => {
+    this.socketCleanup.push(this.socketService.onAsistenceOneEmploye((response: any) => {
       this.marcacionesEmpleado = [];
       this.isLoading = false;
       this.marcacionesEmpleado = response?.data;
       if (this.marcacionesEmpleado.length && !this.isModalActive) {
         this.openDialog();
       }
-    });
+    }));
 
-    this.socketService.socket$.subscribe((id) => {
+    this.viewSubscriptions.add(this.socketService.socket$.subscribe((id) => {
       if ((id || "").length) {
         this.isConectedSocket = true;
       } else {
         this.isConectedSocket = false;
       }
-    });
+    }));
   }
 
   allAtorizacionHoraExtra() {
-    this.storeService.getAllHorasExtrasEmployes().subscribe((res: any) => {
+    this.viewSubscriptions.add(this.storeService.getAllHorasExtrasEmployes().subscribe((res: any) => {
       this.dataTable = res.data;
-    });
+    }));
   }
 
   async onAuth(row: any) {
@@ -86,13 +90,13 @@ export class AutorizacionHorasExtras {
         email: row.email
       }
 
-      this.storeService.postRespuestaAprobacionHextra(body).subscribe((res: any) => {
+      this.viewSubscriptions.add(this.storeService.postRespuestaAprobacionHextra(body).subscribe((res: any) => {
         if (res.success) {
           this.messageNotification = 'Respuesta registrada exitosamente.';
           this.abrirNotificacion('success');
           this.allAtorizacionHoraExtra();
         }
-      });
+      }));
     } else {
       this.isLoading = true;
       this.titleLoader = "Cargando marcaciones...";
@@ -105,9 +109,9 @@ export class AutorizacionHorasExtras {
         "serie": row.store_code
       };
 
-      this.storeService.postHoursWorksEmployes(body).subscribe(() => {
+      this.viewSubscriptions.add(this.storeService.postHoursWorksEmployes(body).subscribe(() => {
 
-      });
+      }));
     }
   }
 
@@ -120,9 +124,9 @@ export class AutorizacionHorasExtras {
         title: 'Marcaciones del empleado'
       }
     })
-    dialogRef.afterClosed().subscribe((saved: boolean) => {
+    this.viewSubscriptions.add(dialogRef.afterClosed().subscribe((saved: boolean) => {
       this.isModalActive = false;
-    });
+    }));
   }
 
   openComentarioModal() {
@@ -133,12 +137,12 @@ export class AutorizacionHorasExtras {
         }
       });
 
-      dialogRef.afterClosed().subscribe(result => {
+      this.viewSubscriptions.add(dialogRef.afterClosed().subscribe(result => {
         if (result) {
           this.comentarioModal = result;
           resolve(this.comentarioModal);
         }
-      });
+      }));
     });
   }
 
@@ -153,6 +157,11 @@ export class AutorizacionHorasExtras {
   }
 
 
+
+  ngOnDestroy() {
+    this.viewSubscriptions.unsubscribe();
+    this.socketCleanup.forEach(remove => remove());
+  }
 }
 
 export interface tableColumns {

@@ -1,3 +1,4 @@
+import { Subscription as ViewSubscriptions } from 'rxjs';
 import { Component, OnInit, inject } from '@angular/core';
 import { StoreService } from '@metasperu/services/store.service';
 
@@ -26,6 +27,9 @@ interface ApiLogRow {
   styleUrl: './api-logs.scss'
 })
 export class ApiLogs implements OnInit {
+  private readonly viewSubscriptions = new ViewSubscriptions();
+  private readonly socketCleanup: Array<() => void> = [];
+
   private storeService = inject(StoreService);
 
   readonly services = [
@@ -75,7 +79,7 @@ export class ApiLogs implements OnInit {
     this.filters.page = page;
     this.isLoading = true;
 
-    this.storeService.getApiLogs(this.filters).subscribe({
+    this.viewSubscriptions.add(this.storeService.getApiLogs(this.filters).subscribe({
       next: (response) => {
         this.logs = response?.rows || [];
         this.total = response?.total || 0;
@@ -85,7 +89,7 @@ export class ApiLogs implements OnInit {
         this.isLoading = false;
         this.notifyError(err?.message || 'No se pudieron cargar los logs de API');
       }
-    });
+    }));
   }
 
   resetFilters(): void {
@@ -107,7 +111,7 @@ export class ApiLogs implements OnInit {
 
   viewDetail(row: ApiLogRow): void {
     this.isLoadingDetail = true;
-    this.storeService.getApiLog(row.id).subscribe({
+    this.viewSubscriptions.add(this.storeService.getApiLog(row.id).subscribe({
       next: (log) => {
         this.selectedLog = log;
         this.isLoadingDetail = false;
@@ -116,7 +120,7 @@ export class ApiLogs implements OnInit {
         this.isLoadingDetail = false;
         this.notifyError(err?.message || 'No se pudo cargar el detalle del log');
       }
-    });
+    }));
   }
 
   previousPage(): void {
@@ -159,5 +163,10 @@ export class ApiLogs implements OnInit {
       isError: true,
       bodyNotification: message
     }]);
+  }
+
+  ngOnDestroy() {
+    this.viewSubscriptions.unsubscribe();
+    this.socketCleanup.forEach(remove => remove());
   }
 }

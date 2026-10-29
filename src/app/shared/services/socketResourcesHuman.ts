@@ -1,3 +1,4 @@
+import { ManagedCenterSocket } from './managed-center-socket';
 // src/app/services/socket.service.ts
 import { Injectable } from '@angular/core';
 import { io, Socket } from 'socket.io-client';
@@ -6,51 +7,22 @@ import { StoreService } from '@metasperu/services/store.service';
 @Injectable({
     providedIn: 'root'
 })
-export class SocketResourcesHumanService {
-    private socket: Socket | undefined;
-    public socketID: any = "";
+export class SocketResourcesHumanService extends ManagedCenterSocket {
     private socketSubject = new BehaviorSubject<any[]>([]);
     public socket$ = this.socketSubject.asObservable();
 
-    constructor(private storeService: StoreService) {
-        this.conectar();
+    constructor() {
+        super('/s5/socket/');
+        this.socket.on('connect', () => this.socketSubject.next(this.socketID as any));
     }
 
-    conectar() {
-        // URL de tu backend Node.js
-        this.socket = io('https://api.metasperu.net.pe', {
-            path: '/s5/socket/', // <--- IMPORTANTE: Nginx redirige esto al puerto 3001
-            transports: ['websocket', 'polling'],
-            withCredentials: true,
-            reconnection: true,
-            reconnectionAttempts: Infinity,
-            reconnectionDelay: 1000,
-        });
-
-        this.socket.on('connect', () => {
-            console.log('Conectado al servicio de Resources Human');
-            //this.socket?.emit('registrar_dashboard');
-            this.socketID = this.socket?.id;
-            this.socketSubject.next(this.socketID);
-
-            /* this.storeService.callRegisterEmployes(this.socketID).subscribe((data: any) => {
-             });*/
-        });
-
-    }
-
-    desconectar() {
-        if (this.socket) {
-            this.socket.disconnect();
-        }
-    }
 
     onRefreshEmployesAsistence(callback: (data: any) => void) {
-        this.socket?.on('dashboard_refresh_empleados', callback);
+        return this.listen('dashboard_refresh_empleados', callback);
     }
 
     onRefreshEmployesEJB(callback: (data: any) => void) {
-        this.socket?.on('dashboard_empleados_horario', callback);
+        return this.listen('dashboard_empleados_horario', callback);
     }
 
     offRefreshEmployesEJB(callback: (data: any) => void) {
@@ -58,7 +30,7 @@ export class SocketResourcesHumanService {
     }
 
     onHoursWorksEmployes(callback: (data: any) => void) {
-        this.socket?.on('py_works_hours_employes_response', callback);
+        return this.listen('py_works_hours_employes_response', callback);
     }
 
     offHoursWorksEmployes(callback: (data: any) => void) {
@@ -66,7 +38,7 @@ export class SocketResourcesHumanService {
     }
 
     onAsistenceOneEmploye(callback: (data: any) => void) {
-        this.socket?.on('py_asistence_employes_response', callback);
+        return this.listen('py_asistence_employes_response', callback);
     }
 
 

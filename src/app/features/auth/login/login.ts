@@ -1,3 +1,4 @@
+import { Subscription as ViewSubscriptions } from 'rxjs';
 import { Component, inject, signal } from '@angular/core';
 import { NonNullableFormBuilder, Validators } from '@angular/forms';
 import { AuthService } from '../../../core/auth/auth.service';
@@ -13,6 +14,9 @@ import { ThemeService } from '../../../shared/services/theme.service';
   styleUrl: './login.scss',
 })
 export class Login {
+  private readonly viewSubscriptions = new ViewSubscriptions();
+  private readonly socketCleanup: Array<() => void> = [];
+
   readonly theme = inject(ThemeService);
   readonly loginError = signal('');
   private fb = inject(NonNullableFormBuilder);
@@ -43,7 +47,7 @@ export class Login {
     if (this.loginForm.invalid) return;
     this.loginError.set('');
     this.isLoading.set(true);
-    this.authService.login(this.loginForm.getRawValue()).subscribe({
+    this.viewSubscriptions.add(this.authService.login(this.loginForm.getRawValue()).subscribe({
       next: () => {
         this.presentToast('Ya puedes consultar tus tiendas y operaciones.', 'success');
         this.isLoading.set(false);
@@ -53,7 +57,7 @@ export class Login {
           err.status === 429 ? 'Demasiados intentos. Espera unos minutos antes de ingresar.' : 'Usuario o contraseña incorrectos.');
         this.isLoading.set(false);
       }
-    });
+    }));
   }
 
   async presentToast(message: string, color: 'success' | 'danger') {
@@ -68,4 +72,9 @@ export class Login {
     toast.present();
   }
 
+
+  ngOnDestroy() {
+    this.viewSubscriptions.unsubscribe();
+    this.socketCleanup.forEach(remove => remove());
+  }
 }

@@ -1,3 +1,4 @@
+import { Subscription as ViewSubscriptions } from 'rxjs';
 import { Component } from '@angular/core';
 import { StoreService } from '@metasperu/services/store.service';
 import { tableColumns } from '../../../../../rrhh-asistencia/rrhh-asistencia';
@@ -9,6 +10,9 @@ import { tableColumns } from '../../../../../rrhh-asistencia/rrhh-asistencia';
   styleUrl: './mt-registros-horarios.scss',
 })
 export class MtRegistrosHorarios {
+  private readonly viewSubscriptions = new ViewSubscriptions();
+  private readonly socketCleanup: Array<() => void> = [];
+
 
   columnsHorartio: tableColumns[] = [
     { isSticky: true, matColumnDef: 'tienda', titleColumn: 'Tienda', propertyValue: 'cDescripcion', filterActive: false, isCboFilter: false, cboFilter: [] },
@@ -29,9 +33,9 @@ export class MtRegistrosHorarios {
   }
 
   onRegistrosHorarios() {
-    this.storeService.getHorarios().subscribe((horarios) => {
+    this.viewSubscriptions.add(this.storeService.getHorarios().subscribe((horarios) => {
       this.dataHorarios = horarios.data;
-    });
+    }));
   }
 
   toggleHorarios(element: any) {
@@ -47,4 +51,9 @@ export class MtRegistrosHorarios {
   }
 
 
+
+  ngOnDestroy() {
+    this.viewSubscriptions.unsubscribe();
+    this.socketCleanup.forEach(remove => remove());
+  }
 }

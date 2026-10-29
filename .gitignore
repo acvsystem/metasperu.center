@@ -40,3 +40,7 @@ testem.log
 # System files
 .DS_Store
 Thumbs.db
+
+# Generated immutable spreadsheet assets from the locked npm package.
+/public/vendor/
+/public/workers/spreadsheet-*.js

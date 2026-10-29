@@ -18,3 +18,6 @@ ion-popover { --width:260px; }.account-menu { background:var(--center-surface); 
 button:focus-visible { outline:3px solid #76a5df; outline-offset:2px; }
 @media(max-width:1099px) { .workspace-toolbar { --padding-start:4px; --padding-end:12px; }.workspace-brand { display:block; font-size:9px; color:var(--center-muted); margin-bottom:3px; } }
 @media(max-width:600px) { .workspace-toolbar { --min-height:64px; }.workspace-context strong { font-size:12px; }.profile-name { display:none; }.profile-initial { width:30px; height:30px; margin-right:0; }.profile-button mat-icon { margin-left:3px; }.theme-toggle { margin-right:8px; }.workspace-context { max-width:calc(100vw - 190px); } }
+.update-indicator{position:relative}.update-dot{position:absolute;right:4px;top:4px;width:7px;height:7px;border-radius:50%;background:#f59e0b}
+
+.file-preparing{display:grid;place-items:center;width:32px;color:var(--center-link)}.file-preparing mat-icon{animation:center-file-spin 1.2s linear infinite}@keyframes center-file-spin{to{transform:rotate(360deg)}}@media(prefers-reduced-motion:reduce){.file-preparing mat-icon{animation:none}}

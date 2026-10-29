@@ -27,6 +27,13 @@
         <ion-buttons slot="start"><ion-menu-button menu="center-menu" aria-label="Abrir navegación"></ion-menu-button></ion-buttons>
         <div class="workspace-context"><span class="workspace-brand">METAS PERÚ</span><strong>{{ pageLabel }}</strong><span class="workspace-subtitle">Centro de operaciones</span></div>
         <ion-buttons slot="end">
+          @if(spreadsheets.active()){
+          <span class="file-preparing" role="status" [attr.aria-label]="'Procesando archivo '+spreadsheets.progress()+'%'" [title]="'Procesando archivo '+spreadsheets.progress()+'%'"><mat-icon aria-hidden="true">sync</mat-icon></span>}
+          @if(updates.available()){
+          <button type="button" class="theme-toggle update-indicator" aria-label="Nueva version disponible" title="Nueva version disponible" (click)="onNavigatorRoute('actualizaciones')">
+            <mat-icon aria-hidden="true">system_update</mat-icon><span class="update-dot" aria-hidden="true"></span>
+          </button>}
+
           <button type="button" class="theme-toggle" (click)="theme.toggle()"
             [attr.aria-label]="theme.mode() === 'dark' ? 'Activar tema claro' : 'Activar tema oscuro'" [attr.aria-pressed]="theme.mode() === 'dark'">
             <span aria-hidden="true">{{ theme.mode() === 'dark' ? '☀' : '☾' }}</span>
@@ -38,7 +45,6 @@
         </ion-buttons>
       </ion-toolbar></ion-header>
       <ion-content class="workspace-content" [class.login-content]="!isLogged"><ion-router-outlet></ion-router-outlet></ion-content>
-      <toas-notification></toas-notification>
     </div>
   </ion-split-pane>
   <ion-popover #accountPopover trigger="profile-popover-trigger" *ngIf="isLogged" [dismissOnSelect]="false">

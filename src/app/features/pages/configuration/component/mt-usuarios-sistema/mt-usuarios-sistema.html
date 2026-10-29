@@ -14,6 +14,8 @@
         <mt-input (keyup)="applyFilter($event)" label="Filtrar usuarios"
             placeholder="Buscar por nombre, email o nivel..."></mt-input>
 
+        <p *ngIf="loading" role="status">Cargando usuarios…</p>
+        <p *ngIf="loadError" role="alert" class="text-danger">{{loadError}}</p>
         <div class="dynamic-table-container shadow-sm border rounded">
             <table mat-table [dataSource]="dataSource" class="w-100">
 
@@ -39,11 +41,11 @@
                 <ng-container matColumnDef="accesos">
                     <th mat-header-cell *matHeaderCellDef class="text-center"> Configuración de Accesos </th>
                     <td mat-cell *matCellDef="let user" class="text-center">
-                        <button mat-icon-button color="primary" matTooltip="Asignar Tiendas"
+                        <button mat-icon-button color="primary" matTooltip="Asignar Tiendas" [attr.aria-label]="'Asignar tiendas de ' + user.USUARIO"
                             (click)="gestionarTiendas(user)">
                             <mat-icon>storefront</mat-icon>
                         </button>
-                        <button mat-icon-button color="accent" matTooltip="Permisos de Menú"
+                        <button mat-icon-button color="accent" matTooltip="Permisos de Menú" [attr.aria-label]="'Permisos del perfil ' + user.NIVEL"
                             (click)="gestionarPermisosMenu(user)">
                             <mat-icon>settings_suggest</mat-icon>
                         </button>
@@ -71,6 +73,8 @@
                 <p class="text-muted mt-2">No se encontraron usuarios.</p>
             </div>
         </div>
+        <mat-paginator [length]="total" [pageIndex]="pageIndex" [pageSize]="pageSize" [pageSizeOptions]="[25,50,100]"
+            (page)="changePage($event)" aria-label="Paginas de usuarios"></mat-paginator>
     </ion-col>
 </ion-row>
 

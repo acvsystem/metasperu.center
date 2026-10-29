@@ -1,3 +1,4 @@
+import { Subscription as ViewSubscriptions } from 'rxjs';
 import { Component, Inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
@@ -11,6 +12,9 @@ import { MatSnackBar } from '@angular/material/snack-bar';
   styleUrl: './mdl-in-upd-parametro-store.scss',
 })
 export class MdlInUpdParametroStore {
+  private readonly viewSubscriptions = new ViewSubscriptions();
+  private readonly socketCleanup: Array<() => void> = [];
+
   form: FormGroup;
   isEdit: boolean = false;
 
@@ -58,12 +62,17 @@ export class MdlInUpdParametroStore {
       ? this.storeService.putUpdateParametrosTienda(this.data.ID_PARAMETROS, this.form.value)
       : this.storeService.postInsertParametrosTienda(this.form.value);
 
-    observable.subscribe({
+    this.viewSubscriptions.add(observable.subscribe({
       next: () => {
         this.snackBar.open('Guardado correctamente', 'OK', { duration: 2000 });
         this.dialogRef.close(true);
       },
       error: (err) => console.error(err)
-    });
+    }));
+  }
+
+  ngOnDestroy() {
+    this.viewSubscriptions.unsubscribe();
+    this.socketCleanup.forEach(remove => remove());
   }
 }

@@ -1,4 +1,4 @@
-import { NgModule, provideBrowserGlobalErrorListeners, isDevMode, CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA, LOCALE_ID } from '@angular/core';
+import { NgModule, provideBrowserGlobalErrorListeners, isDevMode, CUSTOM_ELEMENTS_SCHEMA, LOCALE_ID } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { RouteReuseStrategy } from '@angular/router';
 import { AppRoutingModule } from './app-routing-module';
@@ -8,172 +8,41 @@ import { Login } from '../app/features/auth/login/login';
 import { IonicModule, IonicRouteStrategy } from '@ionic/angular';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
-import { Dashboard } from './features/pages/dashboard/dashboard'; // 1. Importar la función
 import { authInterceptor } from './shared/services/auth.interceptor';
 import { MatIconModule } from '@angular/material/icon';
-import { MatButtonModule } from '@angular/material/button';
-import { MatTableModule } from '@angular/material/table';
-import { MatSidenavModule } from '@angular/material/sidenav';
-import { MatTooltipModule } from '@angular/material/tooltip';
-import { MatBadgeModule } from '@angular/material/badge';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatToolbarModule } from '@angular/material/toolbar';
-import { MatTabsModule } from '@angular/material/tabs';
-import { MtDatatable } from './shared/component/mt-datatable/mt-datatable';
-import { MtInput } from './shared/component/mt-input/mt-input';
-import { MtSelect } from './shared/component/mt-select/mt-select';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatMenu } from '@angular/material/menu';
-import { MatMenuModule } from '@angular/material/menu';
-import { Inventario } from './features/pages/inventario/inventario';
-import { MatPaginatorModule } from '@angular/material/paginator';
-import { MtNotification } from './shared/component/mt-notification/mt-notification';
-import { MtLoader } from './shared/component/mt-loader/mt-loader';
+
+
+
+
+
+
+
+
+
+
+
+
+
 import localeEsPe from '@angular/common/locales/es-PE';
 import { registerLocaleData } from '@angular/common';
-import { RrhhAsistencia } from './features/pages/rrhh-asistencia/rrhh-asistencia';
-import { MtCalendar } from './shared/component/mt-calendar/mt-calendar';
-import { MatDatepickerModule } from '@angular/material/datepicker';
-import { MatChipsModule } from '@angular/material/chips';
-import { MtMarcacionesEmployes } from './shared/component/mt-datatable/component/mt-marcaciones-employes/mt-marcaciones-employes';
-import { MtViewPapeleta } from './shared/component/mt-view-papeleta/mt-view-papeleta';
-import { RrhhHorario } from './features/pages/rrhh-horario/rrhh-horario';
-import { Kardex } from './features/pages/kardex/kardex';
-import { MtKardex } from './features/pages/kardex/component/mt-kardex/mt-kardex';
-import { MatListModule } from '@angular/material/list';
-import { MtCuo } from './features/pages/kardex/component/mt-cuo/mt-cuo';
-import { Traspasos } from './features/pages/traspasos/traspasos';
-import { MtCreationTraspasos } from './features/pages/traspasos/component/mt-creation-traspasos/mt-creation-traspasos';
-import { MtRegistrosTraspasos } from './features/pages/traspasos/component/mt-registros-traspasos/mt-registros-traspasos';
-import { PanelHorario } from './features/pages/panel-horario/panel-horario';
-import { MtRegistrosHorarios } from './features/pages/panel-horario/component/mt-rw-horario/component/mt-registros-horarios/mt-registros-horarios';
-import { MtRwHorario } from './features/pages/panel-horario/component/mt-rw-horario/mt-rw-horario';
-import { MtMdlRangoHora } from './features/pages/panel-horario/component/mt-rw-horario/component/mt-mdl-rango-hora/mt-mdl-rango-hora';
-import { MtMdlAsignarPersonal } from './features/pages/panel-horario/component/mt-rw-horario/component/mt-mdl-asignar-personal/mt-mdl-asignar-personal';
-import { ExchangeRateStore } from './features/pages/exchange-rate-store/exchange-rate-store';
-import { MtMdlInfoHorario } from './features/pages/panel-horario/component/mt-rw-horario/component/mt-mdl-info-horario/mt-mdl-info-horario';
-import { MtMdlObervaciones } from './features/pages/panel-horario/component/mt-rw-horario/component/mt-mdl-obervaciones/mt-mdl-obervaciones';
-import { MatSelectModule } from '@angular/material/select';
-import { MtRwPapeleta } from './features/pages/panel-horario/component/mt-rw-papeleta/mt-rw-papeleta';
-import { AutorizacionHorasExtras } from './features/pages/autorizacion-horas-extras/autorizacion-horas-extras';
-import { MtComentario } from './features/pages/autorizacion-horas-extras/component/mt-comentario/mt-comentario';
-import { MtRPapeletas } from './features/pages/panel-horario/component/mt-r-papeletas/mt-r-papeletas';
-import { MtRHrxConsolidado } from './features/pages/panel-horario/component/mt-r-hrx-consolidado/mt-r-hrx-consolidado';
-import { Configuration } from './features/pages/configuration/configuration';
-import { MatCheckboxModule } from '@angular/material/checkbox';
-import { MatDialogModule } from '@angular/material/dialog';
-import { MatSnackBarModule } from '@angular/material/snack-bar';
-import { MtPermisosTiendas } from './features/pages/configuration/component/mt-permisos-tiendas/mt-permisos-tiendas';
-import { MtUsuariosSistema } from './features/pages/configuration/component/mt-usuarios-sistema/mt-usuarios-sistema';
-import { MdlUsuarioTienda } from './features/pages/configuration/component/mt-usuarios-sistema/component/mdl-usuario-tienda/mdl-usuario-tienda';
-import { MdlPermisosMenu } from './features/pages/configuration/component/mt-usuarios-sistema/component/mdl-permisos-menu/mdl-permisos-menu';
-import { MatSlideToggleModule } from '@angular/material/slide-toggle';
-import { MdlUpdateUsuario } from './features/pages/configuration/component/mt-usuarios-sistema/component/mdl-update-usuario/mdl-update-usuario';
-import { MdlCreateUsuario } from './features/pages/configuration/component/mt-usuarios-sistema/component/mdl-create-usuario/mdl-create-usuario';
-import { MtParametrosTienda } from './features/pages/configuration/component/mt-parametros-tienda/mt-parametros-tienda';
-import { MdlInUpdParametroStore } from './features/pages/configuration/component/mt-parametros-tienda/component/mdl-in-upd-parametro-store/mdl-in-upd-parametro-store';
-import { MdlExtraParametros } from './features/pages/configuration/component/mt-parametros-tienda/component/mdl-extra-parametros/mdl-extra-parametros';
-import { MtMdlPapeletas } from './features/pages/panel-horario/component/mt-rw-horario/component/mt-mdl-papeletas/mt-mdl-papeletas';
+
+
+
+
+
+
+
+
 import { MAT_DATE_LOCALE } from '@angular/material/core';
-import {MatButtonToggleModule} from '@angular/material/button-toggle';
-import { MtMaintenanceTables } from './features/pages/configuration/component/mt-maintenance-tables/mt-maintenance-tables';
-import { MdlMaintenanceRecord } from './features/pages/configuration/component/mt-maintenance-tables/component/mdl-maintenance-record/mdl-maintenance-record';
-import { MtPageMantenimiento } from './shared/component/mt-page-mantenimiento/mt-page-mantenimiento';
-import { RrwebSessions } from './features/pages/rrweb-sessions/rrweb-sessions';
-import { ApiLogs } from './features/pages/api-logs/api-logs';
-import { PanelReportes } from './features/pages/panel-reportes/panel-reportes';
-import { MtInformeRendimiento } from './features/pages/panel-reportes/components/mt-informe-rendimiento/mt-informe-rendimiento';
+
 
 registerLocaleData(localeEsPe);
 @NgModule({
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
-  declarations: [
-    App,
-    Login,
-    Dashboard,
-    MtDatatable,
-    MtInput,
-    MtSelect,
-    Inventario,
-    MtNotification,
-    MtLoader,
-    RrhhAsistencia,
-    MtCalendar,
-    MtMarcacionesEmployes,
-    MtViewPapeleta,
-    RrhhHorario,
-    Kardex,
-    MtKardex,
-    MtCuo,
-    Traspasos,
-    MtCreationTraspasos,
-    MtRegistrosTraspasos,
-    PanelHorario,
-    MtRegistrosHorarios,
-    MtRwHorario,
-    MtMdlRangoHora,
-    MtMdlAsignarPersonal,
-    ExchangeRateStore,
-    MtMdlInfoHorario,
-    MtMdlObervaciones,
-    MtRwPapeleta,
-    AutorizacionHorasExtras,
-    MtComentario,
-    MtRPapeletas,
-    MtRHrxConsolidado,
-    Configuration,
-    MtPermisosTiendas,
-    MtUsuariosSistema,
-    MdlUsuarioTienda,
-    MdlPermisosMenu,
-    MdlUpdateUsuario,
-    MdlCreateUsuario,
-    MtParametrosTienda,
-    MdlInUpdParametroStore,
-    MdlExtraParametros,
-    MtMdlPapeletas,
-    MtMaintenanceTables,
-    MdlMaintenanceRecord,
-    MtPageMantenimiento,
-    RrwebSessions,
-    ApiLogs,
-    PanelReportes,
-    MtInformeRendimiento
-  ],
+  declarations: [App,Login],
   imports: [
-    IonicModule.forRoot(),
-    FormsModule,
-    MatSelectModule,
-    MatMenu,
-    MatMenuModule,
-    MatCheckboxModule,
-    MatDialogModule,
-    MatSnackBarModule,
-    MatFormFieldModule,
-    MatButtonToggleModule,
-    MatTabsModule,
-    MatPaginatorModule,
-    MatToolbarModule,
-    MatInputModule,
-    MatProgressSpinnerModule,
-    MatBadgeModule,
-    MatIconModule,
-    MatSidenavModule,
-    MatTooltipModule,
-    MatButtonModule,
-    BrowserModule,
-    MatTableModule,
-    ReactiveFormsModule,
-    AppRoutingModule,
-    MatDatepickerModule,
-    MatChipsModule,
-    MatListModule,
-    MatSlideToggleModule,
-    ServiceWorkerModule.register('ngsw-worker.js', {
-      enabled: !isDevMode(),
-      registrationStrategy: 'registerWhenStable:30000'
-    })
+    IonicModule.forRoot(),BrowserModule,FormsModule,ReactiveFormsModule,MatIconModule,AppRoutingModule,
+    ServiceWorkerModule.register('ngsw-worker.js',{enabled:!isDevMode(),registrationStrategy:'registerWhenStable:30000'})
   ],
   providers: [
     { provide: MAT_DATE_LOCALE, useValue: 'es-ES' },

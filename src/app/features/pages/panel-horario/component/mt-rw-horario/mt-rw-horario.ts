@@ -1,4 +1,6 @@
+import { Subscription as ViewSubscriptions } from 'rxjs';
 import { Component, inject, Input, SimpleChanges } from '@angular/core';
+import { DraftStore } from '@metasperu/page/core/drafts/draft-store';
 import { StoreService } from '@metasperu/services/store.service';
 import {
   MatDialog,
@@ -24,6 +26,10 @@ import { MtMdlPapeletas } from './component/mt-mdl-papeletas/mt-mdl-papeletas';
   styleUrl: './mt-rw-horario.scss',
 })
 export class MtRwHorario implements CanComponentDeactivate {
+  private readonly drafts=inject(DraftStore);
+  private readonly viewSubscriptions = new ViewSubscriptions();
+  private readonly socketCleanup: Array<() => void> = [];
+
 
   @Input() dataSearch: any = {};
   @Input() isCreateHorario: boolean = false;
@@ -66,7 +72,6 @@ export class MtRwHorario implements CanComponentDeactivate {
   async ngOnInit() {
     console.info('v1954');
     // 1. Cargar datos base
-    this.cargarDeCache();
 
     try {
       // 2. Esperar a que las listas carguen (asumiendo que retornan Promesas u Observables)
@@ -87,6 +92,7 @@ export class MtRwHorario implements CanComponentDeactivate {
       const store = this.storeList.find(s => s.serie === serieDecrypted);
       this.keyStore = store ? store.serie : 'OF';
       this.keyStore_2 = oldSerieDecrypted;
+      if(this.isCreateHorario&&!this.isReadOnly)this.cargarDeCache();
 
       this.allAtorizacionHoraExtra()
 
@@ -96,7 +102,7 @@ export class MtRwHorario implements CanComponentDeactivate {
       }
 
       // 4. Escuchar el socket con filtrado reactivo
-      this.socketService.onRefreshEmployesEJB((data: any[]) => {
+      this.socketCleanup.push(this.socketService.onRefreshEmployesEJB((data: any[]) => {
         console.log(data);
         if (!data) return;
 
@@ -112,7 +118,7 @@ export class MtRwHorario implements CanComponentDeactivate {
 
         this.employeEJBList = filtrados;
         this.listaMaestraTrabajadores = [...filtrados];
-      });
+      }));
 
     } catch (error) {
       console.error('Error al inicializar datos de tienda:', error);
@@ -120,11 +126,11 @@ export class MtRwHorario implements CanComponentDeactivate {
   }
 
   allAtorizacionHoraExtra() {
-    this.storeService.getPermissionStore().subscribe((data: any) => {
+    this.viewSubscriptions.add(this.storeService.getPermissionStore().subscribe((data: any) => {
       const isPermision = data.find((store: any) => store.serie === this.keyStore);
       this.puedeEditarPasado = isPermision?.horarioPermiso == 1 ? true : false;
       console.log(isPermision);
-    });
+    }));
   };
 
   ngOnChanges(changes: SimpleChanges) {
@@ -142,17 +148,16 @@ export class MtRwHorario implements CanComponentDeactivate {
   registrarCambio() {
     this.hayCambios = true;
     this.guardarEnCache(); // Aprovechamos para persistir en el LocalStorage
-    localStorage.setItem('hayCambios', 'true');
   }
 
   onEmpleadosList() {
-    this.socketService.socket$.subscribe((id) => {
+    this.viewSubscriptions.add(this.socketService.socket$.subscribe((id) => {
       if ((id || "").length) {
         const socketId = this.socketService.socketID || '';
-        this.storeService.callRegisterEmployes(socketId).subscribe((data: any) => {
-        });
+        this.viewSubscriptions.add(this.storeService.callRegisterEmployes(socketId).subscribe((data: any) => {
+        }));
       }
-    });
+    }));
   }
 
   async onStoreList() {
@@ -275,12 +280,12 @@ export class MtRwHorario implements CanComponentDeactivate {
       old_code_store: this.dataSearch.old_code_store
     };
 
-    this.storeService.postoneSearchHorarios(body).subscribe(response => {
+    this.viewSubscriptions.add(this.storeService.postoneSearchHorarios(body).subscribe(response => {
       console.log(response);
       this.isLoading = false;
 
       this.prepararDataHorario(response);
-    });
+    }));
   }
 
   // Añadimos el parámetro 'item' que representa al cargo (Gerentes, Cajeros, etc.)
@@ -295,7 +300,7 @@ export class MtRwHorario implements CanComponentDeactivate {
       }
     });
 
-    dialogRef.afterClosed().subscribe(result => {
+    this.viewSubscriptions.add(dialogRef.afterClosed().subscribe(result => {
       if (result) {
         if (fila) {
           // Lógica de Edición: actualizamos el texto del rango
@@ -307,7 +312,7 @@ export class MtRwHorario implements CanComponentDeactivate {
           this.registrarCambio();
         }
       }
-    });
+    }));
   }
 
 
@@ -327,7 +332,7 @@ export class MtRwHorario implements CanComponentDeactivate {
       data: { trabajadores: this.employeEJBList, diaNombre: this.obtenerNombreDia(diaId), notasDia: celda?.notasDia || [] }
     });
 
-    dialogRef.afterClosed().subscribe(seleccionados => {
+    this.viewSubscriptions.add(dialogRef.afterClosed().subscribe(seleccionados => {
       if (seleccionados) {
         console.log(seleccionados);
 
@@ -339,7 +344,7 @@ export class MtRwHorario implements CanComponentDeactivate {
           this.registrarCambio();
         }
       }
-    });
+    }));
   }
 
   openDialogRango(component: any, item: any, cargo?: any) {
@@ -352,12 +357,12 @@ export class MtRwHorario implements CanComponentDeactivate {
       }
     });
 
-    dialogRef.afterClosed().subscribe(result => {
+    this.viewSubscriptions.add(dialogRef.afterClosed().subscribe(result => {
       if (result) {
         this.agregarFilaARango(item, result.rango);
         this.registrarCambio();
       }
-    });
+    }));
   }
 
   openDialogInfo() {
@@ -396,9 +401,7 @@ export class MtRwHorario implements CanComponentDeactivate {
   // 2. Función para guardar en LocalStorage
   guardarEnCache() {
     try {
-      const dataString = JSON.stringify(this.horariosProcesados);
-      localStorage.setItem('horario_metas_peru', dataString);
-      console.log('Progreso guardado automáticamente');
+      this.drafts.save(this.keyStore,'schedule',{rows:this.horariosProcesados,calendar:this.defaultCalendar,dirty:this.hayCambios});
     } catch (e) {
       this.messageNotification = 'Error al guardar el horario.';
       this.abrirNotificacion('danger');
@@ -408,30 +411,22 @@ export class MtRwHorario implements CanComponentDeactivate {
 
   // 3. Función para recuperar los datos
   cargarDeCache() {
-    this.defaultCalendar = JSON.parse(localStorage.getItem('calendar') || '{}');
-
-    const hayCambios = localStorage.getItem('hayCambios');
-    if (hayCambios === 'true') {
-      this.hayCambios = true;
-    } else {
-      this.hayCambios = false;
-      localStorage.setItem('hayCambios', 'false');
-    }
-
-    const cache: any = localStorage.getItem('horario_metas_peru');
-
-    if (JSON.parse(cache || "[]").length > 0) {
-      this.isEditing = true;
-      this.horariosProcesados = JSON.parse(cache || "[]");
-    } else {
-      this.hayCambios = false;
-      localStorage.setItem('hayCambios', 'false');
+    try {
+      const draft=this.drafts.read<{rows:any[];calendar:any;dirty:boolean}>(this.keyStore,'schedule');
+      if(!draft)return;
+      if(!Array.isArray(draft.rows))throw new Error('Borrador invalido.');
+      this.defaultCalendar=draft.calendar||{};this.dateCalendar=this.defaultCalendar.value||[];
+      this.horariosProcesados=draft.rows;this.hayCambios=draft.dirty===true;
+      this.isEditing=draft.rows.length>0;
+    }catch{
+      this.messageNotification='No se pudo recuperar el borrador local. Se conserva para su revision.';
+      this.abrirNotificacion('danger');
     }
   }
 
   // 4. Limpiar el horario (para cuando ya se envíe a la base de datos)
   limpiarCache() {
-    localStorage.removeItem('horario_metas_peru');
+    this.drafts.remove(this.keyStore,'schedule');
   }
 
   // Esta función devuelve solo los trabajadores que NO están trabajando ese día
@@ -464,7 +459,7 @@ export class MtRwHorario implements CanComponentDeactivate {
       data: { trabajadores: disponibles, diaNombre: this.obtenerNombreDia(diaId) }
     });
 
-    dialogRef.afterClosed().subscribe((seleccionados: any[]) => {
+    this.viewSubscriptions.add(dialogRef.afterClosed().subscribe((seleccionados: any[]) => {
       if (seleccionados && seleccionados.length > 0) {
         // Insertamos todos los trabajadores seleccionados de una vez
         seleccionados.forEach(trab => {
@@ -476,7 +471,7 @@ export class MtRwHorario implements CanComponentDeactivate {
 
         this.registrarCambio();
       }
-    });
+    }));
   }
 
   // Esta función ahora sirve tanto para turnos de trabajo como para Días Libres
@@ -491,7 +486,7 @@ export class MtRwHorario implements CanComponentDeactivate {
       }
     });
 
-    dialogRef.afterClosed().subscribe((seleccionados: any[]) => {
+    this.viewSubscriptions.add(dialogRef.afterClosed().subscribe((seleccionados: any[]) => {
       if (seleccionados && seleccionados.length > 0) {
         seleccionados.forEach(trab => {
           // Evitamos duplicados en la misma celda de Día Libre
@@ -506,7 +501,7 @@ export class MtRwHorario implements CanComponentDeactivate {
 
         this.registrarCambio();
       }
-    });
+    }));
   }
 
   obtenerNombreDia(diaId: number): string {
@@ -581,11 +576,14 @@ export class MtRwHorario implements CanComponentDeactivate {
 
   onCalendar(event: any): void {
     const { isPeriodo, isMultiSelect, isDefault, isRange, value } = event;
-    localStorage.setItem('calendar', JSON.stringify(event));
+    this.defaultCalendar=event;
     this.dateCalendar = value;
+    this.guardarEnCache();
   }
 
   async guardarHorarioCompleto() {
+    if(this.isLoading||!this.horariosProcesados.length)return;
+    this.isLoading=true;
     this.titleLoader = "Cargando registros...";
     const ahora = new Date();
     const fechaHoyPC: string = new Intl.DateTimeFormat('es-CL', {
@@ -596,12 +594,11 @@ export class MtRwHorario implements CanComponentDeactivate {
 
     const payload = { codigoTienda: this.keyStore, fechaCabecera: fechaHoyPC, rangoDias: `${this.convertirFechaAll(this.horariosProcesados[0].dias[0].fecha)} ${this.convertirFechaAll(this.horariosProcesados[0].dias[6].fecha)}`, datos: this.horariosProcesados };
 
-    this.isLoading = false;
-    this.hayCambios = false;
     // Enviar al servicio
-    this.storeService.postRegisterHorarios(payload).subscribe({
+    this.viewSubscriptions.add(this.storeService.postRegisterHorarios(payload).subscribe({
       next: (response: any) => {
         this.isLoading = false;
+        this.hayCambios = false;
         this.limpiarCache();
         this.onSearch();
         this.messageNotification = response.message || 'null';
@@ -613,14 +610,14 @@ export class MtRwHorario implements CanComponentDeactivate {
         this.messageNotification = error.message || 'Error al guardar el horario.';
         this.abrirNotificacion('danger');
       }
-    });
+    }));
   }
 
   onVerificarHorario() {
     this.isLoading = true;
     const fechaFormateada_1: string = this.dateCalendar[0].split('-').reverse().join('-');
     const fechaFormateada_2: string = this.dateCalendar[1].split('-').reverse().join('-');
-    this.storeService.postoneSearchHorarios({ range_days: `${fechaFormateada_1} ${fechaFormateada_2}`, old_code_store: this.keyStore_2, code_store: this.keyStore }).subscribe((response: any) => {
+    this.viewSubscriptions.add(this.storeService.postoneSearchHorarios({ range_days: `${fechaFormateada_1} ${fechaFormateada_2}`, old_code_store: this.keyStore_2, code_store: this.keyStore }).subscribe((response: any) => {
 
       if (response?.length > 0) {
         this.isLoading = false;
@@ -631,7 +628,7 @@ export class MtRwHorario implements CanComponentDeactivate {
 
       this.onInitHorario();
 
-    });
+    }));
   }
 
   onSearch() {
@@ -641,11 +638,10 @@ export class MtRwHorario implements CanComponentDeactivate {
       const fechaFormateada_1: string = this.dateCalendar[0].split('-').reverse().join('-');
       const fechaFormateada_2: string = this.dateCalendar[1].split('-').reverse().join('-');
 
-      this.storeService.postoneSearchHorarios({ range_days: `${fechaFormateada_1} ${fechaFormateada_2}`, old_code_store: this.keyStore_2, code_store: this.keyStore }).subscribe((response: any) => {
+      this.viewSubscriptions.add(this.storeService.postoneSearchHorarios({ range_days: `${fechaFormateada_1} ${fechaFormateada_2}`, old_code_store: this.keyStore_2, code_store: this.keyStore }).subscribe((response: any) => {
         this.isLoading = false;
         this.hayCambios = false;
         this.isEditing = true;
-        localStorage.setItem('hayCambios', 'false');
         const data = response;
         const hoy = new Date();
         hoy.setHours(0, 0, 0, 0);
@@ -667,7 +663,7 @@ export class MtRwHorario implements CanComponentDeactivate {
         });
         console.log(this.horariosProcesados);
         this.guardarEnCache();
-      });
+      }));
 
 
     } else {
@@ -687,6 +683,7 @@ export class MtRwHorario implements CanComponentDeactivate {
   }
 
   async editarHorarioCompleto() {
+    if(this.isLoading||!this.horariosProcesados.length)return;
     this.isLoading = true;
     this.titleLoader = "Cargando registros...";
     const ahora = new Date();
@@ -704,13 +701,11 @@ export class MtRwHorario implements CanComponentDeactivate {
       rango: `${this.convertirFechaAll(this.horariosProcesados[0].dias[0].fecha)} ${this.convertirFechaAll(this.horariosProcesados[0].dias[6].fecha)}`
     };
 
-    this.isLoading = false;
-    this.hayCambios = false;
-
     // Enviar al servicio
-    this.storeService.putHorario(payload).subscribe({
+    this.viewSubscriptions.add(this.storeService.putHorario(payload).subscribe({
       next: (response: any) => {
         this.isLoading = false;
+        this.hayCambios = false;
         this.limpiarCache();
         this.messageNotification = response.message || 'null';
         this.abrirNotificacion('success');
@@ -720,7 +715,7 @@ export class MtRwHorario implements CanComponentDeactivate {
         this.messageNotification = error.message || 'Error al guardar el horario.';
         this.abrirNotificacion('danger');
       }
-    });
+    }));
   }
 
 
@@ -841,5 +836,10 @@ export class MtRwHorario implements CanComponentDeactivate {
     const anio = fecha.getFullYear();
 
     return `${dia}-${mes}-${anio}`;
+  }
+
+  ngOnDestroy() {
+    this.viewSubscriptions.unsubscribe();
+    this.socketCleanup.forEach(remove => remove());
   }
 }

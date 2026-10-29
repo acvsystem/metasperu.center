@@ -1,3 +1,4 @@
+import { Subscription as ViewSubscriptions } from 'rxjs';
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { SocketResourcesHumanService } from '@metasperu/services/socketResourcesHuman';
 import { StoreService } from '@metasperu/services/store.service';
@@ -11,6 +12,9 @@ import { catchError, mergeMap } from 'rxjs/operators';
   styleUrl: './mt-r-hrx-consolidado.scss',
 })
 export class MtRHrxConsolidado implements OnInit, OnDestroy {
+  private readonly viewSubscriptions = new ViewSubscriptions();
+  private readonly socketCleanup: Array<() => void> = [];
+
   storeList: Array<any> = [];
   keyStore: string = '';
   selectEmploye: any = {};
@@ -77,7 +81,7 @@ export class MtRHrxConsolidado implements OnInit, OnDestroy {
     const store = this.storeList.find(s => s.serie === serieDecrypted);
     this.keyStore = store ? store.serie : 'OF';
 
-    this.socketService.onRefreshEmployesEJB(this.refreshCallbackEmployes);
+    this.socketCleanup.push(this.socketService.onRefreshEmployesEJB(this.refreshCallbackEmployes));
 
 
 
@@ -87,7 +91,7 @@ export class MtRHrxConsolidado implements OnInit, OnDestroy {
     this.subscriptions.add(socketSub);
 
     // 4. Escuchar respuesta de horas (resultado del procesamiento)
-    this.socketService.onHoursWorksEmployes(this.hoursWorksCallback);
+    this.socketCleanup.push(this.socketService.onHoursWorksEmployes(this.hoursWorksCallback));
   }
 
   /**
@@ -154,7 +158,7 @@ export class MtRHrxConsolidado implements OnInit, OnDestroy {
 
   onEmpleadosList() {
     return new Promise((resolve) => {
-      this.socketService.socket$.subscribe((id) => {
+      this.viewSubscriptions.add(this.socketService.socket$.subscribe((id) => {
         if ((id || "").length) {
           const socketId = this.socketService.socketID || '';
           const sub = this.storeService.callRegisterEmployes(socketId).subscribe({
@@ -166,7 +170,7 @@ export class MtRHrxConsolidado implements OnInit, OnDestroy {
           });
           this.subscriptions.add(sub);
         }
-      });
+      }));
     });
   }
 
@@ -210,6 +214,9 @@ export class MtRHrxConsolidado implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
+    this.viewSubscriptions.unsubscribe();
+    this.socketCleanup.forEach(remove => remove());
+
     // Limpiamos suscripciones para evitar memory leaks
     this.subscriptions.unsubscribe();
     this.socketService.offRefreshEmployesEJB(this.refreshCallbackEmployes);

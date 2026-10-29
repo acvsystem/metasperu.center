@@ -1,3 +1,4 @@
+import { Subscription as ViewSubscriptions } from 'rxjs';
 import { Component } from '@angular/core';
 import { StoreService } from '@metasperu/services/store.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -9,6 +10,9 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
   styleUrl: './mdl-extra-parametros.scss',
 })
 export class MdlExtraParametros {
+  private readonly viewSubscriptions = new ViewSubscriptions();
+  private readonly socketCleanup: Array<() => void> = [];
+
   clientesTexto: string = '';
   nuevaObservacion: string = '';
   vReferencia: string = '';
@@ -23,21 +27,21 @@ export class MdlExtraParametros {
   }
 
   onListaClientesDelete() {
-    this.storeService.getClientesDelete().subscribe((res: any) => {
+    this.viewSubscriptions.add(this.storeService.getClientesDelete().subscribe((res: any) => {
       this.clientesTexto = res.LIST_CLIENTE;
-    });
+    }));
   }
 
   guardarClientes() {
-    this.storeService.postClientesDelete({ LIST_CLIENTE: this.clientesTexto }).subscribe((response: any) => {
+    this.viewSubscriptions.add(this.storeService.postClientesDelete({ LIST_CLIENTE: this.clientesTexto }).subscribe((response: any) => {
       this.snackBar.open((response || {})['message'], 'OK', { duration: 2000 });
-    });
+    }));
   }
 
   onTolerancia() {
-    this.storeService.getTolerancia().subscribe((res: any) => {
+    this.viewSubscriptions.add(this.storeService.getTolerancia().subscribe((res: any) => {
       this.arTolerancia = res;
-    });
+    }));
   }
 
   onSelectTolerancia(data: any) {
@@ -52,9 +56,14 @@ export class MdlExtraParametros {
   }
 
   guardarTolerancia() {
-    this.storeService.putTolerancia({ id: this.vIdTolerancia, REFERENCIA: this.vReferencia, TIEMPO_TOLERANCIA: this.vTimeTolerance }).subscribe((response: any) => {
+    this.viewSubscriptions.add(this.storeService.putTolerancia({ id: this.vIdTolerancia, REFERENCIA: this.vReferencia, TIEMPO_TOLERANCIA: this.vTimeTolerance }).subscribe((response: any) => {
       this.snackBar.open((response || {})['message'], 'OK', { duration: 2000 });
       this.onTolerancia();
-    });
+    }));
+  }
+
+  ngOnDestroy() {
+    this.viewSubscriptions.unsubscribe();
+    this.socketCleanup.forEach(remove => remove());
   }
 }

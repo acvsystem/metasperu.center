@@ -1,3 +1,4 @@
+import { Subscription as ViewSubscriptions } from 'rxjs';
 import { Component } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { StoreService } from '@metasperu/services/store.service';
@@ -10,6 +11,9 @@ export type NotificationType = 'success' | 'warning' | 'danger';
   styleUrl: './mt-permisos-tiendas.scss',
 })
 export class MtPermisosTiendas {
+  private readonly viewSubscriptions = new ViewSubscriptions();
+  private readonly socketCleanup: Array<() => void> = [];
+
   messageNotification: string = '';
   typeNotification: NotificationType = 'success';
   isNotification: boolean = false;
@@ -19,7 +23,7 @@ export class MtPermisosTiendas {
   }
 
   ngOnInit() {
-    this.serviceStore.getPermissionStore().subscribe((data) => {
+    this.viewSubscriptions.add(this.serviceStore.getPermissionStore().subscribe((data) => {
       this.dataSource.data = [];
       this.dataSource.data = data.map((item: any) => {
         return {
@@ -30,7 +34,7 @@ export class MtPermisosTiendas {
           avisosTraffic: item.avisosTraffic ? true : false
         }
       });
-    });
+    }));
   }
 
   // Columnas que coinciden con tu imagen
@@ -49,10 +53,10 @@ export class MtPermisosTiendas {
     });
 
 
-    this.serviceStore.postPermissionStore(body).subscribe((response) => {
+    this.viewSubscriptions.add(this.serviceStore.postPermissionStore(body).subscribe((response) => {
       this.messageNotification = (response || {})['message'];
       this.abrirNotificacion('success');
-    });
+    }));
 
   }
 
@@ -66,6 +70,11 @@ export class MtPermisosTiendas {
     this.isNotification = false;
   }
 
+
+  ngOnDestroy() {
+    this.viewSubscriptions.unsubscribe();
+    this.socketCleanup.forEach(remove => remove());
+  }
 }
 
 export interface TiendaPermiso {

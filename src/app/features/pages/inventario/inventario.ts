@@ -1,9 +1,10 @@
+import { Subscription as ViewSubscriptions } from 'rxjs';
 import { Component, OnDestroy } from '@angular/core';
 import { EMPTY, Subject, Subscription, catchError, concatMap, takeUntil, tap } from 'rxjs';
 import { SocketInventoryService } from '@metasperu/page/shared/services/socketInvetory';
 import { StoreService } from '@metasperu/services/store.service';
 export type NotificationType = 'success' | 'warning' | 'danger';
-import * as XLSX from 'xlsx';
+import { SpreadsheetService } from '@metasperu/page/core/spreadsheets/spreadsheet.service';
 
 @Component({
   selector: 'inventario',
@@ -12,6 +13,9 @@ import * as XLSX from 'xlsx';
   styleUrl: './inventario.scss',
 })
 export class Inventario implements OnDestroy {
+  private readonly viewSubscriptions = new ViewSubscriptions();
+  private readonly socketCleanup: Array<() => void> = [];
+
 
   columnsInventory: tableColumns[] = [
     { isSticky: true, matColumnDef: 'codigoBarra', titleColumn: 'Codigo Barra', propertyValue: 'cCodigoBarra', filterActive: false, isCboFilter: false, cboFilter: [] },
@@ -77,12 +81,12 @@ export class Inventario implements OnDestroy {
     });
     return [...stores.values()].filter(store => !this.receivedStores.has(store.serie));
   }
-  constructor(private socketInventoryService: SocketInventoryService, private storeService: StoreService) { }
+  constructor(private socketInventoryService: SocketInventoryService, private storeService: StoreService, private sheets:SpreadsheetService) { }
 
   ngOnInit() {
 
 
-    this.storeService.getStores().pipe(takeUntil(this.destroy)).subscribe(
+    this.viewSubscriptions.add(this.storeService.getStores().pipe(takeUntil(this.destroy)).subscribe(
       response => {
         this.storeList = response;
         this.cboStoreList = this.storeList.map(store => ({ key: store.serie, value: store.nombre }));
@@ -94,7 +98,7 @@ export class Inventario implements OnDestroy {
           this.onAddUpdateColumn(this.selectedStore.key);
         }
       }
-    );
+    ));
 
     this.removeInventoryListener = this.socketInventoryService.onUpdateInventory((data: any) => {
       if (!this.hasInventoryQuery || data?.serieStore == null) return;
@@ -155,6 +159,9 @@ export class Inventario implements OnDestroy {
   }
 
   ngOnDestroy() {
+    this.viewSubscriptions.unsubscribe();
+    this.socketCleanup.forEach(remove => remove());
+
     this.clearInventoryTimer();
     this.cancelInventory.next();
     this.cancelInventory.complete();
@@ -251,7 +258,7 @@ export class Inventario implements OnDestroy {
   onEmailInventory() {
     this.isLoading = true;
     this.titleLoader = `Enviando inventario...`;
-    this.storeService.callInventoryEmail(this.emailInvetorySend, this.storesSelected).subscribe(
+    this.viewSubscriptions.add(this.storeService.callInventoryEmail(this.emailInvetorySend, this.storesSelected).subscribe(
       response => {
         this.isLoading = false;
         this.messageNotification = 'Correo enviado exitosamente';
@@ -262,7 +269,7 @@ export class Inventario implements OnDestroy {
         this.messageNotification = 'Error al enviar el email:' + error;
         this.abrirNotificacion('danger');
       }
-    );
+    ));
   }
 
   onSendInventory() {
@@ -323,7 +330,7 @@ export class Inventario implements OnDestroy {
       ))
     ).subscribe();
     this.restartInventoryTimer();
-    this.storeService.callInventory(this.inventoryBrand, this.socketInventoryService.socketID)
+    this.viewSubscriptions.add(this.storeService.callInventory(this.inventoryBrand, this.socketInventoryService.socketID)
       .pipe(takeUntil(this.cancelInventory), takeUntil(this.destroy)).subscribe({
         next: response => {
           this.dataStoreOnline = [...new Set<string>((response.online || [])
@@ -344,7 +351,7 @@ export class Inventario implements OnDestroy {
           this.messageNotification = 'Error al obtener el inventario. Intente consultar nuevamente.';
           this.abrirNotificacion('danger');
         }
-      });
+      }));
   }
 
   abrirNotificacion(type: NotificationType) {
@@ -357,62 +364,8 @@ export class Inventario implements OnDestroy {
     this.isNotification = false;
   }
 
-  exportarExcel() {
-    // 1. Mapeamos los datos (Tu lógica se mantiene igual)
-    const dataParaExportar = this.datosExportar.map(item => {
-      const objReturn: Record<string, any> = item;
-      return objReturn;
-    });
-
-    // 2. Creamos la hoja de trabajo
-    const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(dataParaExportar);
-
-    // 3. --- LÓGICA PARA PINTAR CELDAS ---
-    const range = XLSX.utils.decode_range(worksheet['!ref']!);
-
-    for (let R = range.s.r + 1; R <= range.e.r; ++R) { // Empezamos en +1 para saltar el encabezado
-      // Buscamos la columna 'cEstadoEscaneo'. 
-      // Si sabes que es la columna 17 (por ejemplo), puedes usarla directo.
-      const estadoCellAddress = XLSX.utils.encode_cell({ r: R, c: 16 }); // Ajusta el índice de columna
-      const cell = worksheet[estadoCellAddress];
-
-      if (cell && cell.v === 'NO ESCANEADO') {
-        // Pintamos toda la fila o solo esa celda
-        for (let C = range.s.c; C <= range.e.c; ++C) {
-          const address = XLSX.utils.encode_cell({ r: R, c: C });
-          if (!worksheet[address]) continue;
-
-          worksheet[address].s = {
-            fill: {
-              fgColor: { rgb: "FFFF0000" } // Rojo (Formato ARGB)
-            },
-            font: {
-              color: { rgb: "FFFFFF" }, // Texto blanco para que resalte
-              bold: true
-            }
-          };
-        }
-      }
-    }
-
-    // 4. Generamos el libro y descargamos
-    const workbook: XLSX.WorkBook = {
-      Sheets: { 'Inventario': worksheet },
-      SheetNames: ['Inventario']
-    };
-
-    const excelBuffer: any = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
-    this.saveAsExcelFile(excelBuffer, 'inventario_sin_exponer');
-  }
-
-  private saveAsExcelFile(buffer: any, fileName: string): void {
-    const data: Blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8' });
-    const url = window.URL.createObjectURL(data);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = fileName + '_' + new Date().getTime() + '.xlsx';
-    link.click();
-    window.URL.revokeObjectURL(url);
+  async exportarExcel() {
+    await this.sheets.exportFile({rows:this.datosExportar,sheetName:'Inventario',highlightColumn:16},'inventario_sin_exponer_'+Date.now());
   }
 
 }

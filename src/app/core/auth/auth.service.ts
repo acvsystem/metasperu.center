@@ -1,3 +1,5 @@
+import { SessionState } from './session-state';
+import { firstValueFrom,timeout } from 'rxjs';
 import { Injectable, signal, computed, inject, Output, EventEmitter } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
@@ -9,6 +11,7 @@ import { RrwebRecorderService } from '@metasperu/services/rrweb-recorder.service
 
 // Definimos la interfaz del usuario para tipado fuerte
 export interface User {
+    id?: number;
     username: string;
     role: string;
     email: string;
@@ -26,6 +29,7 @@ export interface MenuOption {
 export class AuthService {
     @Output() onMenu: EventEmitter<any> = new EventEmitter();
     private http = inject(HttpClient);
+    private session = inject(SessionState);
     private router = inject(Router);
     private navCtrl = inject(NavController);
     private socketService = inject(SocketService);
@@ -47,48 +51,36 @@ export class AuthService {
     /**
      * Intenta recuperar la sesión al cargar la PWA (evita logout al refrescar)
      */
+    constructor() {
+        this.session.expired.subscribe(() => {
+            this.rrwebRecorder.stop();
+            this.clearAccount();
+            this.navCtrl.navigateRoot('/login?reason=expired');
+        });
+    }
+
+    private normalizeUser(value: any): User {
+        const user = { id:value?.id, username: value?.username ?? value?.USUARIO, role: value?.role ?? value?.NIVEL, email: value?.email ?? value?.EMAIL ?? '' };
+        if (!user.username || !user.role) throw new Error('Invalid session response');
+        return user;
+    }
+
     checkSession(): Observable<boolean> {
-        return this.http.get<User>(`${this.API_URL}/check-session`).pipe(
-            tap(user => {
-                this.#user.set(user);
-                const savedMenu = localStorage.getItem('menu');
-                if (savedMenu) {
-                    this.#menu.set(JSON.parse(savedMenu));
-                }
+        return this.http.get<User & {menu:MenuOption[]}>(`${this.API_URL}/check-session`).pipe(timeout(15000),
+            tap(value => {
+                this.applyContext(value,value.menu);
+                this.session.open(this.session.token() || undefined);
             }),
-            map(() => true),                   // <--- Transformamos el flujo a boolean (ÉXITO)
-            catchError((err) => {
-                this.#user.set(null);
-                return of(false);                // <--- En caso de error, devolvemos false
-            })
+            map(() => true),
+            catchError(() => { this.#user.set(null); this.session.clear(); return of(false); })
         );
     }
 
     login(credentials: any): Observable<any> {
-        // 1. Eliminamos withCredentials porque ya no usaremos cookies para la sesión
-        return this.http.post<any>(`${this.API_URL}/login`, credentials).pipe(
+        return this.http.post<any>(`${this.API_URL}/login`, credentials).pipe(timeout(15000),
             tap(response => {
-                // 2. Guardamos el token en localStorage para que el Interceptor lo use
-                if (response.token) {
-                    localStorage.setItem('auth_token', response.token);
-                    localStorage.setItem('role', response.user.role);
-                    localStorage.setItem('name', response.user.username);
-                    localStorage.setItem('marca', response.user.unid_servicio || 'OF');
-
-                    const keyStore = this.storeService.encrypt(response.user.code_store);
-                    const keyStore_2 = this.storeService.encrypt(response.user.old_code_store);
-                    localStorage.setItem('keyStore', keyStore);
-                    localStorage.setItem('keyStore_2', keyStore_2);
-
-                    this.socketService.conectar();
-                    localStorage.setItem('menu', JSON.stringify(response.menu));
-                    this.#menu.set(response.menu);
-                    this.onMenu.emit(response.menu);
-                }
-
-                // 3. Actualizamos el estado del usuario y navegamos
-                this.#user.set(response.user || response);
-
+                this.applyContext(response.user,response.menu);
+                this.session.open(response.token);
                 // Navegación dinámica: Ir a la primera ruta permitida del menú
                 const initialRoute = response.menu && response.menu.length > 0
                     ? '/' + response.menu[0].ruta
@@ -99,15 +91,36 @@ export class AuthService {
     }
 
 
-    async logout() {
-        this.rrwebRecorder.stop();
-        // Preserve device preferences and unrelated local work.
-        for (const key of ['auth_token', 'menu', 'name', 'role', 'marca', 'keyStore', 'keyStore_2']) {
-            localStorage.removeItem(key);
-        }
+    private applyContext(value:any,menu:any) {
+        const user=this.normalizeUser(value),options=Array.isArray(menu)?menu:[];
+        this.#user.set(user);this.#menu.set(options);
+        localStorage.setItem('role',user.role);localStorage.setItem('name',user.username);
+        localStorage.setItem('marca',value.unid_servicio || 'OF');
+        localStorage.setItem('keyStore',this.storeService.encrypt(value.code_store || ''));
+        localStorage.setItem('keyStore_2',this.storeService.encrypt(value.old_code_store || ''));
+        localStorage.setItem('menu',JSON.stringify(options));
+        this.onMenu.emit(options);
+    }
+
+    private clearAccount() {
+        this.session.clear();
+        for (const key of ['auth_token','menu','name','role','marca','keyStore','keyStore_2']) localStorage.removeItem(key);
         this.socketService.desconectar();
-        this.#user.set(null);                  // Limpiar el estado
-        this.#menu.set([]);                    // Limpiar el menú
-        this.navCtrl.navigateRoot('/login');      // Redirigir
+        this.#user.set(null);
+        this.#menu.set([]);
+        this.onMenu.emit([]);
+    }
+
+    async logout(): Promise<boolean> {
+        try {
+            await this.rrwebRecorder.stop();
+            await firstValueFrom(this.http.post(`${this.API_URL}/logout`, {}).pipe(timeout(15000)));
+            this.clearAccount();
+            await this.navCtrl.navigateRoot('/login');
+            return true;
+        } catch {
+            this.storeService.onNotification.emit([{ isError: true, bodyNotification: 'No se pudo confirmar el cierre de sesion. Revisa tu conexion y vuelve a intentarlo.' }]);
+            return false;
+        }
     }
 }

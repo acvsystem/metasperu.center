@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, EMPTY, expand, reduce, map } from 'rxjs';
 
 export interface RrwebSession {
   session_id: string;
@@ -18,6 +18,7 @@ export interface RrwebSession {
 export interface RrwebSessionEvents {
   sessionId: string;
   events: any[];
+  nextCursor?: number | null;
 }
 
 @Injectable({
@@ -27,13 +28,20 @@ export class RrwebPlayerService {
   private http = inject(HttpClient);
   private readonly API_URL = 'https://api.metasperu.net.pe/s1/center';
 
-  listSessions(): Observable<RrwebSession[]> {
-    return this.http.get<RrwebSession[]>(`${this.API_URL}/api/rrweb/sessions`);
+  listSessions(page=1,limit=25): Observable<{rows:RrwebSession[];total:number;page:number;limit:number}> {
+    return this.http.get<{rows:RrwebSession[];total:number;page:number;limit:number}>(`${this.API_URL}/api/rrweb/sessions`, {params:{page,limit}});
   }
 
   getSessionEvents(sessionId: string): Observable<RrwebSessionEvents> {
-    return this.http.get<RrwebSessionEvents>(
-      `${this.API_URL}/api/rrweb/session/${sessionId}/events`
+    const chunk=(after=0)=>this.http.get<RrwebSessionEvents>(`${this.API_URL}/api/rrweb/session/${encodeURIComponent(sessionId)}/events`,{params:{after}});
+    return chunk().pipe(
+      expand(page=>page.nextCursor ? chunk(page.nextCursor) : EMPTY,1),
+      reduce((result,page)=>{
+        result.bytes+=JSON.stringify(page.events).length;
+        if(result.bytes>32*1024*1024 || result.events.length+page.events.length>100000) throw new Error('La grabacion supera el limite de reproduccion.');
+        result.events.push(...page.events);return result;
+      },{events:[] as any[],bytes:0}),
+      map(result=>({sessionId,events:result.events}))
     );
   }
 }

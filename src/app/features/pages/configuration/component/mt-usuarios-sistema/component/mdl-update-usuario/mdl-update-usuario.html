@@ -45,19 +45,20 @@
         <mat-form-field class="col-md-6" appearance="outline">
             <mat-label>Nueva Contraseña</mat-label>
             <input matInput [type]="hidePassword ? 'password' : 'text'" formControlName="PASSWORD">
-            <button mat-icon-button matSuffix (click)="hidePassword = !hidePassword">
+            <button mat-icon-button matSuffix type="button" (click)="hidePassword = !hidePassword">
                 <mat-icon>{{hidePassword ? 'visibility_off' : 'visibility'}}</mat-icon>
             </button>
             <mat-hint>Dejar en blanco para no cambiar</mat-hint>
         </mat-form-field>
     </form>
+<p *ngIf="saveError" role="alert" class="text-danger px-3">{{saveError}}</p>
 </mat-dialog-content>
 
 <mat-dialog-actions align="end" class="p-3 border-top bg-light">
     <div style="display: flex; justify-content: end; padding-bottom: 12px; padding-top: 10px;">
-        <button [disabled]="form.invalid" (click)="guardar()" type="button" class="btn btn-primary btn-sm" style="padding: 0 2px; margin-right: 3px; display: flex;
+        <button [disabled]="form.invalid || saving" (click)="guardar()" type="button" class="btn btn-primary btn-sm" style="padding: 0 2px; margin-right: 3px; display: flex;
         justify-content: center; align-items: center; height: 34px; width: 164px;">
-            <span>Actualizar Usuario</span>
+            <span>{{saving ? 'Guardando…' : 'Actualizar usuario'}}</span>
         </button>
     </div>
 </mat-dialog-actions>

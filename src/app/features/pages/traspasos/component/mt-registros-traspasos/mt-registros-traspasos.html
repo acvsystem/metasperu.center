@@ -1,8 +1,11 @@
 <ion-row>
     <ion-col size="12">
+        <p *ngIf="loading" role="status">Cargando traspasos…</p>
+        <p *ngIf="loadError" role="alert" class="text-danger">{{loadError}}</p>
         <div class="table-card">
             <mt-datatable [dataIn]="dataTraspasos" [dataColumnsIn]="columnsTraspasos"
-                [extraColumns]="displayedColumnsTraspasos">
+                [extraColumns]="displayedColumnsTraspasos" [serverTotal]="total" [serverPageIndex]="pageIndex"
+                [serverPageSize]="pageSize" (serverPage)="changePage($event)">
             </mt-datatable>
         </div>
     </ion-col>

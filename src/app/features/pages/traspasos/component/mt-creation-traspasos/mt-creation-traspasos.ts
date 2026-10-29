@@ -1,7 +1,8 @@
+import { Subscription as ViewSubscriptions, switchMap, tap, finalize } from 'rxjs';
 import { Component, Input } from '@angular/core';
 import { SocketInventoryService } from '@metasperu/services/socketInvetory';
 import { StoreService } from '@metasperu/services/store.service';
-import * as XLSX from 'xlsx';
+import { SpreadsheetService } from '@metasperu/page/core/spreadsheets/spreadsheet.service';
 import { tableColumns } from '../../../rrhh-asistencia/rrhh-asistencia';
 export type NotificationType = 'success' | 'warning' | 'danger';
 import { Router } from '@angular/router';
@@ -13,6 +14,9 @@ import { Router } from '@angular/router';
   styleUrl: './mt-creation-traspasos.scss',
 })
 export class MtCreationTraspasos {
+  private readonly viewSubscriptions = new ViewSubscriptions();
+  private readonly socketCleanup: Array<() => void> = [];
+
   @Input() storeList: Array<any> = [];
   selectedUnidServicio: string = "";
   cboStoreOrigen: Array<any> = [];
@@ -29,6 +33,8 @@ export class MtCreationTraspasos {
   unsDestino: string = '';
   searchCodigoBarra: string = '';
   searchCantidad: number = 0;
+  sending=false;
+  private pendingRegistration:any=null;
 
 
   columnsInventory: tableColumns[] = [
@@ -44,14 +50,14 @@ export class MtCreationTraspasos {
 
   displayedColumnsInventory = this.columnsInventory.map(col => col.matColumnDef);
 
-  constructor(private socketInventoryService: SocketInventoryService, private storeService: StoreService, private router: Router) { }
+  constructor(private socketInventoryService: SocketInventoryService, private storeService: StoreService, private router: Router, private sheets:SpreadsheetService) { }
 
   ngOnInit() {
-    this.socketInventoryService.onOneInvenrotyStore((data: any) => {
+    this.socketCleanup.push(this.socketInventoryService.onOneInvenrotyStore((data: any) => {
       console.log(data);
       this.dataInventory = data.dataCode;
 
-    });
+    }));
   }
 
   calcularSumaTotal(): number {
@@ -87,7 +93,7 @@ export class MtCreationTraspasos {
     }
   }
 
-  onImportarExcel(event: any): void {
+  async onImportarExcel(event:any):Promise<void> {
 
     if (this.selectedUnidServicio === '' || this.storesSelectedOrigen.length === 0 || this.storesSelectedDestino.length === 0) {
       this.messageNotification = 'Seleccione Unidad de Servicio, Tienda Origen y Tienda Destino.';
@@ -98,44 +104,15 @@ export class MtCreationTraspasos {
     const file: File = event.target.files[0];
     if (!file) return;
 
-    // 1. Validación de extensión más limpia
-    const isExcel = file.name.endsWith('.xlsx') || file.name.endsWith('.xls');
-    if (!isExcel) {
-      console.error('Formato no válido');
-      return;
+    const dataJson=await this.sheets.readFirstSheet(file);
+    if(!dataJson)return;
+    const imported=dataJson.slice(1).filter(row=>row.length>=2&&row[0]!==''&&row[0]!==undefined).map(row=>({
+      codigo_barra:String(row[0]??'').trim(),cantidad_solicitada:Number(row[1]??0)
+    }));
+    if(imported.some(row=>!/^[A-Za-z0-9._-]{1,80}$/.test(row.codigo_barra)||!Number.isFinite(row.cantidad_solicitada)||row.cantidad_solicitada<=0||row.cantidad_solicitada>1000000)){
+      this.messageNotification='Revisa los codigos y cantidades del archivo. No se modificaron los datos anteriores.';this.abrirNotificacion('danger');return;
     }
-
-    const reader = new FileReader();
-
-    reader.onload = (e: ProgressEvent<FileReader>) => {
-      const result = e.target?.result;
-      if (!result) return;
-
-      // 2. Procesamiento del Workbook
-      const workbook = XLSX.read(result, { type: 'array' });
-      const sheetName = workbook.SheetNames[0];
-      const worksheet = workbook.Sheets[sheetName];
-
-      // 3. Transformación directa
-      // Convertimos a JSON omitiendo la primera fila (header: 1)
-      const dataJson = XLSX.utils.sheet_to_json<any[]>(worksheet, { header: 1 });
-
-      // 4. Mapeo eficiente
-      // Usamos slice(1) para saltar cabecera y map/filter para procesar
-      this.dataExcelImport = dataJson
-        .slice(1) // Quitamos la cabecera
-        .filter(row => row.length >= 2 && row[0] !== undefined) // Validamos fila mínima
-        .map(row => ({
-          codigo_barra: String(row[0] ?? '').trim(),
-          cantidad_solicitada: Number(row[1] ?? 0)
-        }));
-
-      console.log('Datos importados:', this.dataExcelImport);
-
-      this.onSearchInventory();
-    };
-
-    reader.readAsArrayBuffer(file);
+    this.dataExcelImport=imported;this.onSearchInventory();
   }
 
   onNewTraspaso() {
@@ -164,9 +141,9 @@ export class MtCreationTraspasos {
       "dataCode": this.dataExcelImport
     }
 
-    this.storeService.postOneInventoryStore(body).subscribe((data: any) => {
+    this.viewSubscriptions.add(this.storeService.postOneInventoryStore(body).subscribe((data: any) => {
       console.log(data);
-    });
+    }));
   }
 
   onGenerarTraspaso() {
@@ -193,6 +170,8 @@ export class MtCreationTraspasos {
   }
 
   exportarTxt() {
+    if(this.sending)return;
+    if(this.pendingRegistration){this.persistTransfer();return;}
     // 1. Generar ID único más robusto
     const idFile = Math.floor(Math.random() * 98001) + 1000;
     const fileName = `traspaso_stock_${idFile}.txt`;
@@ -243,56 +222,41 @@ export class MtCreationTraspasos {
     const formData = new FormData();
     formData.append('file', archivo);
     formData.append('ftpDirectorio', nmCarpeta);
+    formData.append('origin_serie', almacenOrigen.serie);
+    formData.append('destination_serie', almacenDestino.serie);
     formData.append('origenStore', almacenOrigen.nombre || 'Origen'); // Para el cuerpo del email
     formData.append('destinoStore', almacenDestino.nombre || 'Destino');
     formData.append('email', 'andrecanalesv@gmail.com'); // El correo del solicitante
 
-    // 6. Suscripción con manejo de estados
-  
-    this.storeService.postTraspasos(formData).subscribe({
-      next: (resp) => {
-
-        let detalleProductos: any = [];
-
-        this.dataInventory.filter((dt) => {
-          (detalleProductos || []).push({
-            barcode: dt.cCodigoBarra,
-            article_code: dt.cCodigoArticulo,
-            description: dt.cDescripcion,
-            size: dt.cTalla,
-            color: dt.cColor,
-            stock: dt.cStock,
-            stock_required: dt.cCantidadSolicitada
-          });
-        });
-
-        const body = {
-          unid_service: this.selectedUnidServicio || "",
-          store_origin: almacenOrigen.nombre || "",
-          store_destination: almacenDestino.nombre || "",
-          code_warehouse_origin: almacenOrigen.codigo_almacen || "",
-          code_warehouse_destination: almacenDestino.codigo_almacen || "",
-          datetime: this.obtenerFechaMysql(),
-          details: detalleProductos || []
-        };
-
-        this.storeService.postInsertTraspasos(body).subscribe((r) => {
-          console.log(r);
-        });
-
-        this.messageNotification = resp.message;
-        this.abrirNotificacion(resp.status);
-        // Aquí podrías disparar un SweetAlert o notificación de éxito
-      },
-      error: (err) => {
-        console.error('Error al procesar traspaso:', err);
-        this.messageNotification = 'Error al procesar el traspaso.';
-        this.abrirNotificacion('danger');
-      }
-    });
-
+    const body={
+      requestId:crypto.randomUUID(),
+      origin_serie:almacenOrigen.serie,destination_serie:almacenDestino.serie,
+      unid_service:this.selectedUnidServicio,store_origin:almacenOrigen.nombre,store_destination:almacenDestino.nombre,
+      code_warehouse_origin:almacenOrigen.codigo_almacen,code_warehouse_destination:almacenDestino.codigo_almacen,
+      datetime:this.obtenerFechaMysql(),details:this.dataInventory.map(dt=>({barcode:dt.cCodigoBarra,
+        article_code:dt.cCodigoArticulo,description:dt.cDescripcion,size:dt.cTalla,color:dt.cColor,
+        stock:dt.cStock,stock_required:dt.cCantidadSolicitada}))
+    };
+    this.sending=true;
+    this.viewSubscriptions.add(this.storeService.postTraspasos(formData).pipe(
+      tap(()=>this.pendingRegistration=body),switchMap(()=>this.storeService.postInsertTraspasos(body)),
+      finalize(()=>this.sending=false)
+    ).subscribe({next:()=>this.transferSaved(),error:()=>this.transferFailed()}));
   }
-
+  private persistTransfer(){
+    this.sending=true;
+    this.viewSubscriptions.add(this.storeService.postInsertTraspasos(this.pendingRegistration).pipe(
+      finalize(()=>this.sending=false)
+    ).subscribe({next:()=>this.transferSaved(),error:()=>this.transferFailed()}));
+  }
+  private transferSaved(){
+    this.pendingRegistration=null;this.dataInventory=[];this.dataExcelImport=[];
+    this.messageNotification='Traspaso enviado y registrado correctamente.';this.abrirNotificacion('success');
+  }
+  private transferFailed(){
+    this.messageNotification=this.pendingRegistration?'El archivo ya se envio. Vuelve a pulsar Generar para reintentar solo su registro.':'No se confirmo el envio del traspaso. Revisa el estado antes de reenviar.';
+    this.abrirNotificacion('danger');
+  }
 
   onChangeInput(ev: any, property?: string) {
     const value = ev.target.value;
@@ -332,9 +296,9 @@ export class MtCreationTraspasos {
         "dataCode": this.dataExcelImport
       }
 
-      this.storeService.postOneInventoryStore(body).subscribe((data: any) => {
+      this.viewSubscriptions.add(this.storeService.postOneInventoryStore(body).subscribe((data: any) => {
         console.log(data);
-      });
+      }));
     }
   }
 
@@ -386,5 +350,10 @@ export class MtCreationTraspasos {
   cerrarNotificacion() {
     // Aquí es donde realmente desaparece del DOM
     this.isNotification = false;
+  }
+
+  ngOnDestroy() {
+    this.viewSubscriptions.unsubscribe();
+    this.socketCleanup.forEach(remove => remove());
   }
 }

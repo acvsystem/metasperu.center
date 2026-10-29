@@ -6,6 +6,8 @@
 </ion-row>
 
 <mat-dialog-content>
+    <p *ngIf="loading" role="status">Cargando o guardando asignaciones…</p>
+    <p *ngIf="error" role="alert" class="text-danger">{{error}}</p>
     <p class="text-muted">Seleccione las tiendas a las que <b>{{data.usuario.USUARIO}}</b> tendrá acceso:</p>
 
 
@@ -14,7 +16,7 @@
 
     <div class="border rounded" style="max-height: 600px; overflow-y: auto;">
         <mat-selection-list #listaTiendas [(ngModel)]="tiendasSeleccionadas" color="primary">
-            <mat-list-option *ngFor="let tienda of tiendasFiltradas" [value]="tienda.id">
+            <mat-list-option *ngFor="let tienda of todasLasTiendas" [value]="tienda.id" [style.display]="tiendasFiltradas.includes(tienda) ? '' : 'none'" [disabled]="loading || !tiendasFiltradas.includes(tienda)">
                 <div class="d-flex justify-content-between w-100">
                     <span>{{tienda.nombre}}</span>
                 </div>
@@ -24,7 +26,8 @@
 </mat-dialog-content>
 
 <div style="padding: 10px;display: inline-flex;align-items: center;justify-content: end;">
-    <button matTooltip="Guardar permisos" (click)="guardar()" id="searchProducto" type="button"
+    <button mat-button type="button" mat-dialog-close [disabled]="loading && ready">Cancelar</button>
+    <button matTooltip="Guardar permisos" (click)="guardar()" [disabled]="loading || !ready" id="searchProducto" type="button"
         class="btn btn-primary btn-sm" style="padding: 0 2px; margin-right: 3px; display: flex;
         justify-content: center; align-items: center; height: 34px; width: 164px;">
         <span>Guardar cambios</span>
