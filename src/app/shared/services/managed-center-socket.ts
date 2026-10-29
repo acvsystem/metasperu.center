@@ -1,3 +1,4 @@
+import {centerApiOrigin} from '../../core/runtime-config';
 import { InjectionToken, effect, inject, signal } from '@angular/core';
 import { io, Socket } from 'socket.io-client';
 import { SessionState } from '../../core/auth/session-state';
@@ -10,7 +11,7 @@ export class ManagedCenterSocket {
   readonly connection = signal<'disconnected' | 'connecting' | 'connected'>('disconnected');
   socketID = '';
   constructor(path: string) {
-    this.socket = inject(CENTER_SOCKET_FACTORY)('https://api.metasperu.net.pe', {
+    this.socket = inject(CENTER_SOCKET_FACTORY)(centerApiOrigin(), {
       path, autoConnect: false, withCredentials: true,
       auth: callback => callback({ token: this.session.token() }),
       transports: ['websocket', 'polling'], reconnection: true, reconnectionDelay: 1000,

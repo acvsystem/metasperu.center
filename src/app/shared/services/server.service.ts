@@ -1,3 +1,4 @@
+import {centerApiOrigin} from '../../core/runtime-config';
 import { EventEmitter, Injectable, Output, inject, signal } from '@angular/core';
 import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http';
 import { Observable, catchError, tap, throwError } from 'rxjs';
@@ -16,7 +17,7 @@ export class StoreService {
     private http = inject(HttpClient);
 
     // Cambia esta URL según tu entorno de desarrollo/producción
-    private readonly API_URL = 'https://api.metasperu.net.pe/s1/center';
+    private readonly API_URL = centerApiOrigin() + '/s1/center';
 
     /**
      * Manejo centralizado de errores de HTTP

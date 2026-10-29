@@ -1,3 +1,4 @@
+import {centerApiOrigin} from '../runtime-config';
 import { SessionState } from './session-state';
 import { firstValueFrom,timeout } from 'rxjs';
 import { Injectable, signal, computed, inject, Output, EventEmitter } from '@angular/core';
@@ -35,7 +36,7 @@ export class AuthService {
     private socketService = inject(SocketService);
     private storeService = inject(StoreService);
     private rrwebRecorder = inject(RrwebRecorderService);
-    private readonly API_URL = 'https://api.metasperu.net.pe/s2/auth/center'; // Ajusta a tu URL
+    private readonly API_URL = centerApiOrigin() + '/s2/auth/center'; // Ajusta a tu URL
 
 
     // 1. Estado reactivo con Signals

@@ -1,3 +1,4 @@
+import {centerApiOrigin} from '../../core/runtime-config';
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { firstValueFrom,retry,timeout } from 'rxjs';
@@ -9,7 +10,7 @@ import { RecordingBuffer } from './recording-buffer';
 export class RrwebRecorderService {
   private readonly http=inject(HttpClient);
   private readonly session=inject(SessionState);
-  private readonly API_URL='https://api.metasperu.net.pe/s1/center/api/rrweb';
+  private readonly API_URL=centerApiOrigin() + '/s1/center/api/rrweb';
   private sessionId='';
   private buffer=new RecordingBuffer();
   private ready:Promise<boolean>=Promise.resolve(false);

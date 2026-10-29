@@ -1,3 +1,4 @@
+import {centerApiOrigin} from '../runtime-config';
 import { Component,DestroyRef,computed,inject,signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
@@ -41,7 +42,7 @@ export class ExportsPage {
   private readonly http=inject(HttpClient);
   private readonly auth=inject(AuthService);
   private readonly destroy=inject(DestroyRef);
-  private readonly api='https://api.metasperu.net.pe/s1/center/api/exports';
+  private readonly api=centerApiOrigin() + '/s1/center/api/exports';
   private polling?:Subscription;
   private creationId?:string;
   private creationSignature?:string;

@@ -1,3 +1,4 @@
+import {centerApiOrigin} from '../../core/runtime-config';
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable, EMPTY, expand, reduce, map } from 'rxjs';
@@ -26,7 +27,7 @@ export interface RrwebSessionEvents {
 })
 export class RrwebPlayerService {
   private http = inject(HttpClient);
-  private readonly API_URL = 'https://api.metasperu.net.pe/s1/center';
+  private readonly API_URL = centerApiOrigin() + '/s1/center';
 
   listSessions(page=1,limit=25): Observable<{rows:RrwebSession[];total:number;page:number;limit:number}> {
     return this.http.get<{rows:RrwebSession[];total:number;page:number;limit:number}>(`${this.API_URL}/api/rrweb/sessions`, {params:{page,limit}});

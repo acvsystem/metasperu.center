@@ -1,3 +1,4 @@
+import {centerApiOrigin} from '../../core/runtime-config';
 import { UiFeedbackService } from './ui-feedback.service';
 import { EventEmitter, Injectable, Output, inject, signal } from '@angular/core';
 import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http';
@@ -35,10 +36,10 @@ export class StoreService {
     private http = inject(HttpClient);
 
     // Cambia esta URL según tu entorno de desarrollo/producción
-    private readonly API_URL = 'https://api.metasperu.net.pe/s1/center';
-    private readonly API_URL_INVENTORY = 'https://api.metasperu.net.pe/s4/center/inventory';
-    private readonly API_URL_RESOURCES_HUMAN = 'https://api.metasperu.net.pe/s5/center/resources/human';
-    private readonly API_URL_ACCOUNTING = 'https://api.metasperu.net.pe/s6/center/accounting';
+    private readonly API_URL = centerApiOrigin() + '/s1/center';
+    private readonly API_URL_INVENTORY = centerApiOrigin() + '/s4/center/inventory';
+    private readonly API_URL_RESOURCES_HUMAN = centerApiOrigin() + '/s5/center/resources/human';
+    private readonly API_URL_ACCOUNTING = centerApiOrigin() + '/s6/center/accounting';
     /**
      * Manejo centralizado de errores de HTTP
      */
@@ -443,9 +444,9 @@ export class StoreService {
         );
     }
 
-    getAllHorasExtrasEmployes(): Observable<any> {
+    getAllHorasExtrasEmployes(page=1,limit=25): Observable<any> {
         return this.http.get(
-            `${this.API_URL_RESOURCES_HUMAN}/api/all/solicitude/hours/works/employes`
+            `${this.API_URL_RESOURCES_HUMAN}/api/all/solicitude/hours/works/employes`,{params:{page,limit}}
         ).pipe(
             catchError(this.handleError)
         );
