@@ -19,6 +19,7 @@ export class AutorizacionHorasExtras {
 
   dialog = inject(MatDialog);
   dataTable: Array<any> = [];
+  total=0;pageIndex=0;pageSize=25;isSaving=false;
   columnsInventory: tableColumns[] = [
     { isSticky: true, matColumnDef: 'tienda', titleColumn: 'Tienda', propertyValue: 'descripcion', filterActive: false, isCboFilter: false, cboFilter: [] },
     { isSticky: true, matColumnDef: 'fecha_hora_extra', titleColumn: 'Fecha', propertyValue: 'fecha', filterActive: false, isCboFilter: false, cboFilter: [] },
@@ -63,12 +64,17 @@ export class AutorizacionHorasExtras {
   }
 
   allAtorizacionHoraExtra() {
-    this.viewSubscriptions.add(this.storeService.getAllHorasExtrasEmployes().subscribe((res: any) => {
+    this.viewSubscriptions.add(this.storeService.getAllHorasExtrasEmployes(this.pageIndex+1,this.pageSize).subscribe((res: any) => {
       this.dataTable = res.data;
+      this.total=res.total||0;
     }));
+  }
+  onPage(event:{pageIndex:number;pageSize:number}){
+    this.pageIndex=event.pageIndex;this.pageSize=event.pageSize;this.allAtorizacionHoraExtra();
   }
 
   async onAuth(row: any) {
+    if(this.isSaving)return;
     if (row.accion != 'marcaciones') {
       this.comentarioModal = "";
       const usuario = localStorage.getItem('name') || "";
@@ -90,13 +96,15 @@ export class AutorizacionHorasExtras {
         email: row.email
       }
 
-      this.viewSubscriptions.add(this.storeService.postRespuestaAprobacionHextra(body).subscribe((res: any) => {
+      this.isSaving=true;
+      this.viewSubscriptions.add(this.storeService.postRespuestaAprobacionHextra(body).subscribe({next:(res: any) => {
+        this.isSaving=false;
         if (res.success) {
           this.messageNotification = 'Respuesta registrada exitosamente.';
           this.abrirNotificacion('success');
           this.allAtorizacionHoraExtra();
         }
-      }));
+      },error:(error:any)=>{this.isSaving=false;this.messageNotification=error.message||'No se pudo registrar la respuesta.';this.abrirNotificacion('danger');}}));
     } else {
       this.isLoading = true;
       this.titleLoader = "Cargando marcaciones...";

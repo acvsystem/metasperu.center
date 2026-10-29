@@ -9,6 +9,7 @@
         <ion-col size="12">
             <div class="table-card">
                 <mt-datatable [dataIn]="dataTable" [dataColumnsIn]="columnsTable" [isTableMobile]="true"
+                    [serverTotal]="total" [serverPageIndex]="pageIndex" [serverPageSize]="pageSize" (serverPage)="onPage($event)"
                     [extraColumns]=" displayedColumnsTable" (callback)="onAuth($event)" [isConectedSocket]="isConectedSocket">
                 </mt-datatable>
             </div>
