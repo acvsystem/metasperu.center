@@ -99,12 +99,22 @@ export class MtRHrxConsolidado implements OnInit, OnDestroy {
     }
   }
 
+  private filterEmployesByStore(employes: any[], codigo_unid_ejb: string) {
+    return (employes || []).filter(emp => {
+      if (codigo_unid_ejb === '0016') {
+        return emp.code_unid_servicio === '0016' || emp.code_unid_servicio === '0019';
+      }
+
+      return emp.code_unid_servicio === codigo_unid_ejb;
+    });
+  }
+
   procesarDataEJB(dataEmployes: any, store: any) {
     if (!dataEmployes) return;
 
     const codigo_unid_ejb = store ? store.codigo_ejb : '0001';
 
-    const filtrados = dataEmployes.filter((emp: any) => emp.code_unid_servicio === codigo_unid_ejb);
+    const filtrados = this.filterEmployesByStore(dataEmployes, codigo_unid_ejb);
 
     this.employeEJBList = filtrados.map((ejb: any) => ({
       key: ejb.nro_documento,
