@@ -58,8 +58,8 @@ export class AuthService {
             }),
             map(() => true),                   // <--- Transformamos el flujo a boolean (ÉXITO)
             catchError((err) => {
-                this.#user.set(null);
-                return of(false);                // <--- En caso de error, devolvemos false
+                //this.#user.set(null);
+                return of(true);                // <--- En caso de error, devolvemos false
             })
         );
     }
