@@ -83,6 +83,8 @@ export class MtRwPapeleta implements OnInit, OnDestroy {
   isOtros: boolean = false;
   isCompensacion: boolean = true;
   titleLoader: string = 'Buscando Horas Extras...';
+  titleLoaderEmployes: string = 'Cargando empleados...';
+  isLoadingEmployes: boolean = true;
   horasCalculadas: string = "00:00";
   isNotification: boolean = false;
   messageNotification: string = '';
@@ -105,6 +107,11 @@ export class MtRwPapeleta implements OnInit, OnDestroy {
     const filtrados = this.filterEmployesByStore(data, codigo_unid_ejb);
 
     this.employeEJBList = filtrados.map(ejb => ({ key: ejb.nro_documento, value: ejb.nombre_completo }));
+    
+    if (this.employeEJBList.length != 0) {
+      this.isLoadingEmployes = false;
+    }
+
     this.listaMaestraTrabajadores = [...filtrados];
   };
 
@@ -128,7 +135,7 @@ export class MtRwPapeleta implements OnInit, OnDestroy {
       new Map(horasExtrasData.map((item: any) => [item.FECHA, item])).values()
     );
 
-     
+
     this.horasExtrasOriginal = [...new Map(this.horasExtras.map(item => [item.FECHA, item])).values()];
     this.isLoading = false;
   };
@@ -616,7 +623,7 @@ export class MtRwPapeleta implements OnInit, OnDestroy {
       this.isLoading = false;
     });
 
-   this.subscriptions.add(sub);
+    this.subscriptions.add(sub);
 
 
   }
