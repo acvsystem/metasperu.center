@@ -100,4 +100,8 @@ export class SocketService {
     onInformeRendimiento(callback: (data: any) => void) {
         this.socket?.on('response_informe_rendimiento', callback);
     }
+
+    onRespuestaDiferenciasDocumentos(callback: (data: any) => void) {
+        this.socket?.on('resultado_verificacion_documentos_bds', callback);
+    }
 }

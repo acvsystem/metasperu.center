@@ -3,6 +3,20 @@ import { SocketService } from '@metasperu/services/socket.service';
 import { StoreService } from '@metasperu/services/store.service';
 import { MatTableDataSource } from '@angular/material/table';
 
+export interface ComprobanteFaltante {
+  origen: string;
+  comprobante_original: string;
+  comprobante_facturacion: string;
+  fecha_comprobante: string;
+}
+
+export interface RespuestaVerificacionBDs {
+  ok: boolean;
+  tieneDiferencias: boolean;
+  total: number;
+  mensaje: string;
+  data: ComprobanteFaltante[];
+}
 
 @Component({
   selector: 'app-dashboard',
@@ -81,7 +95,7 @@ export class Dashboard {
 
   async ngOnInit(): Promise<void> {
     await this.onListarTiendas();
-
+    console.log(this.socketService.socketID);
 
     this.socketService.tiendas$.subscribe(data => {
       console.log(data);
@@ -149,6 +163,11 @@ export class Dashboard {
     this.socketService.onResponseDeleteClient((response) => {
       console.log(response);
 
+    });
+
+    this.socketService.onRespuestaDiferenciasDocumentos((response) => {
+      console.log('Respuesta de verificación de documentos:', response);
+      this.procesarRespuestaSocket(response);
     });
 
     this.socketService.onDocumentosRecibidos((response) => {
@@ -377,6 +396,57 @@ export class Dashboard {
     });
 
     this.storeService.callTrafficCounterStatus().subscribe((a) => { });
+  }
+
+  panelAbierto = false;
+  verificando = false;
+  mensajeSolicitud = '';
+  filtroOrigen: 'TODOS' | 'PERUBK' | 'PERUVS' = 'TODOS';
+  ultimaVerificacion: Date | null = null;
+  respuestaAudit: RespuestaVerificacionBDs | null = null;
+
+  get datosFiltrados(): ComprobanteFaltante[] {
+    if (!this.respuestaAudit?.data) return [];
+    if (this.filtroOrigen === 'TODOS') return this.respuestaAudit.data;
+    return this.respuestaAudit.data.filter(item => item.origen === this.filtroOrigen);
+  }
+
+  verificacionDiferenciasDocumentos() {
+
+    this.panelAbierto = true;
+    this.verificando = true;
+    this.respuestaAudit = null;
+    this.filtroOrigen = 'TODOS';
+    this.mensajeSolicitud = 'Iniciando conexión con servidores...';
+
+    // Reemplaza con el llamado a tu servicio/función existente:
+    this.storeService.postDocumentsDifferences().subscribe({
+      next: (resSolicitud: { ok: boolean; message: string; socketId: string }) => {
+        if (resSolicitud.ok) {
+          this.mensajeSolicitud = resSolicitud.message;
+        }
+      },
+      error: () => {
+        this.verificando = false;
+        this.respuestaAudit = {
+          ok: false,
+          tieneDiferencias: false,
+          total: 0,
+          mensaje: 'No se pudo enviar la solicitud al servicio de auditoría.',
+          data: []
+        };
+      }
+    });
+  }
+
+  procesarRespuestaSocket(res: RespuestaVerificacionBDs): void {
+    this.verificando = false;
+    this.ultimaVerificacion = new Date();
+    this.respuestaAudit = res;
+  }
+
+  cerrarPanel(): void {
+    this.panelAbierto = false;
   }
 
 }

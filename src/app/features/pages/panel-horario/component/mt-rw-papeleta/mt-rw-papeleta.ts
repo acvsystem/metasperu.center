@@ -390,6 +390,7 @@ export class MtRwPapeleta implements OnInit, OnDestroy {
     };
 
     const codeStoreEmploye = this.allEmplotes.find(emp => emp.nro_documento === this.selectEmploye.key)?.code_unid_servicio || ''
+    console.log('Código de tienda del empleado seleccionado:', this.allEmplotes);
     const serieStore = this.storeList.find(store => store.codigo_ejb === codeStoreEmploye)?.serie || '';
     const body = {
       "serie": serieStore,

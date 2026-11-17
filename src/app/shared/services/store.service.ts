@@ -82,6 +82,17 @@ export class StoreService {
         );
     }
 
+    postDocumentsDifferences(): Observable<any> {
+        return this.http.post(
+            `${this.API_URL}/api/verificacion-diferencias-documentos-bds`,
+            {
+                socketId: this.socketService.socketID,
+            }
+        ).pipe(
+            catchError(this.handleError)
+        );
+    }
+
     putStore(bodyStore: Store): Observable<any> {
         return this.http.put(
             `${this.API_URL}/api/store`,

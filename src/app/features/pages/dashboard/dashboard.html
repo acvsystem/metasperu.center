@@ -96,7 +96,7 @@
       <div id="content" class="full-center">
         <div class="card-content">
           <ion-row>
-            <ion-col sizeXs="12" sizeSm="12" sizeMd="9" sizeLg="9" style="display: flex;align-items: center;">
+            <ion-col sizeXs="12" sizeSm="12" sizeMd="9" sizeLg="9" style="display: flex;align-items: center;overflow: scroll;">
               <div style="display: flex;align-items: center;">
                 <button (click)="onMissingDocuments()" type="button" matTooltip="Verificar comprobantes"
                   style="display: flex;justify-content: center;align-items: center;margin-right: 10px;"
@@ -130,15 +130,18 @@
                   </ul>
                 </div>
 
-                <button (click)="onDeleteColaPanama()" type="button" matTooltip="Eliminar Cola Panamá" 
+                <button (click)="onDeleteColaPanama()" type="button" matTooltip="Eliminar Cola Panamá"
                   style="display: flex;justify-content: center;align-items: center;margin-right: 10px;"
                   class="btn btn-primary btn-sm mobil-margin-button"><mat-icon
                     style="margin-right: 10px;">delete_sweep</mat-icon>
                   Panama</button>
-                <button (click)="drawer.toggle()" type="button"
-                  style="display: flex;justify-content: center;align-items: center;margin-right: 10px;display: none;"
-                  class="btn btn-primary btn-sm mobil-margin-button"><mat-icon
-                    style="margin-right: 10px;">storage</mat-icon> Servidor</button>
+
+                <button type="button" class="btn btn-primary d-inline-flex align-items-center gap-2 shadow-sm"
+                  (click)="verificacionDiferenciasDocumentos()" [disabled]="verificando">
+                  <mat-icon
+                    style="margin-right: 10px;">storage</mat-icon>
+                  <span>{{ verificando ? 'Verificando servidores...' : 'Verificar Comprobantes' }}</span>
+                </button>
               </div>
             </ion-col>
             <ion-col sizeXs="12" sizeSm="12" sizeMd="3" sizeLg="3" style="display: flex;justify-content: end;">
@@ -350,3 +353,145 @@
   </mat-drawer-content>
 
 </mat-drawer-container>
+
+
+<!-- Backdrop -->
+<div class="offcanvas-backdrop fade" [class.show]="panelAbierto" *ngIf="panelAbierto" (click)="cerrarPanel()">
+</div>
+
+<!-- Modal Lateral (Offcanvas Derecho) -->
+<div class="offcanvas offcanvas-end custom-offcanvas shadow-lg" [class.show]="panelAbierto" tabindex="-1" role="dialog">
+
+  <!-- Header -->
+  <div class="offcanvas-header border-bottom">
+    <div>
+      <h5 class="offcanvas-title fw-bold mb-0">Auditoría de Comprobantes</h5>
+      <small class="text-body-secondary">Cruce PERUVS / PERUBK vs COE_DATA</small>
+    </div>
+    <button type="button" class="btn-close" aria-label="Cerrar" (click)="cerrarPanel()"></button>
+  </div>
+
+  <!-- Body -->
+  <div class="offcanvas-body d-flex flex-column">
+
+    <!-- 1. ANIMACIÓN MIENTRAS ESPERA RESPUESTA DEL SOCKET -->
+    <div *ngIf="verificando" class="my-auto text-center py-5 px-3">
+      <div class="server-sync-visual mb-4">
+        <div class="server-node">
+          <i class="bi bi-database-fill fs-3 text-primary"></i>
+          <span class="badge bg-body-tertiary text-body border mt-1">PERUVS / PERUBK</span>
+        </div>
+
+        <div class="sync-track">
+          <div class="sync-pulse"></div>
+        </div>
+
+        <div class="server-node">
+          <i class="bi bi-hdd-network-fill fs-3 text-success"></i>
+          <span class="badge bg-body-tertiary text-body border mt-1">COE_DATA</span>
+        </div>
+      </div>
+
+      <h6 class="fw-semibold mb-1">Verificando comprobantes entre servidores...</h6>
+      <p class="text-body-secondary small mb-3">{{ mensajeSolicitud }}</p>
+
+      <div class="progress mx-auto" style="height: 6px; max-width: 280px;">
+        <div class="progress-bar progress-bar-striped progress-bar-animated w-100"></div>
+      </div>
+    </div>
+
+    <!-- 2. RESULTADO RECIBIDO DESDE EL SOCKET -->
+    <ng-container *ngIf="!verificando && respuestaAudit">
+
+      <!-- Alerta principal usando 'ok', 'tieneDiferencias', 'mensaje' y 'total' -->
+      <div class="alert d-flex align-items-center justify-content-between mb-3"
+        [ngClass]="!respuestaAudit.ok ? 'alert-danger' : (respuestaAudit.tieneDiferencias ? 'alert-warning' : 'alert-success')">
+        <div class="d-flex align-items-center gap-2">
+          <i class="bi fs-5"
+            [ngClass]="!respuestaAudit.ok ? 'bi-x-circle-fill' : (respuestaAudit.tieneDiferencias ? 'bi-exclamation-triangle-fill' : 'bi-check-circle-fill')">
+          </i>
+          <div>
+            <div class="fw-semibold">{{ respuestaAudit.mensaje }}</div>
+            <small *ngIf="ultimaVerificacion" class="opacity-75">
+              Hora: {{ ultimaVerificacion | date:'dd/MM/yyyy HH:mm:ss' }}
+            </small>
+          </div>
+        </div>
+        <span class="badge rounded-pill fs-6" [ngClass]="respuestaAudit.tieneDiferencias ? 'bg-danger' : 'bg-success'">
+          {{ respuestaAudit.total }}
+        </span>
+      </div>
+
+      <!-- Estado sin diferencias (tieneDiferencias === false) -->
+      <div *ngIf="respuestaAudit.ok && !respuestaAudit.tieneDiferencias"
+        class="my-auto text-center py-5 text-body-secondary">
+        <i class="bi bi-shield-check display-3 text-success mb-3 d-block"></i>
+        <h6 class="fw-semibold text-body">Todo sincronizado</h6>
+        <p class="small mb-0">No se detectaron comprobantes pendientes en COE_DATA.</p>
+      </div>
+
+      <!-- Controles y Tabla cuando tieneDiferencias === true -->
+      <ng-container *ngIf="respuestaAudit.tieneDiferencias">
+
+        <!-- Filtro rápido por BD de origen -->
+        <div class="d-flex justify-content-between align-items-center mb-2">
+          <div class="btn-group btn-group-sm" role="group">
+            <button type="button" class="btn"
+              [ngClass]="filtroOrigen === 'TODOS' ? 'btn-dark' : 'btn-outline-secondary'"
+              (click)="filtroOrigen = 'TODOS'">
+              Todos ({{ respuestaAudit.total }})
+            </button>
+            <button type="button" class="btn"
+              [ngClass]="filtroOrigen === 'PERUBK' ? 'btn-info text-dark' : 'btn-outline-secondary'"
+              (click)="filtroOrigen = 'PERUBK'">
+              PERUBK
+            </button>
+            <button type="button" class="btn"
+              [ngClass]="filtroOrigen === 'PERUVS' ? 'btn-primary' : 'btn-outline-secondary'"
+              (click)="filtroOrigen = 'PERUVS'">
+              PERUVS
+            </button>
+          </div>
+          <small class="text-body-secondary">Mostrando {{ datosFiltrados.length }}</small>
+        </div>
+
+        <!-- Tabla de resultados -->
+        <div class="table-responsive border rounded flex-grow-1">
+          <table class="table table-hover table-sm align-middle mb-0">
+            <thead class="table-light sticky-top">
+              <tr>
+                <th>Origen</th>
+                <th>Doc. Origen</th>
+                <th>Formato COE</th>
+                <th>Fecha</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let item of datosFiltrados">
+                <td>
+                  <span class="badge" style="color:black"
+                    [ngClass]="item.origen === 'PERUVS' ? 'bg-primary-subtle text-primary-emphasis' : 'bg-info-subtle text-info-emphasis'">
+                    {{ item.origen }}
+                  </span>
+                </td>
+                <td class="fw-semibold font-monospace">{{ item.comprobante_original }}</td>
+                <td class="text-body-secondary font-monospace">{{ item.comprobante_facturacion }}</td>
+                <td class="small text-nowrap">{{ item.fecha_comprobante }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+      </ng-container>
+    </ng-container>
+  </div>
+
+  <!-- Footer -->
+  <div class="offcanvas-footer border-top p-3 d-flex justify-content-between align-items-center bg-body-tertiary">
+    <button type="button" class="btn btn-outline-primary btn-sm" (click)="verificacionDiferenciasDocumentos()"
+      [disabled]="verificando">
+      <i class="bi bi-arrow-clockwise me-1"></i> Volver a verificar
+    </button>
+    <button type="button" class="btn btn-secondary btn-sm" (click)="cerrarPanel()">Cerrar</button>
+  </div>
+</div>
