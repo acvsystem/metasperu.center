@@ -627,6 +627,14 @@ export class StoreService {
         return this.http.get<any>(`${this.API_URL}/api/reports/informe-rendimiento`, { params: httpParams })
             .pipe(catchError(this.handleError));
     }
+
+    callStatusCronDocBDS(): Observable<any> {
+        return this.http.get(
+            `${this.API_URL}/api/cron/verificacion-diferencias-documentos-bds`
+        ).pipe(
+            catchError(this.handleError)
+        );
+    }
 }
 
 export interface Ballot {

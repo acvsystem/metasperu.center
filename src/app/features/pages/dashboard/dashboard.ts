@@ -212,6 +212,8 @@ export class Dashboard {
       this.onTransactions();
       this.onNotification({ message: response?.status });
     });
+
+    this.getStatusCron();
   }
 
   isExpanded(element: any) {
@@ -401,14 +403,26 @@ export class Dashboard {
   panelAbierto = false;
   verificando = false;
   mensajeSolicitud = '';
-  filtroOrigen: 'TODOS' | 'PERUBK' | 'PERUVS' | 'PETUMI'= 'TODOS';
+  filtroOrigen: 'TODOS' | 'PERUBK' | 'PERUVS' | 'PETUMI' = 'TODOS';
   ultimaVerificacion: Date | null = null;
   respuestaAudit: RespuestaVerificacionBDs | null = null;
-
+  dataStatusCron: any = null;
   get datosFiltrados(): ComprobanteFaltante[] {
     if (!this.respuestaAudit?.data) return [];
     if (this.filtroOrigen === 'TODOS') return this.respuestaAudit.data;
     return this.respuestaAudit.data.filter(item => item.origen === this.filtroOrigen);
+  }
+
+  getStatusCron() {
+    this.storeService.callStatusCronDocBDS().subscribe({
+      next: (res: any) => {
+        this.dataStatusCron = res['data'][0];
+        console.log('Status Cron:', res);
+      },
+      error: (err) => {
+        console.error('Error al obtener el estado del cron:', err);
+      }
+    });
   }
 
   verificacionDiferenciasDocumentos() {

@@ -95,7 +95,7 @@
     <ion-content>
       <div id="content" class="full-center">
         <ion-row>
-          <ion-col sizeXs="12" sizeSm="12" sizeMd="9" sizeLg="9" style="display: flex;align-items: center;">
+          <ion-col sizeXs="12" sizeSm="12" sizeMd="7" sizeLg="7" style="display: flex;align-items: center;">
 
             <header class="workspace-heading">
               <div class="dashboard-heading-actions">
@@ -149,7 +149,56 @@
             </header>
 
           </ion-col>
-          <ion-col sizeXs="12" sizeSm="12" sizeMd="3" sizeLg="3" style="display: flex;justify-content: end;">
+          <ion-col sizeXs="12" sizeSm="12" sizeMd="2" sizeLg="2" style="display: flex;justify-content: end;">
+            <div class="card border shadow-sm bg-body-tertiary mb-3" style="padding: 0px;margin-bottom: 0px !important;width: 306px;">
+              <div class="card-body py-2 px-3">
+                <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
+
+                  <!-- 1. Nombre del CRON y Estado -->
+                  <div class="d-flex align-items-center gap-2">
+                    <div
+                      class="rounded-circle p-2 bg-primary-subtle text-primary d-flex align-items-center justify-content-center">
+                      <i class="bi bi-clock-history fs-5"></i>
+                    </div>
+                    <div>
+                      <div class="d-flex align-items-center gap-2">
+                        <span class="fw-bold text-body">Auditoría Documentos BDs</span>
+
+                        <span
+                          class="badge rounded-pill d-inline-flex align-items-center gap-1 bg-success-subtle text-success-emphasis border border-success-subtle">
+                          <i class="bi bi-check-circle-fill"></i>
+                          <span style="color:black">{{dataStatusCron.cron_status}}</span>
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- 2. Fechas de Ejecución y Respuesta -->
+                  <div class="d-flex flex-wrap align-items-center gap-4">
+                    <div class="d-flex align-items-center gap-2">
+                      <i class="bi bi-play-circle text-primary"></i>
+                      <div class="lh-sm">
+                        <small class="text-body-secondary d-block" style="font-size: 0.72rem;">Última ejecución</small>
+                        <span class="fw-semibold font-monospace small">{{dataStatusCron.date_ejecution}}</span>
+                      </div>
+                    </div>
+
+                    <div class="vr d-none d-sm-block"></div>
+
+                    <div class="d-flex align-items-center gap-2">
+                      <i class="bi bi-check2-all text-success"></i>
+                      <div class="lh-sm">
+                        <small class="text-body-secondary d-block" style="font-size: 0.72rem;">Última respuesta</small>
+                        <span class="fw-semibold font-monospace small">{{dataStatusCron.date_response}}</span>
+                      </div>
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+            </div>
+          </ion-col>
+          <ion-col sizeXs="12" sizeSm="12" sizeMd="2" sizeLg="2" style="display: flex;justify-content: end;">
             <div class="server-card">
               <div class="header">
                 <div class="status-indicator" [class.online]="statusServer.online"></div>
