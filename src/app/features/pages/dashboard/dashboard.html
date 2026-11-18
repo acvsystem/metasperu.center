@@ -94,260 +94,274 @@
   <mat-drawer-content>
     <ion-content>
       <div id="content" class="full-center">
-        <div class="card-content">
-          <ion-row>
-            <ion-col sizeXs="12" sizeSm="12" sizeMd="9" sizeLg="9" style="display: flex;align-items: center;overflow: scroll;">
-              <div style="display: flex;align-items: center;">
-                <button (click)="onMissingDocuments()" type="button" matTooltip="Verificar comprobantes"
-                  style="display: flex;justify-content: center;align-items: center;margin-right: 10px;"
-                  class="btn btn-primary btn-sm mobil-margin-button"><mat-icon
-                    style="margin-right: 10px;">cloud_sync</mat-icon>
-                  Documentos</button>
-                <button (click)="onTransactions()" type="button" matTooltip="Verificar Transacciones"
-                  style="display: flex;justify-content: center;align-items: center;margin-right: 10px;"
-                  class="btn btn-primary btn-sm mobil-margin-button"><mat-icon
-                    style="margin-right: 10px;">cloud_sync</mat-icon>
-                  Transacciones</button>
-                <button (click)="onTrafficCounterStatus()" type="button" matTooltip="Verificar Transacciones"
-                  style="display: flex;justify-content: center;align-items: center;margin-right: 10px;"
-                  class="btn btn-primary btn-sm mobil-margin-button"><mat-icon
-                    style="margin-right: 10px;">missed_video_call</mat-icon>
-                  Traffic Counter</button>
+        <ion-row>
+          <ion-col sizeXs="12" sizeSm="12" sizeMd="9" sizeLg="9" style="display: flex;align-items: center;">
 
-                <div class="btn-group" style="margin-right: 10px;">
-                  <button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown"
-                    aria-expanded="false"
-                    style="height: 34px;border-radius: 4px;display: flex;justify-content: center;align-items: center;">
-                    <mat-icon style="margin-right: 10px;">person</mat-icon> Clientes
-                  </button>
-                  <ul class="dropdown-menu">
-                    <li (click)="onClientBlank()" style="cursor: pointer;"><a class="dropdown-item"
-                        style="display: flex;align-items: center;"><mat-icon>person_search</mat-icon>
-                        Consultar</a></li>
-                    <li (click)="onClientDelete()" style="cursor: pointer;"><a class="dropdown-item"
-                        style="display: flex;align-items: center;"><mat-icon>person_off</mat-icon> Limpiar</a>
-                    </li>
-                  </ul>
-                </div>
+            <header class="workspace-heading">
+              <div class="dashboard-heading-actions">
 
-                <button (click)="onDeleteColaPanama()" type="button" matTooltip="Eliminar Cola Panamá"
-                  style="display: flex;justify-content: center;align-items: center;margin-right: 10px;"
-                  class="btn btn-primary btn-sm mobil-margin-button"><mat-icon
-                    style="margin-right: 10px;">delete_sweep</mat-icon>
-                  Panama</button>
+                <div style="display: flex;align-items: center;">
+                  <button (click)="onMissingDocuments()" type="button" matTooltip="Verificar comprobantes"
+                    style="display: flex;justify-content: center;align-items: center;margin-right: 10px;"
+                    class="btn btn-primary btn-sm mobil-margin-button"><mat-icon
+                      style="margin-right: 10px;">cloud_sync</mat-icon>
+                    Documentos</button>
+                  <button (click)="onTransactions()" type="button" matTooltip="Verificar Transacciones"
+                    style="display: flex;justify-content: center;align-items: center;margin-right: 10px;"
+                    class="btn btn-primary btn-sm mobil-margin-button"><mat-icon
+                      style="margin-right: 10px;">cloud_sync</mat-icon>
+                    Transacciones</button>
 
-                <button type="button" class="btn btn-primary d-inline-flex align-items-center gap-2 shadow-sm"
-                  (click)="verificacionDiferenciasDocumentos()" [disabled]="verificando">
-                  <mat-icon
-                    style="margin-right: 10px;">storage</mat-icon>
-                  <span>{{ verificando ? 'Verificando servidores...' : 'Verificar Comprobantes' }}</span>
-                </button>
-              </div>
-            </ion-col>
-            <ion-col sizeXs="12" sizeSm="12" sizeMd="3" sizeLg="3" style="display: flex;justify-content: end;">
-              <div class="server-card">
-                <div class="header">
-                  <div class="status-indicator" [class.online]="statusServer.online"></div>
-                  <span class="hostname">{{ statusServer.hostname }}</span>
-                  <div class="usb-badge" [class.connected]="statusServer.usb === 'true'">
-                    <span>{{statusServer.network.ip}}</span>
-                    <div class="toggle-switch"></div>
-                  </div>
-                </div>
-
-                <div class="metrics-container">
-                  <div class="metric-row">
-                    <span class="label">CPU</span>
-                    <div class="progress-track">
-                      <div class="progress-fill cpu-bar" [style.width.%]="statusServer.cpu_usage"></div>
-                    </div>
-                    <span class="value">{{ statusServer.cpu_usage }}%</span>
-                  </div>
-
-                  <div class="metric-row">
-                    <span class="label">RAM</span>
-                    <div class="progress-track">
-                      <div class="progress-fill ram-bar" [style.width.%]="statusServer.ram.percent"></div>
-                    </div>
-                    <span class="value">{{ statusServer.ram.percent }}%</span>
-                  </div>
-                </div>
-              </div>
-            </ion-col>
-          </ion-row>
-          <ion-row>
-            <ion-col sizeXs="12" sizeSm="12" sizeMd="12" sizeLg="12" style="overflow: auto;">
-              <table mat-table [dataSource]="dataSource" multiTemplateDataRows class="mat-elevation-z8">
-                @for (column of columnsToDisplay; track column) {
-                <ng-container matColumnDef="{{column.matColumnDef}}">
-                  <th mat-header-cell *matHeaderCellDef>{{column.titleColumn}}</th>
-                  <td mat-cell *matCellDef="let element">
-
-                    @if(column.matColumnDef == "traffic"){
-                    <span *ngIf="element['online'] != 1" style="color: rgb(179, 2, 2);">
-                      <mat-icon>close_small</mat-icon>
-                    </span>
-                    <mat-spinner *ngIf="element.trafficLoading && element['online'] == 1"></mat-spinner>
-                    @if(element['online'] == 1){
-                    @for(trf of element.traffic;track trf){
-                    <span matTooltipPosition="above" matTooltip="{{trf.ip}}"
-                      *ngIf="trf.active && !element.trafficLoading"
-                      style="font-size: 20px;cursor: pointer;color: #17c04f;padding-right: 5px;">
-                      <mat-icon>videocam</mat-icon>
-                    </span>
-
-                    <span matTooltipPosition="above" matTooltip="{{trf.ip}}"
-                      *ngIf="!trf.active && !element.trafficLoading"
-                      style="font-size: 20px;cursor: pointer;color: #898989;padding-right: 5px;">
-                      <mat-icon>videocam_off</mat-icon>
-                    </span>
-                    }
-                    }
-
-                    }
-
-                    @if(column.matColumnDef == "comprobantes"){
-                    <mat-spinner *ngIf="element.comprobantesLoading"></mat-spinner>
-                    <span class="badge bg-success-comprobantes"
-                      *ngIf="element[column.propertyValue] == 0 && !element.comprobantesLoading">{{element[column.propertyValue]}}</span>
-                    <span class="badge bg-danger"
-                      *ngIf="element[column.propertyValue] != 0 && !element.comprobantesLoading">{{element[column.propertyValue]}}</span>
-                    }
-
-                    @if(column.matColumnDef == "transacciones"){
-                    <mat-spinner *ngIf="element.transaccionesLoading"></mat-spinner>
-                    <span class="badge bg-success-comprobantes"
-                      *ngIf="element[column.propertyValue] == 0 && !element.transaccionesLoading">{{element[column.propertyValue]}}</span>
-                    <span class="badge bg-danger"
-                      *ngIf="element[column.propertyValue] != 0 && !element.transaccionesLoading">{{element[column.propertyValue]}}</span>
-                    }
-
-                    @if(column.matColumnDef == "clientes"){
-                    <mat-spinner *ngIf="element.clientesLoading"></mat-spinner>
-                    <span class="badge bg-success-comprobantes"
-                      *ngIf="element[column.propertyValue] == 0 && !element.clientesLoading">{{element[column.propertyValue]}}</span>
-                    <span class="badge bg-danger"
-                      *ngIf="element[column.propertyValue] != 0 && !element.clientesLoading">{{element[column.propertyValue]}}</span>
-                    }
-
-
-                    @if(column.matColumnDef != "online" && column.matColumnDef != "clientes" &&
-                    column.matColumnDef != "traffic" && column.matColumnDef != "comprobantes"
-                    && column.matColumnDef != "transacciones"){
-                    {{element[column.propertyValue]}}
-                    }
-
-                    @if(column.matColumnDef == "online"){
-                    <div [ngClass]="[element[column.propertyValue] == 1 ? 'blob blue': 'blob red']"></div>
-                    }
-                  </td>
-                </ng-container>
-                }
-                <ng-container matColumnDef="expand">
-                  <th mat-header-cell *matHeaderCellDef aria-label="row actions">&nbsp;</th>
-                  <td mat-cell *matCellDef="let element">
-                    <button matIconButton aria-label="expand row" (click)="toggle(element); $event.stopPropagation()"
-                      class="example-toggle-button" [class.example-toggle-button-expanded]="isExpanded(element)">
-                      <mat-icon>keyboard_arrow_down</mat-icon>
+                  <div class="btn-group" style="margin-right: 10px;">
+                    <button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown"
+                      aria-expanded="false"
+                      style="height: 34px;border-radius: 4px;display: flex;justify-content: center;align-items: center;">
+                      <mat-icon style="margin-right: 10px;">person</mat-icon> Clientes
                     </button>
-                  </td>
-                </ng-container>
+                    <ul class="dropdown-menu">
+                      <li (click)="onClientBlank()" style="cursor: pointer;"><a class="dropdown-item"
+                          style="display: flex;align-items: center;"><mat-icon>person_search</mat-icon>
+                          Consultar</a></li>
+                      <li (click)="onClientDelete()" style="cursor: pointer;"><a class="dropdown-item"
+                          style="display: flex;align-items: center;"><mat-icon>person_off</mat-icon> Limpiar</a>
+                      </li>
+                    </ul>
+                  </div>
 
-                <!-- Expanded Content Column - The detail row is made up of this one column that spans across all columns -->
-                <ng-container matColumnDef="expandedDetail">
-                  <td mat-cell *matCellDef="let element" [attr.colspan]="columnsToDisplayWithExpand.length">
-                    <div class="example-element-detail-wrapper"
-                      [class.example-element-detail-wrapper-expanded]="isExpanded(element)">
-                      <div class="example-element-detail">
-                        <div style="width: 100%;">
-                          <ion-row>
-                            <ion-col sizeXs="3" sizeSm="3" sizeMd="3" sizeLg="3">
-                              <div style="text-align: center;">
-                                <div class="head-terminal">
-                                  Origen
-                                </div>
-                              </div>
-                              <ul class="list-group">
-                                @for(terminal of element.terminales; track $index;let idx = $index){
-                                <li id="{{terminal.id}}-origen-{{terminal.nombre}}" name="origen"
-                                  (click)="onSelectedTranferencia($event,terminal,'')"
-                                  class="origen list-group-item list-group-item-action d-flex justify-content-between align-items-center">
-                                  {{terminal.nombre}}
-                                  <span *ngIf="terminal.cantidad == 0" class="badge bg-success-comprobantes badge-pill"
-                                    style="margin-left: 50px;">{{terminal.cantidad}}</span>
-                                  <span *ngIf="terminal.cantidad > 0" class="badge bg-danger badge-pill"
-                                    style="margin-left: 50px;">{{terminal.cantidad}}</span>
-                                </li>
-                                }
-                              </ul>
-                            </ion-col>
-                            <ion-col sizeXs="1" sizeSm="1" sizeMd="1" sizeLg="1">
-                              <div style="height: 100%;display: flex;justify-content: center;align-items: center;">
-                                <button type="button" (click)="onTransferTreminal()"
-                                  class="btn btn-primary btn-sm mobil-margin-button"><i class="fa fa-rocket"
-                                    aria-hidden="true"></i></button>
-                              </div>
-                            </ion-col>
-                            <ion-col sizeXs="3" sizeSm="3" sizeMd="3" sizeLg="3">
-                              <div style="text-align: center;">
-                                <div class="head-terminal">
-                                  Destino
-                                </div>
-                              </div>
-                              <ul class="list-group">
-                                @for(terminal of element.terminales; track $index;let idx = $index){
-                                <li id="{{terminal.id}}-destino-{{terminal.nombre}}"
-                                  (click)="onSelectedTranferencia($event,'',terminal)"
-                                  class="destino list-group-item list-group-item-action d-flex justify-content-between align-items-center">
-                                  {{terminal.nombre}}
-                                  <span *ngIf="terminal.cantidad == 0" class="badge bg-success-comprobantes badge-pill"
-                                    style="margin-left: 50px;">{{terminal.cantidad}}</span>
-                                  <span *ngIf="terminal.cantidad > 0" class="badge bg-danger badge-pill"
-                                    style="margin-left: 50px;">{{terminal.cantidad}}</span>
-                                </li>
-                                }
-                              </ul>
-                            </ion-col>
-                          </ion-row>
-                          <ion-row>
-                            <ion-col sizeXs="3" sizeSm="3" sizeMd="3" sizeLg="3">
-                              <div style="text-align: center;">
-                                <div class="head-terminal">
-                                  Detalles Clientes
-                                </div>
-                              </div>
-                              <ul class="list-group">
-                                @for(detalle of element.detallesClientes; track $index;let idx = $index){
-                                <li class="list-group-item">
-                                  <div style="display: flex;justify-content: space-between;">
-                                    <span>nombreCliente</span>
-                                    <span>{{detalle.nombreCliente}}</span>
+                  <button class="action-secondary" type="button" [matMenuTriggerFor]="inventoryTools">
+                    <mat-icon aria-hidden="true">more_horiz</mat-icon>Herramientas</button>
+                  <mat-menu #inventoryTools="matMenu">
+                    <button mat-menu-item (click)="onTrafficCounterStatus()">
+                      <mat-icon>missed_video_call</mat-icon><span>Traffic Counter</span>
+                    </button>
+                    <button mat-menu-item (click)="onDeleteColaPanama()">
+                      <mat-icon>delete_sweep</mat-icon><span>Eliminar cola panama</span>
+                    </button>
+
+                    <button mat-menu-item (click)="verificacionDiferenciasDocumentos()">
+                      <mat-icon>storage</mat-icon><span>{{ verificando ? 'Verificando servidores...' : 'Verificar
+                        Comprobantes' }}</span>
+                    </button>
+                  </mat-menu>
+
+                </div>
+              </div>
+            </header>
+
+          </ion-col>
+          <ion-col sizeXs="12" sizeSm="12" sizeMd="3" sizeLg="3" style="display: flex;justify-content: end;">
+            <div class="server-card">
+              <div class="header">
+                <div class="status-indicator" [class.online]="statusServer.online"></div>
+                <span class="hostname">{{ statusServer.hostname }}</span>
+                <div class="usb-badge" [class.connected]="statusServer.usb === 'true'">
+                  <span>{{statusServer.network.ip}}</span>
+                  <div class="toggle-switch"></div>
+                </div>
+              </div>
+
+              <div class="metrics-container">
+                <div class="metric-row">
+                  <span class="label">CPU</span>
+                  <div class="progress-track">
+                    <div class="progress-fill cpu-bar" [style.width.%]="statusServer.cpu_usage"></div>
+                  </div>
+                  <span class="value">{{ statusServer.cpu_usage }}%</span>
+                </div>
+
+                <div class="metric-row">
+                  <span class="label">RAM</span>
+                  <div class="progress-track">
+                    <div class="progress-fill ram-bar" [style.width.%]="statusServer.ram.percent"></div>
+                  </div>
+                  <span class="value">{{ statusServer.ram.percent }}%</span>
+                </div>
+              </div>
+            </div>
+          </ion-col>
+          <ion-col sizeXs="12" sizeSm="12" sizeMd="12" sizeLg="12">
+            <div class="card-content">
+              <ion-row>
+                <ion-col sizeXs="12" sizeSm="12" sizeMd="12" sizeLg="12" style="overflow: auto;"
+                  class="inventory-table-scroll">
+                  <table mat-table [dataSource]="dataSource" multiTemplateDataRows>
+                    @for (column of columnsToDisplay; track column) {
+                    <ng-container matColumnDef="{{column.matColumnDef}}">
+                      <th mat-header-cell *matHeaderCellDef>{{column.titleColumn}}</th>
+                      <td mat-cell *matCellDef="let element">
+
+                        @if(column.matColumnDef == "traffic"){
+                        <span *ngIf="element['online'] != 1" style="color: rgb(179, 2, 2);">
+                          <mat-icon>close_small</mat-icon>
+                        </span>
+                        <mat-spinner *ngIf="element.trafficLoading && element['online'] == 1"></mat-spinner>
+                        @if(element['online'] == 1){
+                        @for(trf of element.traffic;track trf){
+                        <span matTooltipPosition="above" matTooltip="{{trf.ip}}"
+                          *ngIf="trf.active && !element.trafficLoading"
+                          style="font-size: 20px;cursor: pointer;color: #17c04f;padding-right: 5px;">
+                          <mat-icon>videocam</mat-icon>
+                        </span>
+
+                        <span matTooltipPosition="above" matTooltip="{{trf.ip}}"
+                          *ngIf="!trf.active && !element.trafficLoading"
+                          style="font-size: 20px;cursor: pointer;color: #898989;padding-right: 5px;">
+                          <mat-icon>videocam_off</mat-icon>
+                        </span>
+                        }
+                        }
+
+                        }
+
+                        @if(column.matColumnDef == "comprobantes"){
+                        <mat-spinner *ngIf="element.comprobantesLoading"></mat-spinner>
+                        <span class="badge bg-success-comprobantes"
+                          *ngIf="element[column.propertyValue] == 0 && !element.comprobantesLoading">{{element[column.propertyValue]}}</span>
+                        <span class="badge bg-danger"
+                          *ngIf="element[column.propertyValue] != 0 && !element.comprobantesLoading">{{element[column.propertyValue]}}</span>
+                        }
+
+                        @if(column.matColumnDef == "transacciones"){
+                        <mat-spinner *ngIf="element.transaccionesLoading"></mat-spinner>
+                        <span class="badge bg-success-comprobantes"
+                          *ngIf="element[column.propertyValue] == 0 && !element.transaccionesLoading">{{element[column.propertyValue]}}</span>
+                        <span class="badge bg-danger"
+                          *ngIf="element[column.propertyValue] != 0 && !element.transaccionesLoading">{{element[column.propertyValue]}}</span>
+                        }
+
+                        @if(column.matColumnDef == "clientes"){
+                        <mat-spinner *ngIf="element.clientesLoading"></mat-spinner>
+                        <span class="badge bg-success-comprobantes"
+                          *ngIf="element[column.propertyValue] == 0 && !element.clientesLoading">{{element[column.propertyValue]}}</span>
+                        <span class="badge bg-danger"
+                          *ngIf="element[column.propertyValue] != 0 && !element.clientesLoading">{{element[column.propertyValue]}}</span>
+                        }
+
+
+                        @if(column.matColumnDef != "online" && column.matColumnDef != "clientes" &&
+                        column.matColumnDef != "traffic" && column.matColumnDef != "comprobantes"
+                        && column.matColumnDef != "transacciones"){
+                        {{element[column.propertyValue]}}
+                        }
+
+                        @if(column.matColumnDef == "online"){
+                        <div [ngClass]="[element[column.propertyValue] == 1 ? 'blob blue': 'blob red']"></div>
+                        }
+                      </td>
+                    </ng-container>
+                    }
+                    <ng-container matColumnDef="expand">
+                      <th mat-header-cell *matHeaderCellDef aria-label="row actions">&nbsp;</th>
+                      <td mat-cell *matCellDef="let element">
+                        <button matIconButton aria-label="expand row"
+                          (click)="toggle(element); $event.stopPropagation()" class="example-toggle-button"
+                          [class.example-toggle-button-expanded]="isExpanded(element)">
+                          <mat-icon>keyboard_arrow_down</mat-icon>
+                        </button>
+                      </td>
+                    </ng-container>
+
+                    <!-- Expanded Content Column - The detail row is made up of this one column that spans across all columns -->
+                    <ng-container matColumnDef="expandedDetail">
+                      <td mat-cell *matCellDef="let element" [attr.colspan]="columnsToDisplayWithExpand.length">
+                        <div class="example-element-detail-wrapper"
+                          [class.example-element-detail-wrapper-expanded]="isExpanded(element)">
+                          <div class="example-element-detail">
+                            <div style="width: 100%;">
+                              <ion-row>
+                                <ion-col sizeXs="3" sizeSm="3" sizeMd="3" sizeLg="3">
+                                  <div style="text-align: center;">
+                                    <div class="head-terminal">
+                                      Origen
+                                    </div>
                                   </div>
-                                  <div style="display: flex;justify-content: space-between;">
-                                    <span>nombreComercial</span>
-                                    <span>{{detalle.nombreComercial}}</span>
+                                  <ul class="list-group">
+                                    @for(terminal of element.terminales; track $index;let idx = $index){
+                                    <li id="{{terminal.id}}-origen-{{terminal.nombre}}" name="origen"
+                                      (click)="onSelectedTranferencia($event,terminal,'')"
+                                      class="origen list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                                      {{terminal.nombre}}
+                                      <span *ngIf="terminal.cantidad == 0"
+                                        class="badge bg-success-comprobantes badge-pill"
+                                        style="margin-left: 50px;">{{terminal.cantidad}}</span>
+                                      <span *ngIf="terminal.cantidad > 0" class="badge bg-danger badge-pill"
+                                        style="margin-left: 50px;">{{terminal.cantidad}}</span>
+                                    </li>
+                                    }
+                                  </ul>
+                                </ion-col>
+                                <ion-col sizeXs="1" sizeSm="1" sizeMd="1" sizeLg="1">
+                                  <div style="height: 100%;display: flex;justify-content: center;align-items: center;">
+                                    <button type="button" (click)="onTransferTreminal()"
+                                      class="btn btn-primary btn-sm mobil-margin-button"><i class="fa fa-rocket"
+                                        aria-hidden="true"></i></button>
                                   </div>
-                                </li>
-                                }
-                              </ul>
-                            </ion-col>
-                          </ion-row>
+                                </ion-col>
+                                <ion-col sizeXs="3" sizeSm="3" sizeMd="3" sizeLg="3">
+                                  <div style="text-align: center;">
+                                    <div class="head-terminal">
+                                      Destino
+                                    </div>
+                                  </div>
+                                  <ul class="list-group">
+                                    @for(terminal of element.terminales; track $index;let idx = $index){
+                                    <li id="{{terminal.id}}-destino-{{terminal.nombre}}"
+                                      (click)="onSelectedTranferencia($event,'',terminal)"
+                                      class="destino list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                                      {{terminal.nombre}}
+                                      <span *ngIf="terminal.cantidad == 0"
+                                        class="badge bg-success-comprobantes badge-pill"
+                                        style="margin-left: 50px;">{{terminal.cantidad}}</span>
+                                      <span *ngIf="terminal.cantidad > 0" class="badge bg-danger badge-pill"
+                                        style="margin-left: 50px;">{{terminal.cantidad}}</span>
+                                    </li>
+                                    }
+                                  </ul>
+                                </ion-col>
+                              </ion-row>
+                              <ion-row>
+                                <ion-col sizeXs="3" sizeSm="3" sizeMd="3" sizeLg="3">
+                                  <div style="text-align: center;">
+                                    <div class="head-terminal">
+                                      Detalles Clientes
+                                    </div>
+                                  </div>
+                                  <ul class="list-group">
+                                    @for(detalle of element.detallesClientes; track $index;let idx = $index){
+                                    <li class="list-group-item">
+                                      <div style="display: flex;justify-content: space-between;">
+                                        <span>nombreCliente</span>
+                                        <span>{{detalle.nombreCliente}}</span>
+                                      </div>
+                                      <div style="display: flex;justify-content: space-between;">
+                                        <span>nombreComercial</span>
+                                        <span>{{detalle.nombreComercial}}</span>
+                                      </div>
+                                    </li>
+                                    }
+                                  </ul>
+                                </ion-col>
+                              </ion-row>
+                            </div>
+                          </div>
                         </div>
-                      </div>
-                    </div>
-                  </td>
-                </ng-container>
+                      </td>
+                    </ng-container>
 
-                <tr mat-header-row *matHeaderRowDef="columnsToDisplayWithExpand"></tr>
-                <tr mat-row *matRowDef="let element; columns: columnsToDisplayWithExpand;" class="example-element-row"
-                  [class.example-expanded-row]="isExpanded(element)" (click)="toggle(element)">
-                </tr>
-                <tr mat-row *matRowDef="let row; columns: ['expandedDetail']" class="example-detail-row"></tr>
-              </table>
-            </ion-col>
-          </ion-row>
+                    <tr mat-header-row *matHeaderRowDef="columnsToDisplayWithExpand"></tr>
+                    <tr mat-row *matRowDef="let element; columns: columnsToDisplayWithExpand;"
+                      class="example-element-row" [class.example-expanded-row]="isExpanded(element)"
+                      (click)="toggle(element)">
+                    </tr>
+                    <tr mat-row *matRowDef="let row; columns: ['expandedDetail']" class="example-detail-row"></tr>
+                  </table>
+                </ion-col>
+              </ion-row>
 
-        </div>
+            </div>
+          </ion-col>
+        </ion-row>
+
       </div>
     </ion-content>
   </mat-drawer-content>
@@ -450,6 +464,11 @@
               [ngClass]="filtroOrigen === 'PERUVS' ? 'btn-primary' : 'btn-outline-secondary'"
               (click)="filtroOrigen = 'PERUVS'">
               PERUVS
+            </button>
+            <button type="button" class="btn"
+              [ngClass]="filtroOrigen === 'PETUMI' ? 'btn-success' : 'btn-outline-secondary'"
+              (click)="filtroOrigen = 'PETUMI'">
+              PETUMI
             </button>
           </div>
           <small class="text-body-secondary">Mostrando {{ datosFiltrados.length }}</small>

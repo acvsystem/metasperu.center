@@ -401,7 +401,7 @@ export class Dashboard {
   panelAbierto = false;
   verificando = false;
   mensajeSolicitud = '';
-  filtroOrigen: 'TODOS' | 'PERUBK' | 'PERUVS' = 'TODOS';
+  filtroOrigen: 'TODOS' | 'PERUBK' | 'PERUVS' | 'PETUMI'= 'TODOS';
   ultimaVerificacion: Date | null = null;
   respuestaAudit: RespuestaVerificacionBDs | null = null;
 

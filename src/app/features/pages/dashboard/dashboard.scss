@@ -142,7 +142,8 @@ tr.example-element-row:not(.example-expanded-row):active {
 }
 
 .head-terminal {
-  color: black;
+  background: #173e76;
+  color: white;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -151,7 +152,6 @@ tr.example-element-row:not(.example-expanded-row):active {
   border-radius: 5px;
   margin-bottom: 10px;
   margin-left: 5px;
-  background: white;
   border-color: #CCCCCC;
 }
 
@@ -455,8 +455,13 @@ mat-spinner {
 }
 
 @keyframes dataFlow {
-  0% { left: -40%; }
-  100% { left: 100%; }
+  0% {
+    left: -40%;
+  }
+
+  100% {
+    left: 100%;
+  }
 }
 
 .spin-icon {
@@ -465,5 +470,9 @@ mat-spinner {
 }
 
 @keyframes spin {
-  100% { transform: rotate(360deg); }
+  100% {
+    transform: rotate(360deg);
+  }
 }
+
+//------------

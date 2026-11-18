@@ -1,6 +1,6 @@
-<section class="example-container mat-elevation-z8" style="overflow: auto;padding-bottom: 200px;">
+<section class="example-container" style="overflow: auto;padding-bottom: 200px;">
 
-    <div class="dynamic-table-container shadow-sm border rounded" [ngClass]="{'desktop-only':isTableMobile}">
+    <div class="dynamic-table-container  border rounded" [ngClass]="{'desktop-only':isTableMobile}">
         <table mat-table [dataSource]="dataSource">
 
             @for(col of dataColumns; track col.matColumnDef) {
@@ -128,8 +128,7 @@
                         <mat-icon style="margin-top: 6px;">cancel</mat-icon>
                     </button>
                     <button matTooltip="Marcaciones" id="searchProducto" type="button" class="btn btn-primary btn-sm"
-                        (click)="onCallback(element,'marcaciones')"
-                        [disabled]="!isConectedSocket"
+                        (click)="onCallback(element,'marcaciones')" [disabled]="!isConectedSocket"
                         style="padding-bottom: 0px;padding-top: 0;margin-right: 3px;">
                         <mat-icon style="margin-top: 6px;">fingerprint</mat-icon>
                     </button>
@@ -197,8 +196,8 @@
                             style="word-wrap: break-word;">{{item.comentario}}</span></div>
                     <div>
                         <button matTooltip="Marcaciones" id="searchProducto" type="button"
-                            [disabled]="!isConectedSocket"
-                            class="btn btn-primary btn-sm" (click)="onCallback(item,'marcaciones')"
+                            [disabled]="!isConectedSocket" class="btn btn-primary btn-sm"
+                            (click)="onCallback(item,'marcaciones')"
                             style="padding-bottom: 0px;padding-top: 0;margin-right: 3px;">
                             <mat-icon style="margin-top: 6px;">fingerprint</mat-icon>
                         </button>

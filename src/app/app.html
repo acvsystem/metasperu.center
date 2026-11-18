@@ -1,16 +1,20 @@
 <ion-app>
     <ion-menu contentId="main-content" type="overlay">
-        <ion-header>
-            <ion-toolbar color="primary">
-                <ion-title>Menú</ion-title>
-            </ion-toolbar>
-        </ion-header>
+        <ion-header class="ion-no-border"><ion-toolbar>
+                <div class="brand-lockup">
+                    <img src="assets/metasicon.png" alt="" />
+                    <div><strong>METAS PERÚ</strong></div>
+                </div>
+            </ion-toolbar></ion-header>
         <ion-content>
+            <div class="navigation-caption">Menú</div>
             <ion-list lines="none">
                 <ion-menu-toggle auto-hide="true" *ngFor="let menu of menuFiltrado">
-                    <ion-item button (click)="onNavigatorRoute(menu.ruta)">
-                        <ion-label>{{menu.nombre}}</ion-label>
-                    </ion-item>
+
+                    <button type="button" class="navigation-item" (click)="onNavigatorRoute(menu.ruta)">
+                        <span>{{ menu.nombre }}</span>
+                    </button>
+
                 </ion-menu-toggle>
             </ion-list>
         </ion-content>
@@ -18,7 +22,7 @@
 
     <div class="ion-page" id="main-content">
 
-        <ion-header *ngIf="isLogged" >
+        <ion-header *ngIf="isLogged">
             <ion-toolbar>
                 <ion-buttons slot="start">
                     <ion-menu-button></ion-menu-button>
@@ -34,7 +38,7 @@
                 </ion-buttons>
             </ion-toolbar>
         </ion-header>
-        <ion-content class="ion-padding" style="height: 95.6%;">
+        <ion-content class="ion-padding inventory-ui" style="height: 95.6%;">
             <ion-router-outlet></ion-router-outlet>
         </ion-content>
         <toas-notification></toas-notification>
