@@ -406,7 +406,12 @@ export class Dashboard {
   filtroOrigen: 'TODOS' | 'PERUBK' | 'PERUVS' | 'PETUMI' = 'TODOS';
   ultimaVerificacion: Date | null = null;
   respuestaAudit: RespuestaVerificacionBDs | null = null;
-  dataStatusCron: any = null;
+  dataStatusCron: any = {
+    "name": "py_verificacion_documentos_dbs",
+    "date_ejecution": "",
+    "date_response": "",
+    "cron_status": ""
+  };
   get datosFiltrados(): ComprobanteFaltante[] {
     if (!this.respuestaAudit?.data) return [];
     if (this.filtroOrigen === 'TODOS') return this.respuestaAudit.data;
